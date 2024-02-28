@@ -47,4 +47,28 @@ class IntsTests {
         val ix: Int = indexOfBinary(v, 1, 1, 2)
         assertTrue(ix < 0)
     }
+
+    @Test
+    fun indexOfBinary_returns_index_of_element() {
+        // Arrange
+        val v = intArrayOf(1, 2, 3)
+
+        // Act
+        val ix: Int = indexOfBinary(v, 0, 3, 2)
+
+        // Assert
+        assertEquals(1, ix)
+    }
+
+    @Test
+    fun indexOfBinary_returns_index_of_element_in_subarray() {
+        // Arrange
+        val v = intArrayOf(1, 2, 3, 4, 5)
+
+        // Act
+        val ix: Int = indexOfBinary(v, 1, 4, 3)
+
+        // Assert
+        assertEquals(2, ix)
+    }
 }
