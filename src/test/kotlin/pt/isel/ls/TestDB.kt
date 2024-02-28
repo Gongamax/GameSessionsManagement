@@ -40,15 +40,6 @@ class TestDB {
     }
 
     @Test
-    fun `test basic update`() {
-        dataSource.connection.use {
-            val stm = it.prepareStatement("update students set name = 'Joao Silva' where number = 1")
-            val rs = stm.executeUpdate()
-            assertEquals(1, rs)
-        }
-    }
-
-    @Test
     fun `complete test for insertion`() {
         val stdNumber = (1000..9999).random()
         dataSource.connection.use {
@@ -69,5 +60,35 @@ class TestDB {
             val rs2 = stm2.executeUpdate()
             assertEquals(1, rs2)
         }
+    }
+
+
+    @Test
+    fun `insert students test`(){
+        val number = 17777
+        val name = "Maria"
+        val course = 1
+
+        dataSource.connection.use {
+            val stm = it.prepareStatement("insert into students values ($number,'$name',1)")
+            val rs = stm.executeUpdate()
+            assertEquals(1, rs)
+        }
+        dataSource.connection.use{
+            val stm = it.prepareStatement("select * from students where number = $number")
+            val rs = stm.executeQuery()
+            assert(rs.next())
+            assertEquals(number,rs.getInt("number"))
+            assertEquals(name,rs.getString("name"))
+            assertEquals(course,rs.getInt("course"))
+        }
+        dataSource.connection.use {
+            val stm = it.prepareStatement("delete from students where number = $number")
+            val rs = stm.executeUpdate()
+            assertEquals(1,rs)
+        }
+
+
+
     }
 }
