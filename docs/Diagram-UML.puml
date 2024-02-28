@@ -1,0 +1,38 @@
+@startuml
+
+class Player {
+  -number : Int
+  -name: String
+  -email: String
+  -token: String
+  +create(name: String, email: String): Pair<String, Int>
+  +getDetails(): Unit
+}
+
+class Game {
+  -number : Int
+  -name: String
+  -developer: String
+  -genres: Set<String>
+  +create(name: String, developer: String, genres: Set<String>): String
+  +getDetails(): Unit
+  +getGames(genres: Set, developer: String): Unit
+}
+
+class Session {
+  -number : Int
+  -num_of_players: Int
+  -gid: String
+  -date: Date?
+  -state: String?
+  -pid: Int?
+  +create(num_of_players: int, gid: Int, date: Date): String
+  +addPlayer(): Unit
+  +getDetails(): Unit
+  +getSessions(gid: Int, date: Date, state: String, pid: Int): Unit
+}
+
+Player "1" -- "0.*" Session : has
+Game "1" -- "0.*" Session : has
+
+@enduml
