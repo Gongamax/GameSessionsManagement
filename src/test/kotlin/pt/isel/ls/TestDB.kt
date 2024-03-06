@@ -92,7 +92,7 @@ class TestDB {
             assertEquals(1, rs)
         }
 
-        var cid = 0
+        var cid: Int
         // Verify if the course was inserted
         dataSource.connection.use {
             val stm = it.prepareStatement("select * from courses where name = '$dummyCourseName'")

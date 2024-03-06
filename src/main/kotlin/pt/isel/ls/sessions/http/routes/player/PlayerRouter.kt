@@ -31,7 +31,6 @@ class PlayerRouter(private val services: PlayerService) : Router {
 
         fun routes(services: PlayerService) = PlayerRouter(services).routes
 
-
     }
 
     private fun logRequest(request: Request) {
