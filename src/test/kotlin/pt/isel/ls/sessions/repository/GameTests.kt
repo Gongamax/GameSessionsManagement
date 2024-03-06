@@ -5,7 +5,7 @@ import pt.isel.ls.sessions.repository.data.game.GameMemoryDB
 import kotlin.test.AfterTest
 import kotlin.test.Test
 
-class GameMemoryTests {
+class GameTests {
 
     @AfterTest
     fun cleanup() {
