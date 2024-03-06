@@ -144,8 +144,8 @@ class TestDB {
 
     companion object {
         private fun getRandomNumber() = (1000..9999).random()
-        private val dummyStudentName = "Maria"
-        private val dummyCourseName = "LEIM"
-        private val dummyStudentNewName = "Mariana"
+        private const val dummyStudentName = "Maria"
+        private const val dummyCourseName = "LEIM"
+        private const val dummyStudentNewName = "Mariana"
     }
 }

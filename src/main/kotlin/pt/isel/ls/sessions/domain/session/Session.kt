@@ -12,4 +12,10 @@ import java.util.Date
  * @property gid The unique identifier of the game associated with the session.
  * @property associatedPlayers The list of players associated with the session.
  */
-data class Session(val sid: Int, val numberOfPlayers: Int, val date: Date, val gid: Int, val  associatedPlayers: List<Player>)
+data class Session(
+    val sid: Int,
+    val numberOfPlayers: Int,
+    val date: Date,
+    val gid: Int,
+    val associatedPlayers: List<Player>
+)

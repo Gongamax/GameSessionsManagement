@@ -15,7 +15,5 @@ class AppMemoryDB {
         nextPlayerId = AtomicInteger(1)
     }
 
-   
     val playerMemoryDB = PlayerMemoryDB(this)
-
 }

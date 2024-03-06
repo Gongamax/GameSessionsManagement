@@ -2,7 +2,6 @@ package pt.isel.ls.sessions.repository.data.player
 
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
-import pt.isel.ls.sessions.domain.utils.TokenValidationInfo
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import java.util.UUID
 
@@ -10,7 +9,7 @@ import java.util.UUID
 class PlayerMemoryDB(private val source: AppMemoryDB) : PlayerDB {
 
     override fun createPlayer(name: String, email: String): Token {
-        if (source.playersMap.any { it.value.email == email })
+        if (isEmailInUse(email))
             throw IllegalArgumentException("Email already exists.")
         val pid = source.nextPlayerId.getAndIncrement()
         val player = Player(pid, name, email)
@@ -27,5 +26,8 @@ class PlayerMemoryDB(private val source: AppMemoryDB) : PlayerDB {
         source.reset()
     }
 
+    override fun isEmailInUse(email : String) : Boolean {
+        return source.playersMap.any { it.value.email == email }
+    }
 }
 

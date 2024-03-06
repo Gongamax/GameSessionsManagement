@@ -13,4 +13,6 @@ interface PlayerDB {
 
     fun reset()
 
+    fun isEmailInUse(email : String) : Boolean
+
 }
