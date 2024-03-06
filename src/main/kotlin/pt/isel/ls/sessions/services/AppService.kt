@@ -10,7 +10,7 @@ class AppService(memoryDB: AppMemoryDB) {
     val playerService = PlayerService(baseData)
 
     fun reset() {
-        baseData.reset()
+        baseData.playerMemoryDB.reset()
     }
 
 
