@@ -11,11 +11,6 @@ import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.services.game.GameService
 
 class GameRouter(private val services: GameService): Router{
-    private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.routes.game.GameRouter")
-
-    companion object {
-        fun routes(services: GameService) = GameRouter(services).routes
-    }
 
     private fun logRequest(request: Request) {
         logger.info(
@@ -41,5 +36,10 @@ class GameRouter(private val services: GameService): Router{
     }
     private fun createGame(request: Request): Response {
         TODO()
+    }
+
+    companion object {
+        fun routes(services: GameService) = GameRouter(services).routes
+        private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.routes.game.GameRouter")
     }
 }

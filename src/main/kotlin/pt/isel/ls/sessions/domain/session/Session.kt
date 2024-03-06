@@ -1,7 +1,7 @@
 package pt.isel.ls.sessions.domain.session
 
+import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.sessions.domain.player.Player
-import java.util.Date
 
 /**
  * Data class representing a Session.
@@ -15,7 +15,8 @@ import java.util.Date
 data class Session(
     val sid: Int,
     val numberOfPlayers: Int,
-    val date: Date,
+    val date: LocalDateTime,
     val gid: Int,
-    val associatedPlayers: List<Player>
+    val associatedPlayers: Set<Player>,
+    val capacity: Int
 )

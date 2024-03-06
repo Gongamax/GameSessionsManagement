@@ -3,6 +3,7 @@ package pt.isel.ls.sessions.services
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.sessions.services.player.PlayerService
+import pt.isel.ls.sessions.services.session.SessionService
 
 class AppService(memoryDB: AppMemoryDB) {
 
@@ -12,9 +13,9 @@ class AppService(memoryDB: AppMemoryDB) {
 
     val gameService = GameService(baseData)
 
+    val sessionService = SessionService(baseData.sessionMemoryDB, playerService, gameService)
+
     fun reset() {
         baseData.playerMemoryDB.reset()
     }
-
-
 }

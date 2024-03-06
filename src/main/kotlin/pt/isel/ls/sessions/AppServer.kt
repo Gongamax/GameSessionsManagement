@@ -19,14 +19,11 @@ private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.AppServer")
 
 const val DEFAULT_PORT = 1904
 
-class AppServer(private val port:Int, private val database:AppMemoryDB){
-
-
+class AppServer(private val port: Int, private val database: AppMemoryDB) {
     private val service = AppService(database)
     val webApi = AppWebApi(service)
-
-
 }
+
 fun getDate(request: Request): Response {
     return Response(OK)
         .header("content-type", "text/plain")
@@ -44,7 +41,6 @@ fun logRequest(request: Request) {
 }
 
 fun main() {
-
     val database = AppMemoryDB()
     val server = AppServer(DEFAULT_PORT, database)
     val app = routes(
