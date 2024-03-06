@@ -9,12 +9,14 @@ class GameMemoryDB: GameDB {
     private val gameMap = ConcurrentHashMap<Int, Game>()
     private var nextGameId = AtomicInteger(1)
 
-    override fun createGame(name: String, developer: String, genres: List<Genres>): Int {
-        val gid = nextGameId.getAndIncrement()
-        val game = Game(gid, name, developer, genres)
-        gameMap[gid] = game
-        return gid
-    }
+    override fun createGame(name: String, developer: String, genres: List<Genres>): Int? =
+        if (gameMap.any { it.value.name == name })
+            null
+        else {
+            val gid = nextGameId.getAndIncrement()
+            gameMap[gid] = Game(gid, name, developer, genres)
+            gid
+        }
 
     override fun getGames(genres: List<Genres>, developer: String): List<Game> {
         TODO("Not yet implemented")
