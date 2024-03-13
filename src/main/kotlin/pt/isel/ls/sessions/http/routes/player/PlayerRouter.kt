@@ -10,6 +10,7 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.EXPECTATION_FAILED
 import org.http4k.core.Status.Companion.OK
+import org.http4k.core.Uri
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
@@ -17,13 +18,13 @@ import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.TokenDTO
 import pt.isel.ls.sessions.http.routes.Router
+import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.services.player.PlayerService
 
 private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.routes.player.PlayerRouter")
 
 
 class PlayerRouter(private val services: PlayerService) : Router {
-
 
     companion object {
         private const val DEFAULT_SKIP = 0
@@ -44,8 +45,8 @@ class PlayerRouter(private val services: PlayerService) : Router {
     }
 
     override val routes = routes(
-        "" bind POST to ::createPlayer,
-        "/{pid}" bind GET to ::getDetailsPlayer
+       Uris.DEFAULT bind POST to ::createPlayer,
+       Uris.Players.BY_ID bind GET to ::getDetailsPlayer
     )
 
 

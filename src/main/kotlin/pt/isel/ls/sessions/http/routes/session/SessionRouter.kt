@@ -12,6 +12,7 @@ import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
+import org.http4k.core.Uri
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
@@ -31,9 +32,9 @@ class SessionRouter(
 ) : Router {
 
     override val routes: RoutingHttpHandler = routes(
-        Uris.Sessions.ROOT bind GET to ::getSessions,
+        Uris.DEFAULT bind GET to ::getSessions,
         Uris.Sessions.GET_BY_ID bind GET to ::getSession,
-        "" bind POST to ::createSession,
+        Uris.DEFAULT bind POST to ::createSession,
         Uris.Sessions.ADD_PLAYER bind PUT to ::addPlayerToSession
     )
 

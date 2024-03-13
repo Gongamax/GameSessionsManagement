@@ -16,6 +16,7 @@ import pt.isel.ls.sessions.domain.game.toGenre
 import pt.isel.ls.sessions.http.model.game.GameInputModel
 import pt.isel.ls.sessions.http.model.game.GameOutputModel
 import pt.isel.ls.sessions.http.routes.Router
+import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.services.game.GameGetByIdError
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.utils.Either
@@ -33,9 +34,9 @@ class GameRouter(private val services: GameService) : Router {
     }
 
     override val routes: RoutingHttpHandler = routes(
-        "" bind Method.GET to ::getGames,
-        "" bind Method.POST to ::createGame,
-        "/{gid}" bind Method.GET to ::getGame,
+        Uris.DEFAULT bind Method.GET to ::getGames,
+        Uris.DEFAULT bind Method.POST to ::createGame,
+        Uris.Games.BY_ID bind Method.GET to ::getGame,
     )
 
     private fun getGame(request: Request): Response {
