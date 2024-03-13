@@ -13,14 +13,14 @@ import org.http4k.routing.routes
 import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.sessions.domain.game.toGenre
-import pt.isel.ls.sessions.http.model.game.GameDTO
+import pt.isel.ls.sessions.http.model.game.GameInputModel
+import pt.isel.ls.sessions.http.model.game.GameOutputModel
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.services.game.GameGetByIdError
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.utils.Either
 
 class GameRouter(private val services: GameService) : Router {
-
 
     private fun logRequest(request: Request) {
         logger.info(
@@ -40,25 +40,19 @@ class GameRouter(private val services: GameService) : Router {
 
     private fun getGame(request: Request): Response {
         logRequest(request)
-        val gameId = request.path("gid")?.toInt() ?: return Response(Status.BAD_REQUEST)
-            .header("content-type", "application/json")
-            .body("Invalid game id")
-        val game = services.getGame(gameId)
-        return when (game) {
+        val gid = request.path("gid")?.toInt() ?: return Response(Status.BAD_REQUEST)
+        return when (val game = services.getGame(gid)) {
             is Either.Left -> Response(Status.NOT_FOUND)
-                .header("content-type", "application/json")
-                .body("Game not found $gameId")
-
             is Either.Right -> Response(Status.OK)
-                .header("content-type", "application/json")
                 .body(
                     Json.encodeToString(
-                        GameDTO(
+                        GameOutputModel(
                             game.value.name,
                             game.value.developer,
-                            game.value.genres.map { it.name })
+                            game.value.genres.map { it.name }
+                        )
                     )
-                )
+                ).header("Content-Type", "application/json")
         }
     }
 
@@ -73,39 +67,34 @@ class GameRouter(private val services: GameService) : Router {
                 .header("content-type", "application/json")
                 .body("No genres or developer specified")
 
-        val games = services.getGames(genres, developer, limit, skip)
-        return when (games) {
+        return when (val games = services.getGames(genres, developer, limit, skip)) {
             is Either.Left -> Response(Status.NOT_FOUND)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(games.value.toString()))
 
             is Either.Right -> {
                 val gamesDTOs = games.value.map { game ->
-                    GameDTO(game.name, game.developer, game.genres.map { it.name })
+                    GameOutputModel(game.name, game.developer, game.genres.map { it.name })
                 }
                 return Response(Status.OK)
                     .header("content-type", "application/json")
                     .body(Json.encodeToString(gamesDTOs))
             }
         }
-
-
     }
 
     private fun createGame(request: Request): Response {
         logRequest(request)
-        val game = Json.decodeFromString<GameDTO>(request.bodyString())
+        val game = Json.decodeFromString<GameInputModel>(request.bodyString())
         if (game.name == null || game.developer == null || game.genres.isEmpty())
             return Response(Status.EXPECTATION_FAILED)
                 .header("content-type", "application/json")
                 .body("Invalid game data")
-        val genres = game.genres
-        val gameId = services.createGame(game.name, game.developer, genres)
         logger.info(
             "Game created: name:{}, email:{}, genres:{}", game.name,
             game.developer, game.genres
         )
-        return when (gameId) {
+        return when (val gameId = services.createGame(game.name, game.developer, game.genres)) {
             is Either.Left -> Response(Status.BAD_REQUEST)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(gameId.value.toString()))
