@@ -16,27 +16,19 @@ sealed class GameCreationError {
 typealias GameCreationResult = Either<GameCreationError, Int>
 
 sealed class GameGetError {
-    data object NoGamesFound : GameGetError()
+    data object GameNotFound : GameGetError()
 }
 
-typealias GameGetResult = Either<GameGetError, Game>
-
-sealed class GameGetByIdError {
-    data object GameNotFound : GameGetByIdError()
-}
-
-typealias GameGetByIdResult = Either<GameGetByIdError, Game>
+typealias GameGetByIdResult = Either<GameGetError, Game>
 
 
 sealed class GamesGetError {
-    data object GenreNotFound : GamesGetError() {
-        override fun toString(): String = "The genre is invalid."
-    }
 
-    data object DeveloperNotFound : GamesGetError() {
-        override fun toString(): String = "The developer was not found."
-    }
+    data object NoGamesFound : GamesGetError()
 
+    data object GenreNotFound : GamesGetError()
+
+    data object DeveloperNotFound : GamesGetError()
 
 }
 
