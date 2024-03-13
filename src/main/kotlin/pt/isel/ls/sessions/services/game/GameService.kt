@@ -1,7 +1,6 @@
 package pt.isel.ls.sessions.services.game
 
-import pt.isel.ls.sessions.domain.game.Game
-import pt.isel.ls.sessions.domain.game.Genres
+
 import pt.isel.ls.sessions.domain.game.toGenre
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.utils.failure
@@ -11,7 +10,7 @@ class GameService(private val memoryDB: AppMemoryDB) {
     fun getGame(gid: Int): GameGetByIdResult = run {
         val game = memoryDB.gameMemoryDB.getGameById(gid)
         if (game != null) success(game)
-        else failure(GameGetByIdError.GameNotFound)
+        else failure(GameGetError.GameNotFound)
     }
 
     fun getGames(
@@ -29,7 +28,6 @@ class GameService(private val memoryDB: AppMemoryDB) {
           */
 
     }
-
 
     fun createGame(name: String, developer: String, genres: List<String>): GameCreationResult = run {
         val gen = genres.mapNotNull { it.toGenre() }

@@ -11,27 +11,14 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.slf4j.LoggerFactory
-import pt.isel.ls.sessions.domain.game.Game
-import pt.isel.ls.sessions.domain.game.toGenre
 import pt.isel.ls.sessions.http.model.game.GameInputModel
 import pt.isel.ls.sessions.http.model.game.GameOutputModel
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.util.Uris
-import pt.isel.ls.sessions.services.game.GameGetByIdError
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.utils.Either
 
 class GameRouter(private val services: GameService) : Router {
-
-    private fun logRequest(request: Request) {
-        logger.info(
-            "incoming request: method={}, uri={}, content-type={} accept={}",
-            request.method,
-            request.uri,
-            request.header("content-type"),
-            request.header("accept"),
-        )
-    }
 
     override val routes: RoutingHttpHandler = routes(
         Uris.DEFAULT bind Method.GET to ::getGames,
@@ -111,5 +98,15 @@ class GameRouter(private val services: GameService) : Router {
         private const val DEFAULT_LIMIT = 10
         fun routes(services: GameService) = GameRouter(services).routes
         private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.routes.game.GameRouter")
+
+        private fun logRequest(request: Request) {
+            logger.info(
+                "incoming request: method={}, uri={}, content-type={} accept={}",
+                request.method,
+                request.uri,
+                request.header("content-type"),
+                request.header("accept"),
+            )
+        }
     }
 }

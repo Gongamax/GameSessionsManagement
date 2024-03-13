@@ -26,29 +26,10 @@ private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.routes.pl
 
 class PlayerRouter(private val services: PlayerService) : Router {
 
-    companion object {
-        private const val DEFAULT_SKIP = 0
-        private const val DEFAULT_LIMIT = 10
-
-        fun routes(services: PlayerService) = PlayerRouter(services).routes
-
-    }
-
-    private fun logRequest(request: Request) {
-        logger.info(
-            "incoming request: method={}, uri={}, content-type={} accept={}",
-            request.method,
-            request.uri,
-            request.header("content-type"),
-            request.header("accept"),
-        )
-    }
-
     override val routes = routes(
        Uris.DEFAULT bind POST to ::createPlayer,
        Uris.Players.BY_ID bind GET to ::getDetailsPlayer
     )
-
 
     private fun createPlayer(request: Request): Response {
         logRequest(request)
@@ -78,5 +59,20 @@ class PlayerRouter(private val services: PlayerService) : Router {
             .body(Json.encodeToString(PlayerDTO(player.name, player.email)))
     }
 
+    companion object {
+        private const val DEFAULT_SKIP = 0
+        private const val DEFAULT_LIMIT = 10
 
+        fun routes(services: PlayerService) = PlayerRouter(services).routes
+
+        private fun logRequest(request: Request) {
+            logger.info(
+                "incoming request: method={}, uri={}, content-type={} accept={}",
+                request.method,
+                request.uri,
+                request.header("content-type"),
+                request.header("accept"),
+            )
+        }
+    }
 }
