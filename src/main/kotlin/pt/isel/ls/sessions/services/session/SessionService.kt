@@ -6,6 +6,9 @@ import pt.isel.ls.sessions.domain.session.SessionState
 import pt.isel.ls.sessions.repository.SessionRepository
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.sessions.services.player.PlayerService
+import pt.isel.ls.utils.Either
+import pt.isel.ls.utils.failure
+import pt.isel.ls.utils.success
 
 //TODO: USE EITHER CODING STYLE
 class SessionService(
@@ -45,7 +48,17 @@ class SessionService(
         date: LocalDateTime? = null,
         state: SessionState? = null,
         pid: Int? = null
-    ): List<Session> {
-        return sessionRepository.getSessions(gid, date, state, pid)
+    ): SessionsGetResult = run{
+        val game = gameService.getGame(gid)
+        when(game){
+            is Either.Left -> failure(SessionsGetError.GameNotFound)
+            is Either.Right -> {
+                val sessions = sessionRepository.getSessions(gid, date, state, pid)
+                if (sessions.isNotEmpty()) success(sessions)
+                else failure(SessionsGetError.SessionNotFound)
+            }
+        }
+
     }
+
 }

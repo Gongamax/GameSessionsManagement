@@ -4,7 +4,7 @@ import pt.isel.ls.sessions.domain.game.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-class GameMemoryDB: GameDB {
+class GameMemoryDB : GameDB {
 
     private val gameMap = ConcurrentHashMap<Int, Game>()
     private var nextGameId = AtomicInteger(1)
@@ -18,9 +18,10 @@ class GameMemoryDB: GameDB {
             gid
         }
 
-    override fun getGames(genres: List<Genres>, developer: String): List<Game> {
-        TODO("Not yet implemented")
-    }
+    override fun getGames(genres: List<Genres>, developer: String): List<Game> = gameMap.values.filter { game ->
+        genres.all { genre -> game.genres.contains(genre) }
+    }.filter { game -> game.developer == developer }.toList()
+
 
     override fun getGameById(gid: Int): Game? = gameMap[gid]
 

@@ -16,8 +16,13 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.slf4j.LoggerFactory
+import pt.isel.ls.sessions.domain.session.SessionState
+import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
+import pt.isel.ls.sessions.http.model.session.SessionsDTO
 import pt.isel.ls.sessions.services.session.SessionService
+import pt.isel.ls.utils.Either
+import kotlin.math.log
 
 //TODO: USE INPUT AND OUTPUT MODELS
 //TODO: START DEALING WITH EITHERS AND PROBLEMS
@@ -28,13 +33,38 @@ class SessionRouter(
     override val routes: RoutingHttpHandler = routes(
         Uris.Sessions.ROOT bind GET to ::getSessions,
         Uris.Sessions.GET_BY_ID bind GET to ::getSession,
-        Uris.Sessions.CREATE bind POST to ::createSession,
+        "" bind POST to ::createSession,
         Uris.Sessions.ADD_PLAYER bind PUT to ::addPlayerToSession
     )
 
-    //TODO: SARAIVA
+
     private fun getSessions(request: Request): Response {
-        TODO()
+        logRequest(request)
+        val gid = request.query("gid")?.toInt()
+        return when (gid) {
+            null -> Response(Status.BAD_REQUEST).body("Invalid game id")
+            else -> {
+                val date = request.query("date")?.let { LocalDateTime.parse(it) }
+                val state = request.query("state")?.let { SessionState.valueOf(it) }
+                val pid = request.query("pid")?.toInt()
+                val sessions = services.getSessions(gid, date, state, pid)
+                return when (sessions) {
+                    is Either.Left -> Response(Status.NOT_FOUND)
+                        .header("content-type", "application/json")
+                        .body("Sessions not found")
+
+                    is Either.Right -> Response(Status.OK)
+                        .header("content-type", "application/json")
+                        .body(Json.encodeToString(sessions.value.map {
+                            SessionsDTO(
+                                it.sid, it.associatedPlayers.size, it.date,
+                                it.gid, it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email) },
+                                it.capacity
+                            )
+                        }))
+                }
+            }
+        }
     }
 
     private fun getSession(request: Request): Response {

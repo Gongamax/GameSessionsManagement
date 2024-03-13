@@ -5,12 +5,15 @@ enum class Genres {
     ADVENTURE,
     SHOOTER,
     TURN_BASED,
-    ACTION
+    ACTION,
+    MULTIPLAYER,
+    FIGHTING,
+    SPORTS,
 }
 
 fun String.toGenre():Genres? = run {
     try {
-        Genres.valueOf(this)
+        Genres.valueOf(this.uppercase())
     }catch (e:IllegalArgumentException){
         null
     }
