@@ -7,5 +7,8 @@ interface GameDB {
     fun createGame(name: String, developer: String, genres: List<Genres>): Int?
     fun getGames(genres: List<Genres>, developer: String): List<Game>
     fun getGameById(gid: Int): Game?
+
+    fun getDeveloperByName(developer: String): String?
+
     fun reset()
 }

@@ -19,7 +19,7 @@ class GameMemoryDB : GameDB {
         }
 
     override fun getGames(genres: List<Genres>, developer: String): List<Game> = gameMap.values.filter { game ->
-        genres.all { genre -> game.genres.contains(genre) }
+        genres.any {  genre -> game.genres.contains(genre) }
     }.filter { game -> game.developer == developer }.toList()
 
 
@@ -29,5 +29,8 @@ class GameMemoryDB : GameDB {
         gameMap.clear()
         nextGameId = AtomicInteger(1)
     }
+
+    override fun getDeveloperByName(developer: String): String? =
+        gameMap.values.find { it.developer == developer }?.developer
 
 }

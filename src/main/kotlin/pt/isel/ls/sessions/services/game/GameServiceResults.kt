@@ -21,6 +21,9 @@ sealed class GameGetError {
 
 typealias GameGetByIdResult = Either<GameGetError, Game>
 
+    data object NoGamesFound : GamesGetError() {
+        override fun toString(): String = "No games found."
+    }
 
 sealed class GamesGetError {
 
