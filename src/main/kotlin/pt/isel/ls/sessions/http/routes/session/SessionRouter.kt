@@ -1,7 +1,6 @@
 package pt.isel.ls.sessions.http.routes.session
 
 import kotlinx.datetime.LocalDateTime
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.http4k.routing.RoutingHttpHandler
 import pt.isel.ls.sessions.http.routes.Router
@@ -12,21 +11,22 @@ import org.http4k.core.Method.PUT
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
-import org.http4k.core.Uri
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
-import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.domain.session.SessionState
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.session.SessionsDTO
+import pt.isel.ls.sessions.http.model.utils.MessageResponse
+import pt.isel.ls.sessions.http.util.execStart
+import pt.isel.ls.sessions.http.util.json
+import pt.isel.ls.sessions.services.session.SessionAddPlayerError
+import pt.isel.ls.sessions.services.session.SessionCreationError
 import pt.isel.ls.sessions.services.session.SessionService
-import pt.isel.ls.utils.Either
-import kotlin.math.log
+import pt.isel.ls.utils.Failure
+import pt.isel.ls.utils.Success
 
-//TODO: USE INPUT AND OUTPUT MODELS
-//TODO: START DEALING WITH EITHERS AND PROBLEMS
 class SessionRouter(
     private val services: SessionService
 ) : Router {
@@ -38,85 +38,96 @@ class SessionRouter(
         Uris.Sessions.ADD_PLAYER bind PUT to ::addPlayerToSession
     )
 
-
-    private fun getSessions(request: Request): Response {
-        logRequest(request)
-        val gid = request.query("gid")?.toInt()
-        return when (gid) {
+    //TODO: SARAIVA
+    private fun getSessions(request: Request): Response = execStart(request) {
+        return when (val gid = request.query("gid")?.toInt()) {
             null -> Response(Status.BAD_REQUEST).body("Invalid game id")
             else -> {
+                val pid = request.query("pid")?.toUInt()
                 val date = request.query("date")?.let { LocalDateTime.parse(it) }
                 val state = request.query("state")?.let { SessionState.valueOf(it) }
-                val pid = request.query("pid")?.toInt()
-                val sessions = services.getSessions(gid, date, state, pid)
-                return when (sessions) {
-                    is Either.Left -> Response(Status.NOT_FOUND)
-                        .header("content-type", "application/json")
-                        .body("Sessions not found")
+                return when (val res = services.getSessions(gid, date, state, pid)) {
+                    is Failure -> Response(Status.NOT_FOUND).json(MessageResponse("Sessions not found"))
 
-                    is Either.Right -> Response(Status.OK)
-                        .header("content-type", "application/json")
-                        .body(Json.encodeToString(sessions.value.map {
+                    is Success -> Response(Status.OK)
+                        .json(res.value.map {
                             SessionsDTO(
                                 it.sid, it.associatedPlayers.size, it.date,
                                 it.gid, it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email) },
                                 it.capacity
                             )
-                        }))
+                        })
                 }
             }
         }
     }
 
-    private fun getSession(request: Request): Response {
-        logRequest(request)
-        val sid = request.path("sid")?.toInt()
-        return when (sid) {
+    private fun getSession(request: Request): Response = execStart(request) {
+        return when (val sid = request.path("sid")?.toInt()) {
             null -> Response(Status.BAD_REQUEST).body("Invalid session id")
-            else -> {
-                val session = services.getSession(sid)
-                Response(Status.OK)
-                    .header("content-type", "application/json")
-                    .body(Json.encodeToString(session))
+            else -> when (val res = services.getSession(sid)) {
+                is Failure -> Response(Status.NOT_FOUND).json(MessageResponse("Session not found"))
+
+                is Success -> Response(Status.OK).json(
+                    SessionDTO(
+                        res.value.capacity, res.value.gid,
+                        res.value.date.toString()
+                    )
+                )
             }
         }
     }
 
-    private fun createSession(request: Request): Response {
-        logRequest(request)
+    private fun createSession(request: Request): Response = execStart(request) {
         val sessionDTO = Json.decodeFromString<SessionDTO>(request.bodyString())
         val date = LocalDateTime.parse(sessionDTO.date)
-        val sessionId = services.createSession(sessionDTO.capacity, sessionDTO.gid, date)
-        return Response(Status.CREATED)
-            .header("Location", "/sessions/$sessionId")
-            .body("Session id: $sessionId")
+        return when (val res = services.createSession(sessionDTO.capacity, sessionDTO.gid, date)) {
+            is Failure -> when (res.value) {
+                SessionCreationError.GameNotFound ->
+                    Response(Status.NOT_FOUND).json(MessageResponse("Game not found"))
+
+                SessionCreationError.InvalidDate ->
+                    Response(Status.BAD_REQUEST).json(MessageResponse("Invalid date"))
+
+                SessionCreationError.InvalidCapacity ->
+                    Response(Status.BAD_REQUEST).json(MessageResponse("Invalid capacity"))
+            }
+
+            is Success ->
+                Response(Status.CREATED)
+                    .header("Location", "/sessions/${res.value}")
+                    .json(MessageResponse("Session created: ${res.value}"))
+        }
     }
 
-    private fun addPlayerToSession(request: Request): Response {
-        logRequest(request)
+    private fun addPlayerToSession(request: Request): Response = execStart(request) {
         val sid = request.path("sid")?.toInt()
-        val pid = request.path("pid")?.toInt()
+        val pid = request.path("pid")?.toUInt()
         return when {
-            sid == null || pid == null -> Response(Status.BAD_REQUEST).body("Invalid session or player id")
-            else -> {
-                services.addPlayerToSession(sid, pid)
-                Response(Status.NO_CONTENT)
+            sid == null || pid == null -> Response(Status.BAD_REQUEST)
+                .json(MessageResponse("Invalid session or player id"))
+
+            else -> when (val res = services.addPlayerToSession(sid, pid)) {
+                is Failure -> when (res.value) {
+                    SessionAddPlayerError.SessionNotFound ->
+                        Response(Status.NOT_FOUND).json(MessageResponse("Session not found"))
+
+                    SessionAddPlayerError.SessionFull ->
+                        Response(Status.BAD_REQUEST).json(MessageResponse("Session is full"))
+
+                    SessionAddPlayerError.PlayerNotFound ->
+                        Response(Status.NOT_FOUND).json(MessageResponse("Player not found"))
+
+                    SessionAddPlayerError.PlayerAlreadyInSession ->
+                        Response(Status.BAD_REQUEST).json(MessageResponse("Player already in session"))
+                }
+
+                is Success -> Response(Status.OK).json(MessageResponse("Player added to session"))
             }
         }
     }
 
     companion object {
         fun routes(services: SessionService) = SessionRouter(services).routes
-        private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.routes.session.SessionRouter")
-
-        private fun logRequest(request: Request) {
-            logger.info(
-                "incoming request: method={}, uri={}, content-type={} accept={}",
-                request.method,
-                request.uri,
-                request.header("content-type"),
-                request.header("accept"),
-            )
-        }
     }
 }

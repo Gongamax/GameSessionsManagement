@@ -6,5 +6,5 @@ class PlayerService(private val memoryDB: AppMemoryDB) {
 
     fun createPlayer(name: String, email: String) = memoryDB.playerMemoryDB.createPlayer(name, email)
 
-    fun getDetailsPlayer(pid: Int) = memoryDB.playerMemoryDB.getPlayerById(pid)
+    fun getDetailsPlayer(pid: UInt) = memoryDB.playerMemoryDB.getPlayerById(pid)
 }

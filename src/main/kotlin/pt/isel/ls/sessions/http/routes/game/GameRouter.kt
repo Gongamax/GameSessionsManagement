@@ -17,6 +17,8 @@ import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.utils.Either
+import pt.isel.ls.utils.Failure
+import pt.isel.ls.utils.Success
 
 class GameRouter(private val services: GameService) : Router {
 
@@ -83,11 +85,11 @@ class GameRouter(private val services: GameService) : Router {
             game.developer, game.genres
         )
         return when (val gameId = services.createGame(game.name, game.developer, game.genres)) {
-            is Either.Left -> Response(Status.BAD_REQUEST)
+            is Failure -> Response(Status.BAD_REQUEST)
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(gameId.value.toString()))
 
-            is Either.Right -> Response(Status.CREATED)
+            is Success -> Response(Status.CREATED)
                 .header("Location", "/games/${gameId.value}")
                 .body("Game id: ${gameId.value}")
         }

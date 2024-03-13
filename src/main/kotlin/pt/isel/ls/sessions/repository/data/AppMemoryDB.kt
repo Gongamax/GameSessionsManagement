@@ -18,7 +18,7 @@ class AppMemoryDB {
     val playerMemoryDB = PlayerMemoryDB()
 
     // In-memory database for storing and managing session data
-    val sessionMemoryDB = SessionMemoryDB(playerMemoryDB, clock)
+    val sessionMemoryDB = SessionMemoryDB(clock)
 
     // In-memory database for storing and managing game data
     val gameMemoryDB = GameMemoryDB()

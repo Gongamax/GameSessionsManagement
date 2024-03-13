@@ -10,7 +10,6 @@ import org.http4k.core.Response
 import org.http4k.core.Status.Companion.CREATED
 import org.http4k.core.Status.Companion.EXPECTATION_FAILED
 import org.http4k.core.Status.Companion.OK
-import org.http4k.core.Uri
 import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
@@ -31,6 +30,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
        Uris.Players.BY_ID bind GET to ::getDetailsPlayer
     )
 
+
     private fun createPlayer(request: Request): Response {
         logRequest(request)
         val player = Json.decodeFromString<PlayerDTO>(request.bodyString())
@@ -46,11 +46,10 @@ class PlayerRouter(private val services: PlayerService) : Router {
                 .header("content-type", "application/json")
                 .body(Json.encodeToString(error.message))
         }
-
     }
 
     private fun getDetailsPlayer(request: Request): Response {
-        val numberPlayer = request.path("pid")?.toInt()
+        val numberPlayer = request.path("pid")?.toUInt()
         val player = numberPlayer?.let { services.getDetailsPlayer(it) }
         if (player == null) return Response(OK).header("content-type", "application/json").body("Player not found")
         logRequest(request)

@@ -30,16 +30,6 @@ fun getDate(request: Request): Response {
         .body(Clock.System.now().toString())
 }
 
-fun logRequest(request: Request) {
-    logger.info(
-        "incoming request: method={}, uri={}, content-type={} accept={}",
-        request.method,
-        request.uri,
-        request.header("content-type"),
-        request.header("accept"),
-    )
-}
-
 fun main() {
     val database = AppMemoryDB()
     val server = AppServer(DEFAULT_PORT, database)

@@ -8,5 +8,4 @@ package pt.isel.ls.sessions.domain.game
  * @property developer The developer of the game.
  * @property genres The genre of the game, represented as an enum.
  */
-
 data class Game(val gid: Int, val name: String, val developer: String, val genres: List<Genres>)

@@ -72,7 +72,7 @@ class SessionTests {
         val capacity = 10
         val gid = 1
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
-        val pid = 1
+        val pid : UInt = 1u
 
         // Act
         db.gameMemoryDB.createGame("game1", "game1", emptyList())

@@ -1,20 +1,18 @@
 package pt.isel.ls.sessions.domain.game
 
-enum class Genres {
-    RPG,
-    ADVENTURE,
-    SHOOTER,
-    TURN_BASED,
-    ACTION,
-    MULTIPLAYER,
-    FIGHTING,
-    SPORTS,
+enum class Genres(val text: String) {
+    RPG("Rpg"),
+    ADVENTURE("Adventure"),
+    SHOOTER("Shooter"),
+    TURN_BASED("Turn-Based"),
+    ACTION("Action"),
+    MULTIPLAYER("Multiplayer"),
+    FIGHTING("Fighting"),
+    SPORTS("Sports"),
 }
 
-fun String.toGenre():Genres? = run {
-    try {
-        Genres.valueOf(this.uppercase())
-    }catch (e:IllegalArgumentException){
-        null
-    }
+fun String.toGenre(): Genres? {
+    val upper = this.uppercase()
+    return Genres.entries.firstOrNull { it.text.uppercase() == upper }
 }
+

@@ -9,10 +9,9 @@ interface PlayerDB {
 
     fun getPlayers(): List<Player>
 
-    fun getPlayerById(pid: Int): Player?
+    fun getPlayerById(pid: UInt): Player?
 
     fun reset()
 
     fun isEmailInUse(email : String) : Boolean
-
 }

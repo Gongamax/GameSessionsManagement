@@ -10,4 +10,4 @@ import kotlinx.serialization.Serializable
  * @property token The token string.
  */
 @Serializable
-data class TokenDTO(val pid: Int, val token: String)
+data class TokenDTO(val pid: UInt, val token: String)

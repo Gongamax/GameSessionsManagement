@@ -13,5 +13,5 @@ interface SessionRepository {
 
     fun getSession(sid : Int) : Session?
 
-    fun getSessions(gid : Int, date : LocalDateTime?, state : SessionState?, pid : Int?) : List<Session>
+    fun getSessions(gid : Int, date : LocalDateTime?, state : SessionState?, pid : UInt?) : List<Session>
 }

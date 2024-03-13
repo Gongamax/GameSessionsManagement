@@ -13,7 +13,6 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 class SessionMemoryDB(
-    private val players: PlayerMemoryDB,
     private val clock: Clock = Clock.System
 ) : SessionRepository {
     val sessions = ConcurrentHashMap<Int, Session>()
@@ -36,7 +35,7 @@ class SessionMemoryDB(
         return sessions[sid]
     }
 
-    override fun getSessions(gid: Int, date: LocalDateTime?, state: SessionState?, pid: Int?): List<Session> {
+    override fun getSessions(gid: Int, date: LocalDateTime?, state: SessionState?, pid: UInt?): List<Session> {
         return sessions.values.filter {
             (it.gid == gid) &&
                     (date == null || it.date == date) &&

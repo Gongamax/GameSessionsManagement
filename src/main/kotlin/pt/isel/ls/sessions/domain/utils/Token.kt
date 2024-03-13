@@ -7,5 +7,5 @@ package pt.isel.ls.sessions.domain.utils
  * @property pid The unique identifier of the player.
  * @property token The unique token associated with the player.
  */
-data class Token(val pid: Int, val token: String)
+data class Token(val pid: UInt, val token: String)
 

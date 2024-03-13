@@ -6,16 +6,14 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-
 class PlayerMemoryDB() : PlayerDB {
-    private val playersMap = ConcurrentHashMap<Int, Player>()
+    private val playersMap = ConcurrentHashMap<UInt, Player>()
     private var nextPlayerId = AtomicInteger(1)
-
 
     override fun createPlayer(name: String, email: String): Token {
         if (playersMap.any { it.value.email == email })
             throw IllegalArgumentException("Email already exists.")
-        val pid = nextPlayerId.getAndIncrement()
+        val pid = nextPlayerId.getAndIncrement().toUInt()
         val player = Player(pid, name, email)
         playersMap[pid] = player
         val token = UUID.randomUUID().toString()
@@ -24,7 +22,7 @@ class PlayerMemoryDB() : PlayerDB {
 
     override fun getPlayers() = playersMap.map { it.value }
 
-    override fun getPlayerById(pid: Int) = playersMap[pid]
+    override fun getPlayerById(pid: UInt) = playersMap[pid]
 
     override fun reset() {
         playersMap.clear()
@@ -34,6 +32,5 @@ class PlayerMemoryDB() : PlayerDB {
     override fun isEmailInUse(email: String): Boolean {
         TODO("Not yet implemented")
     }
-
 }
 
