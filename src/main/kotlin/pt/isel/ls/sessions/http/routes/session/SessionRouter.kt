@@ -38,9 +38,9 @@ class SessionRouter(
         Uris.Sessions.ADD_PLAYER bind PUT to ::addPlayerToSession
     )
 
-    //TODO: SARAIVA
+
     private fun getSessions(request: Request): Response = execStart(request) {
-        return when (val gid = request.query("gid")?.toInt()) {
+        return when (val gid = request.query("gid")?.toUInt()) {
             null -> Response(Status.BAD_REQUEST).body("Invalid game id")
             else -> {
                 val pid = request.query("pid")?.toUInt()
@@ -63,7 +63,7 @@ class SessionRouter(
     }
 
     private fun getSession(request: Request): Response = execStart(request) {
-        return when (val sid = request.path("sid")?.toInt()) {
+        return when (val sid = request.path("sid")?.toUInt()) {
             null -> Response(Status.BAD_REQUEST).body("Invalid session id")
             else -> when (val res = services.getSession(sid)) {
                 is Failure -> Response(Status.NOT_FOUND).json(MessageResponse("Session not found"))
@@ -81,7 +81,7 @@ class SessionRouter(
     private fun createSession(request: Request): Response = execStart(request) {
         val sessionDTO = Json.decodeFromString<SessionDTO>(request.bodyString())
         val date = LocalDateTime.parse(sessionDTO.date)
-        return when (val res = services.createSession(sessionDTO.capacity, sessionDTO.gid, date)) {
+        return when (val res = services.createSession(sessionDTO.capacity, sessionDTO.gid.toUInt(), date)) {
             is Failure -> when (res.value) {
                 SessionCreationError.GameNotFound ->
                     Response(Status.NOT_FOUND).json(MessageResponse("Game not found"))
@@ -101,7 +101,7 @@ class SessionRouter(
     }
 
     private fun addPlayerToSession(request: Request): Response = execStart(request) {
-        val sid = request.path("sid")?.toInt()
+        val sid = request.path("sid")?.toUInt()
         val pid = request.path("pid")?.toUInt()
         return when {
             sid == null || pid == null -> Response(Status.BAD_REQUEST)

@@ -11,14 +11,16 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.slf4j.LoggerFactory
-import pt.isel.ls.sessions.domain.game.Game
-import pt.isel.ls.sessions.domain.game.toGenre
 import pt.isel.ls.sessions.http.model.game.GameInputModel
 import pt.isel.ls.sessions.http.model.game.GameOutputModel
 import pt.isel.ls.sessions.http.model.game.GamesInputModel
+import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.util.Uris
+import pt.isel.ls.sessions.http.util.execStart
+import pt.isel.ls.sessions.http.util.json
 import pt.isel.ls.sessions.services.game.GameService
+import pt.isel.ls.sessions.services.game.GamesGetError
 import pt.isel.ls.utils.Either
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
@@ -43,7 +45,7 @@ class GameRouter(private val services: GameService) : Router {
 
     private fun getGame(request: Request): Response {
         logRequest(request)
-        val gid = request.path("gid")?.toInt() ?: return Response(Status.BAD_REQUEST)
+        val gid = request.path("gid")?.toUInt() ?: return Response(Status.BAD_REQUEST)
         return when (val game = services.getGame(gid)) {
             is Either.Left -> Response(Status.NOT_FOUND)
             is Either.Right -> Response(Status.OK)
@@ -59,30 +61,31 @@ class GameRouter(private val services: GameService) : Router {
         }
     }
 
-    private fun getGames(request: Request): Response {
+    private fun getGames(request: Request): Response = execStart(request) {
         logRequest(request)
         val game = Json.decodeFromString<GamesInputModel>(request.bodyString())
         val genres = game.genres
         val developer = game.developer
         val limit = request.query("limit")?.toInt() ?: DEFAULT_LIMIT
         val skip = request.query("skip")?.toInt() ?: DEFAULT_SKIP
-        if (genres == null || developer == null)
-            return Response(Status.EXPECTATION_FAILED)
-                .header("content-type", "application/json")
-                .body("No genres or developer specified")
-
         return when (val games = services.getGames(genres, developer, limit, skip)) {
-            is Either.Left -> Response(Status.NOT_FOUND)
-                .header("content-type", "application/json")
-                .body(Json.encodeToString(games.value.toString()))
+            is Failure -> when (games.value) {
+                GamesGetError.NoGamesFound ->
+                    Response(Status.NOT_FOUND).json(MessageResponse("Game not found"))
 
-            is Either.Right -> {
-                val gamesDTOs = games.value.map { game ->
-                    GameOutputModel(game.name, game.developer, game.genres.map { it.name })
+                GamesGetError.GenreNotFound ->
+                    Response(Status.NOT_FOUND).json(MessageResponse("Genre not found"))
+
+                GamesGetError.DeveloperNotFound ->
+                    Response(Status.NOT_FOUND).json(MessageResponse("Developer not found"))
+            }
+
+            is Success -> {
+                val gamesDTOs = games.value.map {
+                    GameOutputModel(it.name, game.developer, it.genres.map { g -> g.name })
                 }
                 return Response(Status.OK)
-                    .header("content-type", "application/json")
-                    .body(Json.encodeToString(gamesDTOs))
+                    .json(gamesDTOs)
             }
         }
     }

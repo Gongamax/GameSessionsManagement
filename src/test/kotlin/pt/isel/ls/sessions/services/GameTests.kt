@@ -66,8 +66,9 @@ class GameTests {
     @Test
     fun testGetNameThatDoesNotExist() {
         // Arrange
+        val gid = 1
         // Act
-        val result = when (val value = gameService.getGame(1)) {
+        val result = when (val value = gameService.getGame(gid.toUInt())) {
             is Either.Left -> null
             is Either.Right -> value.value
         }
@@ -96,7 +97,7 @@ class GameTests {
         val gameService = GameService(appMemoryDB)
         const val NAME = "name"
         const val DEVELOPER = "developer"
-        val genres = listOf(Genres.RPG, Genres.ACTION)
+        val genres = listOf("rpg", "Action")
     }
 
 }

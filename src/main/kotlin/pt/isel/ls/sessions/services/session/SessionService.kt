@@ -16,7 +16,7 @@ class SessionService(
     private val playerService: PlayerService,
     private val gameService: GameService
 ) {
-    fun createSession(capacity: Int, gid: Int, date: LocalDateTime): SessionCreationResult = run {
+    fun createSession(capacity: Int, gid: UInt, date: LocalDateTime): SessionCreationResult = run {
         if (capacity <= 0)
             return@run failure(SessionCreationError.InvalidCapacity)
         if (gameService.getGame(gid) is Failure)
@@ -28,26 +28,29 @@ class SessionService(
         success(sid)
     }
 
-    fun addPlayerToSession(sid: Int, pid: UInt): SessionAddPlayerResult = run {
+    fun addPlayerToSession(sid: UInt, pid: UInt): SessionAddPlayerResult = run {
         val session = sessionRepository.getSession(sid) ?: return@run failure(SessionAddPlayerError.SessionNotFound)
         val playerToAdd = playerService.getDetailsPlayer(pid)
         if (session.associatedPlayers.size >= session.capacity)
             return@run failure(SessionAddPlayerError.SessionFull)
-        if (playerToAdd == null)
-            return@run failure(SessionAddPlayerError.PlayerNotFound)
-        if (session.associatedPlayers.contains(playerToAdd))
-            return@run failure(SessionAddPlayerError.PlayerAlreadyInSession)
-        success(sessionRepository.addPlayerToSession(sid, playerToAdd))
+        when(playerToAdd) {
+            is Failure -> return@run failure(SessionAddPlayerError.PlayerNotFound)
+            is Success -> {
+                if (session.associatedPlayers.contains(playerToAdd.value))
+                    return@run failure(SessionAddPlayerError.PlayerAlreadyInSession)
+                success(sessionRepository.addPlayerToSession(sid, playerToAdd.value))
+            }
+        }
     }
 
-    fun getSession(sid: Int): SessionGetResult = run {
+    fun getSession(sid: UInt): SessionGetResult = run {
         val session = sessionRepository.getSession(sid)
         if (session == null) failure(SessionGetError.SessionNotFound)
         else success(session)
     }
 
     fun getSessions(
-        gid: Int,
+        gid: UInt,
         date: LocalDateTime? = null,
         state: SessionState? = null,
         pid: UInt? = null

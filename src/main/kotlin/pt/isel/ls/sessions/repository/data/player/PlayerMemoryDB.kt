@@ -11,8 +11,6 @@ class PlayerMemoryDB() : PlayerDB {
     private var nextPlayerId = AtomicInteger(1)
 
     override fun createPlayer(name: String, email: String): Token {
-        if (playersMap.any { it.value.email == email })
-            throw IllegalArgumentException("Email already exists.")
         val pid = nextPlayerId.getAndIncrement().toUInt()
         val player = Player(pid, name, email)
         playersMap[pid] = player
@@ -29,8 +27,7 @@ class PlayerMemoryDB() : PlayerDB {
         nextPlayerId = AtomicInteger(1)
     }
 
-    override fun isEmailInUse(email: String): Boolean {
-        TODO("Not yet implemented")
-    }
+    override fun isEmailInUse(email: String): Boolean = playersMap.any { it.value.email == email }
+
 }
 

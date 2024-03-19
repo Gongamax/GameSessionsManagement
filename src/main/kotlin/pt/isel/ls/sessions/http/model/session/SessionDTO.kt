@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SessionDTO(
     val capacity: Int,
-    val gid: Int,
+    val gid: UInt,
     val date: String
 )

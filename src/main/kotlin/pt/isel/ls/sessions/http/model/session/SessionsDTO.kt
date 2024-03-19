@@ -7,10 +7,10 @@ import pt.isel.ls.sessions.http.model.player.PlayerDTO
 
 @Serializable
 data class SessionsDTO(
-    val sid: Int,
+    val sid: UInt,
     val numberOfPlayers: Int,
     val date: LocalDateTime,
-    val gid: Int,
+    val gid: UInt,
     val associatedPlayers: List<PlayerDTO>,
     val capacity: Int
 )

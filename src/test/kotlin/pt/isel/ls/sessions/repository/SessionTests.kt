@@ -17,7 +17,7 @@ class SessionTests {
 
         // Act
         db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = db.sessionMemoryDB.createSession(capacity, gid, date)
+        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
 
         // Assert
         assertNotNull(sid)
@@ -33,14 +33,14 @@ class SessionTests {
 
         // Act
         db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = db.sessionMemoryDB.createSession(capacity, gid, date)
+        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
         val session = db.sessionMemoryDB.getSession(sid)
 
         // Assert
         assertNotNull(session)
         assertEquals(sid, session.sid)
         assertEquals(capacity, session.capacity)
-        assertEquals(gid, session.gid)
+        assertEquals(gid.toUInt(), session.gid)
         assertEquals(date, session.date)
     }
 
@@ -54,14 +54,14 @@ class SessionTests {
 
         // Act
         db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = db.sessionMemoryDB.createSession(capacity, gid, date)
-        val sessions = db.sessionMemoryDB.getSessions(gid, null, null, null)
+        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
+        val sessions = db.sessionMemoryDB.getSessions(gid.toUInt(), null, null, null)
 
         // Assert
         assertEquals(1, sessions.size)
         assertEquals(sid, sessions[0].sid)
         assertEquals(capacity, sessions[0].capacity)
-        assertEquals(gid, sessions[0].gid)
+        assertEquals(gid.toUInt(), sessions[0].gid)
         assertEquals(date, sessions[0].date)
     }
 
@@ -76,7 +76,7 @@ class SessionTests {
 
         // Act
         db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = db.sessionMemoryDB.createSession(capacity, gid, date)
+        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
         db.playerMemoryDB.createPlayer("player1", "player1@isel.pt")
         db.sessionMemoryDB.addPlayerToSession(sid, db.playerMemoryDB.getPlayerById(pid)!!)
 

@@ -9,7 +9,7 @@ sealed class SessionCreationError {
     data object InvalidCapacity : SessionCreationError()
 }
 
-typealias SessionCreationResult = Either<SessionCreationError, Int>
+typealias SessionCreationResult = Either<SessionCreationError, UInt>
 
 sealed class SessionsGetError {
     data object GameNotFound : SessionsGetError()

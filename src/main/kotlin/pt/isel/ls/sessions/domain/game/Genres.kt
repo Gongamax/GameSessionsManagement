@@ -8,7 +8,11 @@ enum class Genres(val text: String) {
     ACTION("Action"),
     MULTIPLAYER("Multiplayer"),
     FIGHTING("Fighting"),
-    SPORTS("Sports"),
+    SPORTS("Sports");
+
+    init {
+        require(text.isNotBlank()) { "The genre text must not be blank" }
+    }
 }
 
 fun String.toGenre(): Genres? {

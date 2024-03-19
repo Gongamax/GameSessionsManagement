@@ -1,6 +1,9 @@
 package pt.isel.ls.sessions.domain.session
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import pt.isel.ls.sessions.domain.player.Player
 
 /**
@@ -13,10 +16,15 @@ import pt.isel.ls.sessions.domain.player.Player
  * @property associatedPlayers The list of players associated with the session.
  */
 data class Session(
-    val sid: Int,
+    val sid: UInt,
     val numberOfPlayers: Int,
     val date: LocalDateTime,
-    val gid: Int,
+    val gid: UInt,
     val associatedPlayers: Set<Player>,
     val capacity: Int
-)
+) {
+    init {
+        require(sid > 0u) { "The session id must be a positive number" }
+        require(gid > 0u) { "The game id must be a positive number" }
+    }
+}

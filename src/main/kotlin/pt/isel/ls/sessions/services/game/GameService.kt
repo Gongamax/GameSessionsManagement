@@ -6,7 +6,7 @@ import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.success
 
 class GameService(private val memoryDB: AppMemoryDB) {
-    fun getGame(gid: Int): GameGetByIdResult = run {
+    fun getGame(gid: UInt): GameGetByIdResult = run {
         val game = memoryDB.gameMemoryDB.getGameById(gid)
         if (game != null) success(game)
         else failure(GameGetError.GameNotFound)

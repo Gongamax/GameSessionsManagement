@@ -15,27 +15,27 @@ import java.util.concurrent.atomic.AtomicInteger
 class SessionMemoryDB(
     private val clock: Clock = Clock.System
 ) : SessionRepository {
-    val sessions = ConcurrentHashMap<Int, Session>()
+    val sessions = ConcurrentHashMap<UInt, Session>()
     private val nextSessionId = AtomicInteger(1)
 
-    override fun createSession(capacity: Int, gid: Int, date: LocalDateTime): Int {
-        val sid = nextSessionId.getAndIncrement()
+    override fun createSession(capacity: Int, gid: UInt, date: LocalDateTime): UInt {
+        val sid = nextSessionId.getAndIncrement().toUInt()
         val session = Session(sid, 0, date, gid, emptySet(), capacity)
         sessions[sid] = session
         return sid
     }
 
-    override fun addPlayerToSession(sid: Int, player: Player) {
+    override fun addPlayerToSession(sid: UInt, player: Player) {
         val session = sessions[sid] ?: throw IllegalArgumentException("Session not found")
         val newPlayers = session.associatedPlayers + player
         sessions[sid] = session.copy(associatedPlayers = newPlayers)
     }
 
-    override fun getSession(sid: Int): Session? {
+    override fun getSession(sid: UInt): Session? {
         return sessions[sid]
     }
 
-    override fun getSessions(gid: Int, date: LocalDateTime?, state: SessionState?, pid: UInt?): List<Session> {
+    override fun getSessions(gid: UInt, date: LocalDateTime?, state: SessionState?, pid: UInt?): List<Session> {
         return sessions.values.filter {
             (it.gid == gid) &&
                     (date == null || it.date == date) &&

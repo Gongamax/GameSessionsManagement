@@ -9,7 +9,7 @@ class AppService(memoryDB: AppMemoryDB) {
 
     private val baseData = memoryDB
 
-    val playerService = PlayerService(baseData)
+    val playerService = PlayerService(baseData.playerMemoryDB)
 
     val gameService = GameService(baseData)
 

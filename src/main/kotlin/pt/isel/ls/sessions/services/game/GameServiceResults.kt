@@ -13,7 +13,7 @@ sealed class GameCreationError {
     }
 }
 
-typealias GameCreationResult = Either<GameCreationError, Int>
+typealias GameCreationResult = Either<GameCreationError, UInt>
 
 sealed class GameGetError {
     data object GameNotFound : GameGetError()
@@ -21,9 +21,7 @@ sealed class GameGetError {
 
 typealias GameGetByIdResult = Either<GameGetError, Game>
 
-    data object NoGamesFound : GamesGetError() {
-        override fun toString(): String = "No games found."
-    }
+
 
 sealed class GamesGetError {
 
