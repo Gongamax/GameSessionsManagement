@@ -23,6 +23,7 @@ import pt.isel.ls.sessions.http.util.getPathSegments
 import pt.isel.ls.sessions.services.session.SessionAddPlayerError
 import pt.isel.ls.sessions.services.session.SessionCreationError
 import pt.isel.ls.sessions.services.session.SessionService
+import pt.isel.ls.sessions.services.session.SessionsGetError
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
 import pt.isel.ls.utils.handleEither
@@ -46,8 +47,12 @@ class SessionRouter(
         val date = request.query(DATE)?.toLocalDateTime()
         val state = request.query(STATE)
         return when (val res = services.getSessions(gid, date, state?.toSessionState(), pid)) {
-            is Failure -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Sessions not found"))
-
+            is Failure -> when (res.value) {
+                SessionsGetError.GameNotFound -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Game not found"))
+                SessionsGetError.InvalidDate -> Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid date"))
+                SessionsGetError.InvalidState -> Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid state"))
+                SessionsGetError.PlayerNotFound -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Player not found"))
+            }
             is Success -> Response(Status.OK)
                 .jsonResponse(res.value.map {
                     SessionsDTO(

@@ -59,6 +59,8 @@ class SessionService(
             return@run failure(SessionsGetError.InvalidDate)
         if (state != null && state !in SessionState.entries)
             return@run failure(SessionsGetError.InvalidState)
+        if (pid != null && playerRepository.getPlayerById(pid) == null)
+            return@run failure(SessionsGetError.PlayerNotFound)
         val sessions = sessionRepository.getSessions(gid, date, state, pid)
         success(sessions)
     }

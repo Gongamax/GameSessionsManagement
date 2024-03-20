@@ -9,7 +9,7 @@ import pt.isel.ls.sessions.http.AppWebApi
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.AppService
 
-const val DEFAULT_PORT = 1905
+const val DEFAULT_PORT = 1904
 
 class AppServer(private val port: Int, private val database: AppMemoryDB) {
     private val service = AppService(database)

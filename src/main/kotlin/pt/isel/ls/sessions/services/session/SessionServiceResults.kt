@@ -15,6 +15,7 @@ sealed class SessionsGetError {
     data object GameNotFound : SessionsGetError()
     data object InvalidDate : SessionsGetError()
     data object InvalidState : SessionsGetError()
+    data object PlayerNotFound : SessionsGetError()
 }
 
 typealias SessionsGetResult = Either<SessionsGetError, List<Session>>
