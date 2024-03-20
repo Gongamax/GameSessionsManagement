@@ -11,12 +11,11 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.routing.bind
-import org.http4k.routing.path
 import org.http4k.routing.routes
 import pt.isel.ls.sessions.domain.session.SessionState
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
+import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
-import pt.isel.ls.sessions.http.model.session.SessionsDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.util.*
 import pt.isel.ls.sessions.http.util.getPathSegments
@@ -26,7 +25,6 @@ import pt.isel.ls.sessions.services.session.SessionService
 import pt.isel.ls.sessions.services.session.SessionsGetError
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
-import pt.isel.ls.utils.handleEither
 
 class SessionRouter(
     private val services: SessionService
@@ -55,7 +53,7 @@ class SessionRouter(
             }
             is Success -> Response(Status.OK)
                 .jsonResponse(res.value.map {
-                    SessionsDTO(
+                    SessionDTO(
                         it.sid, it.associatedPlayers.size, it.date,
                         it.gid, it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email) },
                         it.capacity
@@ -71,15 +69,19 @@ class SessionRouter(
 
             is Success -> Response(Status.OK).jsonResponse(
                 SessionDTO(
-                    res.value.capacity, res.value.gid,
-                    res.value.date.toString()
+                    res.value.sid,
+                   res.value.numberOfPlayers,
+                    res.value.date,
+                    res.value.gid,
+                    res.value.associatedPlayers.map { p -> PlayerDTO(p.name, p.email) },
+                    res.value.capacity
                 )
             )
         }
     }
 
     private fun createSession(request: Request): Response = execStart(request) {
-        val sessionDTO = Json.decodeFromString<SessionDTO>(request.bodyString())
+        val sessionDTO = Json.decodeFromString<SessionCreateDTO>(request.bodyString())
         val date = LocalDateTime.parse(sessionDTO.date)
         return when (val res = services.createSession(sessionDTO.capacity, sessionDTO.gid, date)) {
             is Failure -> when (res.value) {

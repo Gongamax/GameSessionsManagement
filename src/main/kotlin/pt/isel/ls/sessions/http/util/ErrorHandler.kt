@@ -5,6 +5,7 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.slf4j.LoggerFactory
+import pt.isel.ls.sessions.http.model.utils.MessageResponse
 
 private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.util.ErrorHandler")
 
@@ -14,17 +15,17 @@ inline fun execStart(request: Request, block: () -> Response): Response =
         logRequest(request)
         block()
     } catch (error: SerializationException) {
-        Response(Status.BAD_REQUEST).body("Invalid request")
+        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
     } catch(error: NumberFormatException) {
-        Response(Status.BAD_REQUEST).body("Invalid request, invalid number format")
+        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request, invalid number format"))
     } catch (error: IllegalArgumentException) {
-        Response(Status.BAD_REQUEST).body("Invalid request")
+        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
     } catch (error: NoSuchElementException) {
-        Response(Status.NOT_FOUND).body("Not found")
+        Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Not found"))
     } catch (error: IllegalStateException) {
-        Response(Status.BAD_REQUEST).body("Invalid request")
+        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
     } catch (error: Exception) {
-        Response(Status.INTERNAL_SERVER_ERROR).body("Internal server error")
+        Response(Status.INTERNAL_SERVER_ERROR).jsonResponse(MessageResponse("Internal server error"))
     }
 
 fun logRequest(request: Request) {

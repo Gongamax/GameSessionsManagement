@@ -1,6 +1,8 @@
 package pt.isel.ls.sessions.services
 
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
+import pt.isel.ls.sessions.services.player.PlayerCreationError
+import pt.isel.ls.sessions.services.player.PlayerGetError
 import pt.isel.ls.sessions.services.player.PlayerService
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
@@ -58,26 +60,27 @@ class PlayerTests {
         assertEquals(email, player.email)
     }
 
-//    @Test
-//    fun getDetailsPlayerNotFound() {
-//        // arrange
-//        val playerService = PlayerService(baseDate.playerMemoryDB)
-//        val pid = 34u
-//        // arrange
-//        val player = playerService.getDetailsPlayer(pid)
-//        // assert
-//        assertEquals(null, player)
-//    }
-//
-//    @Test
-//    fun `create player email already exists`() {
-//        // arrange
-//        val playerService = PlayerService(baseDate.playerMemoryDB)
-//        val nPlayer = "Bob"
-//        // arrange
-//        assertFailsWith<IllegalArgumentException> {
-//            playerService.createPlayer(nPlayer, email)
-//        }
-//    }
+    @Test
+    fun getDetailsPlayerNotFound() {
+        // arrange
+        val playerService = PlayerService(baseDate.playerMemoryDB)
+        val pid = 34u
+        // arrange
+        val player = playerService.getDetailsPlayer(pid)
+        // assert
+        assertEquals(failure(PlayerGetError.PlayerNotFound), player)
+
+    }
+
+    @Test
+    fun `create player email already exists`() {
+        // arrange
+        val playerService = PlayerService(baseDate.playerMemoryDB)
+        val nPlayer = "Bob"
+        val player = playerService.createPlayer(nPlayer, email)
+        // arrange
+        assertEquals(failure(PlayerCreationError.EmailExists), player)
+    }
+
 
 }
