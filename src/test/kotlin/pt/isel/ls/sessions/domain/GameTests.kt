@@ -9,10 +9,10 @@ class GameTests {
     @Test
     fun testCreateGame() {
         //Arrange
-        val game = Game(1, "name", "Ubisoft", listOf(Genres.RPG, Genres.ADVENTURE))
+        val game = Game(1u, "name", "Ubisoft", listOf(Genres.RPG, Genres.ADVENTURE))
         //Act
         //Assert
-        assertEquals(1, game.gid)
+        assertEquals(1u, game.gid)
         assertEquals("name", game.name)
         assertEquals("Ubisoft", game.developer)
         assertTrue { game.genres.contains(Genres.RPG) }
@@ -21,7 +21,7 @@ class GameTests {
     @Test
     fun `test Game toString`() {
         //Arrange
-        val game = Game(1, "name", "Ubisoft", listOf(Genres.RPG, Genres.ADVENTURE))
+        val game = Game(1u, "name", "Ubisoft", listOf(Genres.RPG, Genres.ADVENTURE))
         //Act
         //Assert
         assertEquals("Game(gid=1, name=name, developer=Ubisoft, genres=[RPG, ADVENTURE])", game.toString())

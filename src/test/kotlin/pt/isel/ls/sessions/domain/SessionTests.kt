@@ -11,12 +11,12 @@ class SessionTests {
     fun `test session creation`() {
         // Arrange
         val localDateTime = LocalDateTime(2021, 1, 1, 0, 0)
-        val session = Session(1, 1, localDateTime, 1, emptySet(), 5)
+        val session = Session(1u, 1, localDateTime, 1u, emptySet(), 5)
         // Act
         // Assert
-        assertEquals(1, session.sid)
+        assertEquals(1u, session.sid)
         assertEquals(1, session.numberOfPlayers)
-        assertEquals(1, session.gid)
+        assertEquals(1u, session.gid)
         assertEquals(localDateTime, session.date)
     }
 
@@ -24,10 +24,10 @@ class SessionTests {
     fun `test session toString`() {
         // Arrange
         val localDateTime = LocalDateTime(2021, 1, 1, 0, 0)
-        val session = Session(1, 1, localDateTime, 1, emptySet(), 5)
+        val session = Session(1u, 1, localDateTime, 1u, emptySet(), 5)
         // Act
         val result = session.toString()
         // Assert
-        assertEquals("Session(sid=1, numberOfPlayers=1, date=2021-01-01T00:00, gid=1, associatedPlayers=[])", result)
+        assertEquals("Session(sid=1, numberOfPlayers=1, date=2021-01-01T00:00, gid=1, associatedPlayers=[], capacity=5)", result)
     }
 }

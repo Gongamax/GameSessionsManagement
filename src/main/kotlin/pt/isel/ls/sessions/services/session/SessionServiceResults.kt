@@ -13,10 +13,10 @@ typealias SessionCreationResult = Either<SessionCreationError, UInt>
 
 sealed class SessionsGetError {
     data object GameNotFound : SessionsGetError()
-
-    data object SessionNotFound : SessionsGetError()
-
+    data object InvalidDate : SessionsGetError()
+    data object InvalidState : SessionsGetError()
 }
+
 typealias SessionsGetResult = Either<SessionsGetError, List<Session>>
 
 sealed class SessionGetError {

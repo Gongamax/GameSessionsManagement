@@ -1,10 +1,11 @@
 package pt.isel.ls.sessions.repository.data.game
 
 import pt.isel.ls.sessions.domain.game.*
+import pt.isel.ls.sessions.repository.GameRepository
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-class GameMemoryDB : GameDB {
+class GameMemoryDB : GameRepository {
 
     private val gameMap = ConcurrentHashMap<UInt, Game>()
     private var nextGameId = AtomicInteger(1)
@@ -19,13 +20,12 @@ class GameMemoryDB : GameDB {
         }
 
     override fun getGames(genres: List<Genres>, developer: String): List<Game> = gameMap.values.filter { game ->
-        genres.any {  genre -> game.genres.contains(genre) }
-    }.filter { game -> game.developer == developer }.toList()
-
+        game.developer == developer && genres.any { genre -> game.genres.contains(genre) }
+    }
 
     override fun getGameById(gid: UInt): Game? = gameMap[gid]
 
-    override fun reset(): Unit = run {
+    override fun reset() {
         gameMap.clear()
         nextGameId = AtomicInteger(1)
     }

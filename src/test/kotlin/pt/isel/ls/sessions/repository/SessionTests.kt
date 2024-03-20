@@ -1,6 +1,7 @@
 package pt.isel.ls.sessions.repository
 
 import kotlinx.datetime.LocalDateTime
+import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import kotlin.test.*
 
@@ -16,7 +17,7 @@ class SessionTests {
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
         val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
 
         // Assert
@@ -32,7 +33,7 @@ class SessionTests {
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
         val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
         val session = db.sessionMemoryDB.getSession(sid)
 
@@ -53,7 +54,7 @@ class SessionTests {
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
         val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
         val sessions = db.sessionMemoryDB.getSessions(gid.toUInt(), null, null, null)
 
@@ -75,7 +76,7 @@ class SessionTests {
         val pid : UInt = 1u
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
+        db.gameMemoryDB.createGame("game1", "game1",GENRES)
         val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
         db.playerMemoryDB.createPlayer("player1", "player1@isel.pt")
         db.sessionMemoryDB.addPlayerToSession(sid, db.playerMemoryDB.getPlayerById(pid)!!)
@@ -85,5 +86,9 @@ class SessionTests {
         assertNotNull(session)
         assertEquals(1, session.associatedPlayers.size)
         assertEquals(pid, session.associatedPlayers.first().pid)
+    }
+
+    companion object {
+        private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
     }
 }

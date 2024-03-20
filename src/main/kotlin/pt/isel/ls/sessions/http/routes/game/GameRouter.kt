@@ -18,7 +18,7 @@ import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.http.util.execStart
-import pt.isel.ls.sessions.http.util.json
+import pt.isel.ls.sessions.http.util.jsonResponse
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.sessions.services.game.GamesGetError
 import pt.isel.ls.utils.Either
@@ -71,13 +71,13 @@ class GameRouter(private val services: GameService) : Router {
         return when (val games = services.getGames(genres, developer, limit, skip)) {
             is Failure -> when (games.value) {
                 GamesGetError.NoGamesFound ->
-                    Response(Status.NOT_FOUND).json(MessageResponse("Game not found"))
+                    Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Game not found"))
 
                 GamesGetError.GenreNotFound ->
-                    Response(Status.NOT_FOUND).json(MessageResponse("Genre not found"))
+                    Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Genre not found"))
 
                 GamesGetError.DeveloperNotFound ->
-                    Response(Status.NOT_FOUND).json(MessageResponse("Developer not found"))
+                    Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Developer not found"))
             }
 
             is Success -> {
@@ -85,7 +85,7 @@ class GameRouter(private val services: GameService) : Router {
                     GameOutputModel(it.name, game.developer, it.genres.map { g -> g.name })
                 }
                 return Response(Status.OK)
-                    .json(gamesDTOs)
+                    .jsonResponse(gamesDTOs)
             }
         }
     }
@@ -93,7 +93,7 @@ class GameRouter(private val services: GameService) : Router {
     private fun createGame(request: Request): Response {
         logRequest(request)
         val game = Json.decodeFromString<GameInputModel>(request.bodyString())
-        if (game.name == null || game.developer == null || game.genres.isEmpty())
+        if (game.name.isBlank() || game.developer.isBlank() || game.genres.isEmpty())
             return Response(Status.EXPECTATION_FAILED)
                 .header("content-type", "application/json")
                 .body("Invalid game data")

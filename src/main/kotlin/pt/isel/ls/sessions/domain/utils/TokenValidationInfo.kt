@@ -5,5 +5,4 @@ package pt.isel.ls.sessions.domain.utils
  *
  * @property validationInfo The validation information of the token.
  */
-
 data class TokenValidationInfo(val validationInfo: String)

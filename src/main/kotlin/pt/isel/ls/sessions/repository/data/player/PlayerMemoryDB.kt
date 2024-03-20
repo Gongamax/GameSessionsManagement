@@ -2,11 +2,12 @@ package pt.isel.ls.sessions.repository.data.player
 
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
+import pt.isel.ls.sessions.repository.PlayerRepository
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
-class PlayerMemoryDB() : PlayerDB {
+class PlayerMemoryDB : PlayerRepository {
     private val playersMap = ConcurrentHashMap<UInt, Player>()
     private var nextPlayerId = AtomicInteger(1)
 
@@ -28,6 +29,5 @@ class PlayerMemoryDB() : PlayerDB {
     }
 
     override fun isEmailInUse(email: String): Boolean = playersMap.any { it.value.email == email }
-
 }
 

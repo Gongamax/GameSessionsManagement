@@ -1,11 +1,5 @@
 package pt.isel.ls.sessions
 
-
-import kotlinx.datetime.Clock
-import org.http4k.core.Method.GET
-import org.http4k.core.Request
-import org.http4k.core.Response
-import org.http4k.core.Status.Companion.OK
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
@@ -15,34 +9,39 @@ import pt.isel.ls.sessions.http.AppWebApi
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.AppService
 
-private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.AppServer")
-
-const val DEFAULT_PORT = 1904
+const val DEFAULT_PORT = 1905
 
 class AppServer(private val port: Int, private val database: AppMemoryDB) {
     private val service = AppService(database)
-    val webApi = AppWebApi(service)
+    private val webApi = AppWebApi(service)
+
+    fun start() {
+        val app = routes(
+            API_PATH bind webApi.httpHandler,
+        )
+
+        try {
+            val jettyServer = app.asServer(Jetty(port)).start()
+            logger.info("server started listening on port $port")
+            readln()
+            jettyServer.stop()
+            logger.info("server stopped")
+        } catch (e: Exception) {
+            logger.error("Error occurred: ${e.message}")
+        }
+    }
+
+    //TODO: Think about having a stop function, probably useful for testing
+
+    companion object {
+        private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.AppServer")
+        private const val API_PATH = "api"
+    }
 }
 
-fun getDate(request: Request): Response {
-    return Response(OK)
-        .header("content-type", "text/plain")
-        .body(Clock.System.now().toString())
-}
-
+//TODO: Move this to a main file
 fun main() {
     val database = AppMemoryDB()
     val server = AppServer(DEFAULT_PORT, database)
-    val app = routes(
-        server.webApi.routes,
-        "date" bind GET to ::getDate,
-    )
-
-    val jettyServer = app.asServer(Jetty(DEFAULT_PORT)).start()
-    logger.info("server started listening")
-
-    readln()
-    jettyServer.stop()
-
-    logger.info("leaving Main")
+    server.start()
 }

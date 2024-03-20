@@ -12,21 +12,14 @@ class GameService(private val memoryDB: AppMemoryDB) {
         else failure(GameGetError.GameNotFound)
     }
 
-    fun getGames(
-        genres: List<String>, developer: String, limit: Int, skip: Int
-    ): GamesGetResult = run {
+    fun getGames(genres: List<String>, developer: String, limit: Int, skip: Int): GamesGetResult = run {
         val gen = genres.mapNotNull { it.toGenre() }
-        if (gen.size < genres.size)
+        if (gen.size != genres.size)
             return failure(GamesGetError.GenreNotFound)
         val games = memoryDB.gameMemoryDB.getGames(gen, developer)
-        if (games.isNotEmpty()) return@run success(games)
-        val dev = memoryDB.gameMemoryDB.getDeveloperByName(developer)
-        when(dev) {
-            null -> failure(GamesGetError.DeveloperNotFound)
-            else -> failure(GamesGetError.NoGamesFound)
-        }
+        memoryDB.gameMemoryDB.getDeveloperByName(developer) ?: return failure(GamesGetError.DeveloperNotFound)
+        success(games)
     }
-
 
     fun createGame(name: String, developer: String, genres: List<String>): GameCreationResult = run {
         val gen = genres.mapNotNull { it.toGenre() }
@@ -36,5 +29,4 @@ class GameService(private val memoryDB: AppMemoryDB) {
         if (gid != null) success(gid)
         else failure(GameCreationError.NameAlreadyExists)
     }
-
 }

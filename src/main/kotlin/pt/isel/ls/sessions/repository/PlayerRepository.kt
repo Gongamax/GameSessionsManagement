@@ -1,9 +1,9 @@
-package pt.isel.ls.sessions.repository.data.player
+package pt.isel.ls.sessions.repository
 
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
 
-interface PlayerDB {
+interface PlayerRepository {
 
     fun createPlayer(name: String, email: String): Token
 

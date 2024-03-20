@@ -1,7 +1,11 @@
 package pt.isel.ls.sessions.services
 
 import kotlinx.datetime.LocalDateTime
+import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
+import pt.isel.ls.utils.Failure
+import pt.isel.ls.utils.Success
+import pt.isel.ls.utils.failure
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -15,11 +19,11 @@ class SessionTests {
         val db = AppMemoryDB()
         val service = AppService(db)
         val capacity = 10
-        val gid = 1
+        val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
         val sid = service.sessionService.createSession(capacity, gid, date)
 
         // Assert
@@ -32,13 +36,20 @@ class SessionTests {
         val db = AppMemoryDB()
         val service = AppService(db)
         val capacity = 10
-        val gid = 1
+        val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = service.sessionService.createSession(capacity, gid, date)
-        val session = service.sessionService.getSession(sid)
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
+        val sessionId = when (val res = service.sessionService.createSession(capacity, gid, date)) {
+            is Success -> res.value
+            else -> null
+        }
+        val sid = sessionId ?: return
+        val session = when (val res = service.sessionService.getSession(sid)) {
+            is Success -> res.value
+            is Failure -> null
+        }
 
         // Assert
         assertNotNull(session)
@@ -54,13 +65,19 @@ class SessionTests {
         val db = AppMemoryDB()
         val service = AppService(db)
         val capacity = 10
-        val gid = 1
+        val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = service.sessionService.createSession(capacity, gid, date)
-        val sessions = service.sessionService.getSessions(gid)
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
+        val sid = when (val res = service.sessionService.createSession(capacity, gid, date)) {
+            is Success -> res.value
+            is Failure -> null
+        }
+        val sessions = when (val res = service.sessionService.getSessions(gid)) {
+            is Success -> res.value
+            is Failure -> null
+        }
 
         // Assert
         assertNotNull(sessions)
@@ -77,13 +94,19 @@ class SessionTests {
         val db = AppMemoryDB()
         val service = AppService(db)
         val capacity = 10
-        val gid = 1
+        val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = service.sessionService.createSession(capacity, gid, date)
-        val sessions = service.sessionService.getSessions(gid, date)
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
+        val sid = when (val res = service.sessionService.createSession(capacity, gid, date)) {
+            is Success -> res.value
+            is Failure -> null
+        }
+        val sessions = when (val res = service.sessionService.getSessions(gid, date)) {
+            is Success -> res.value
+            is Failure -> null
+        }
 
         // Assert
         assertNotNull(sessions)
@@ -100,20 +123,32 @@ class SessionTests {
         val db = AppMemoryDB()
         val service = AppService(db)
         val capacity = 10
-        val gid = 1
+        val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", emptyList())
-        val sid = service.sessionService.createSession(capacity, gid, date)
+        db.gameMemoryDB.createGame("game1", "game1", GENRES)
+        val sid = when (val res = service.sessionService.createSession(capacity, gid, date)) {
+            is Success -> res.value
+            is Failure -> null
+        }
+        assertNotNull(sid, "sid is null")
         db.playerMemoryDB.createPlayer("player1", "player1@isel.pt")
         val pid = db.playerMemoryDB.getPlayers().first().pid
+
         service.sessionService.addPlayerToSession(sid, pid)
-        val session = service.sessionService.getSession(sid)
+        val session = when (val res = service.sessionService.getSession(sid)) {
+            is Success -> res.value
+            is Failure -> null
+        }
 
         // Assert
         assertNotNull(session)
         assertEquals(1, session.associatedPlayers.size)
         assertEquals(pid, session.associatedPlayers.first().pid)
+    }
+
+    companion object {
+        private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
     }
 }

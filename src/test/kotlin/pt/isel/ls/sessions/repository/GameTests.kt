@@ -58,7 +58,7 @@ class GameTests {
         //cleanup
     }
 
-    private companion object{
+    private companion object {
         val gameMemoryDB = GameMemoryDB()
         const val NAME = "name"
         const val DEVELOPER = "developer"

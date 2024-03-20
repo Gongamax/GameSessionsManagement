@@ -1,11 +1,10 @@
 package pt.isel.ls.sessions.services.player
 
-import pt.isel.ls.sessions.domain.utils.Token
-import pt.isel.ls.sessions.repository.data.player.PlayerDB
+import pt.isel.ls.sessions.repository.PlayerRepository
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.success
 
-class PlayerService(private val playerRepository: PlayerDB) {
+class PlayerService(private val playerRepository: PlayerRepository) {
 
     fun createPlayer(name: String, email: String): PlayerCreationResult = run {
         if (playerRepository.isEmailInUse(email))

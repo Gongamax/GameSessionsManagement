@@ -99,5 +99,4 @@ class GameTests {
         const val DEVELOPER = "developer"
         val genres = listOf("rpg", "Action")
     }
-
 }
