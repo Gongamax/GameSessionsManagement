@@ -1,11 +1,12 @@
 package pt.isel.ls.sessions.domain
 
+import junit.framework.TestCase.assertEquals
 import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertTrue
 
 class PlayerTests {
-
     @Test
     fun testCreatePlayer() {
         val player = Player(1u, "name", Email("email"))
@@ -29,9 +30,5 @@ class PlayerTests {
     fun `test isValidEmail on a Player`() {
         val player2 = Player(1u, "name", Email("email@isel.pt"))
         assertTrue { Email.isValidEmail(player2.email.value) }
-    }
-
-    companion object {
-        private const val mail = "email"
     }
 }

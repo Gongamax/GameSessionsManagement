@@ -10,9 +10,8 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-//TODO: ADD MORE TESTS
+// TODO: ADD MORE TESTS
 class SessionTests {
-
     private val clock = Clock.System
 
     @Test
@@ -43,15 +42,17 @@ class SessionTests {
 
         // Act
         db.gameDB.createGame("game1", "game1", GENRES)
-        val sessionId = when (val res = service.sessionService.createSession(capacity, gid, date)) {
-            is Success -> res.value
-            else -> null
-        }
+        val sessionId =
+            when (val res = service.sessionService.createSession(capacity, gid, date)) {
+                is Success -> res.value
+                else -> null
+            }
         val sid = sessionId ?: return
-        val session = when (val res = service.sessionService.getSession(sid)) {
-            is Success -> res.value
-            is Failure -> null
-        }
+        val session =
+            when (val res = service.sessionService.getSession(sid)) {
+                is Success -> res.value
+                is Failure -> null
+            }
 
         // Assert
         assertNotNull(session)
@@ -72,14 +73,16 @@ class SessionTests {
 
         // Act
         db.gameDB.createGame("game1", "game1", GENRES)
-        val sid = when (val res = service.sessionService.createSession(capacity, gid, date)) {
-            is Success -> res.value
-            is Failure -> null
-        }
-        val sessions = when (val res = service.sessionService.getSessions(gid)) {
-            is Success -> res.value
-            is Failure -> null
-        }
+        val sid =
+            when (val res = service.sessionService.createSession(capacity, gid, date)) {
+                is Success -> res.value
+                is Failure -> null
+            }
+        val sessions =
+            when (val res = service.sessionService.getSessions(gid)) {
+                is Success -> res.value
+                is Failure -> null
+            }
 
         // Assert
         assertNotNull(sessions)
@@ -101,14 +104,16 @@ class SessionTests {
 
         // Act
         db.gameDB.createGame("game1", "game1", GENRES)
-        val sid = when (val res = service.sessionService.createSession(capacity, gid, date)) {
-            is Success -> res.value
-            is Failure -> null
-        }
-        val sessions = when (val res = service.sessionService.getSessions(gid, date)) {
-            is Success -> res.value
-            is Failure -> null
-        }
+        val sid =
+            when (val res = service.sessionService.createSession(capacity, gid, date)) {
+                is Success -> res.value
+                is Failure -> null
+            }
+        val sessions =
+            when (val res = service.sessionService.getSessions(gid, date)) {
+                is Success -> res.value
+                is Failure -> null
+            }
 
         // Assert
         assertNotNull(sessions)
@@ -130,19 +135,21 @@ class SessionTests {
 
         // Act
         db.gameDB.createGame("game1", "game1", GENRES)
-        val sid = when (val res = service.sessionService.createSession(capacity, gid, date)) {
-            is Success -> res.value
-            is Failure -> null
-        }
+        val sid =
+            when (val res = service.sessionService.createSession(capacity, gid, date)) {
+                is Success -> res.value
+                is Failure -> null
+            }
         assertNotNull(sid, "sid is null")
         db.playerDB.createPlayer("player1", "player1@isel.pt")
         val pid = db.playerDB.getPlayers().first().pid
 
         service.sessionService.addPlayerToSession(sid, pid)
-        val session = when (val res = service.sessionService.getSession(sid)) {
-            is Success -> res.value
-            is Failure -> null
-        }
+        val session =
+            when (val res = service.sessionService.getSession(sid)) {
+                is Success -> res.value
+                is Failure -> null
+            }
 
         // Assert
         assertNotNull(session)

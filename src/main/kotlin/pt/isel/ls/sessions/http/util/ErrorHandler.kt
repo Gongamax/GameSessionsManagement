@@ -5,14 +5,17 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.slf4j.LoggerFactory
+import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.repository.jdbc.ExecuteSqlException
 import java.sql.SQLException
-import pt.isel.ls.sessions.http.model.utils.MessageResponse
 
 private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.util.ErrorHandler")
 
-//TODO: Improve error handling
-inline fun execStart(request: Request, block: () -> Response): Response =
+// TODO: Improve error handling
+inline fun execStart(
+    request: Request,
+    block: () -> Response,
+): Response =
     try {
         logRequest(request)
         block()
@@ -36,10 +39,11 @@ inline fun execStart(request: Request, block: () -> Response): Response =
 
 fun logRequest(request: Request) {
     logger.info(
-        "incoming request: method={}, uri={}, content-type={} accept={}",
+        "incoming request: method={}, uri={}, content-type={}, accept={}, body={}",
         request.method,
         request.uri,
         request.header(CONTENT_TYPE),
         request.header(ACCEPT),
+        request.bodyString(),
     )
 }

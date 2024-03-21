@@ -6,12 +6,23 @@ import pt.isel.ls.sessions.domain.session.Session
 import pt.isel.ls.sessions.domain.session.SessionState
 
 interface SessionRepository {
+    fun createSession(
+        capacity: Int,
+        gid: UInt,
+        date: LocalDateTime,
+    ): UInt
 
-    fun createSession(capacity : Int, gid : UInt, date : LocalDateTime) : UInt
+    fun addPlayerToSession(
+        sid: UInt,
+        player: Player,
+    )
 
-    fun addPlayerToSession(sid : UInt, player: Player)
+    fun getSession(sid: UInt): Session?
 
-    fun getSession(sid : UInt) : Session?
-
-    fun getSessions(gid : UInt, date : LocalDateTime?, state : SessionState?, pid : UInt?) : List<Session>
+    fun getSessions(
+        gid: UInt,
+        date: LocalDateTime?,
+        state: SessionState?,
+        pid: UInt?,
+    ): List<Session>
 }

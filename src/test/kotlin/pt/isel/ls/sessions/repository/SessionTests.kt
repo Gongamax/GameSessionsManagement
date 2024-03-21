@@ -4,11 +4,12 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
-//TODO: ADD MORE TESTS
+// TODO: ADD MORE TESTS
 class SessionTests {
-
     private val clock = Clock.System
 
     @Test
@@ -76,10 +77,10 @@ class SessionTests {
         val capacity = 10
         val gid = 1
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
-        val pid : UInt = 1u
+        val pid = 1u
 
         // Act
-        db.gameDB.createGame("game1", "game1",GENRES)
+        db.gameDB.createGame("game1", "game1", GENRES)
         val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
         db.playerDB.createPlayer("player1", "player1@isel.pt")
         db.sessionDB.addPlayerToSession(sid, db.playerDB.getPlayerById(pid)!!)

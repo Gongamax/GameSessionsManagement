@@ -1,6 +1,5 @@
 package pt.isel.ls.sessions.domain.utils
 
-
 /**
  * Creates validation information for a given token.
  *
@@ -8,5 +7,5 @@ package pt.isel.ls.sessions.domain.utils
  * @return The validation information for the token.
  */
 interface TokenEncoder {
-    fun createValidationInformation(token: String) : TokenValidationInfo
+    fun createValidationInformation(token: String): TokenValidationInfo
 }

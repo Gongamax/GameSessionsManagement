@@ -7,6 +7,7 @@ package pt.isel.ls.sessions.domain.session
  * @property CLOSED Represents a session that has ended or is not currently active.
  */
 enum class SessionState {
-    OPEN, CLOSED
+    OPEN,
+    CLOSED,
 }
-//TODO: THIS NEEDS TO BE OKAY WITH UPPER AND LOWER CASE WHEN COMPARING
+// TODO: THIS NEEDS TO BE OKAY WITH UPPER AND LOWER CASE WHEN COMPARING

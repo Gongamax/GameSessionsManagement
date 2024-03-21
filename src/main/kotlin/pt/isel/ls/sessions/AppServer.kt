@@ -8,21 +8,21 @@ import org.http4k.server.asServer
 import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.http.AppWebApi
 import pt.isel.ls.sessions.repository.AppDB
-import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.AppService
 
 class AppServer(
     private val port: Int,
     private val database: AppDB,
-    private val clock: Clock
+    private val clock: Clock,
 ) {
     private val service = AppService(database, clock)
     private val webApi = AppWebApi(service)
 
     fun start() {
-        val app = routes(
-            API_PATH bind webApi.httpHandler,
-        )
+        val app =
+            routes(
+                API_PATH bind webApi.httpHandler,
+            )
         try {
             val jettyServer = app.asServer(Jetty(port)).start()
             logger.info("server started listening on port $port")
@@ -34,7 +34,7 @@ class AppServer(
         }
     }
 
-    //TODO: Think about having a stop function, probably useful for testing
+    // TODO: Think about having a stop function, probably useful for testing
 
     companion object {
         private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.AppServer")

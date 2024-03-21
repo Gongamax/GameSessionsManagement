@@ -1,9 +1,6 @@
 package pt.isel.ls.sessions.domain.session
 
-import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import pt.isel.ls.sessions.domain.player.Player
 
 /**
@@ -21,7 +18,7 @@ data class Session(
     val date: LocalDateTime,
     val gid: UInt,
     val associatedPlayers: Set<Player>,
-    val capacity: Int
+    val capacity: Int,
 ) {
     init {
         require(sid > 0u) { "The session id must be a positive number" }

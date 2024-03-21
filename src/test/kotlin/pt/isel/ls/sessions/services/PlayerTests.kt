@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.services
 
+import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.Clock
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.player.PlayerCreationError
@@ -9,7 +10,6 @@ import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
 import pt.isel.ls.utils.failure
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class PlayerTests {
@@ -29,10 +29,11 @@ class PlayerTests {
         val nPlayer = "Alice"
         val ePlayer = "alice@email.com"
         // act
-        val pid: UInt? = when (val res = playerService.createPlayer(nPlayer, ePlayer)) {
-            is Success -> res.value.pid
-            is Failure -> null
-        }
+        val pid: UInt? =
+            when (val res = playerService.createPlayer(nPlayer, ePlayer)) {
+                is Success -> res.value.pid
+                is Failure -> null
+            }
         assertNotNull(pid)
         val namePlayer = baseDate.playerDB.getPlayerById(pid)?.name
         val emailPlayer = baseDate.playerDB.getPlayerById(pid)?.email
@@ -48,10 +49,11 @@ class PlayerTests {
         val playerService = PlayerService(baseDate.playerDB)
         val pid = 1u
         // arrange
-        val player = when (val res = playerService.getDetailsPlayer(pid)) {
-            is Success -> res.value
-            is Failure -> null
-        }
+        val player =
+            when (val res = playerService.getDetailsPlayer(pid)) {
+                is Success -> res.value
+                is Failure -> null
+            }
 
         // assert
         assertNotNull(player)
@@ -69,7 +71,6 @@ class PlayerTests {
         val player = playerService.getDetailsPlayer(pid)
         // assert
         assertEquals(failure(PlayerGetError.PlayerNotFound), player)
-
     }
 
     @Test

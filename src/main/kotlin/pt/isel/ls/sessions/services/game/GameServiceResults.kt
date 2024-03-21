@@ -21,17 +21,12 @@ sealed class GameGetError {
 
 typealias GameGetByIdResult = Either<GameGetError, Game>
 
-
-
 sealed class GamesGetError {
-
     data object NoGamesFound : GamesGetError()
 
     data object GenreNotFound : GamesGetError()
 
     data object DeveloperNotFound : GamesGetError()
-
 }
 
 typealias GamesGetResult = Either<GamesGetError, List<Game>>
-

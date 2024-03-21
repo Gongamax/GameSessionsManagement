@@ -12,7 +12,10 @@ class PlayerMemoryDB : PlayerRepository {
     private val playersMap = ConcurrentHashMap<UInt, Player>()
     private var nextPlayerId = AtomicInteger(1)
 
-    override fun createPlayer(name: String, email: String): Token {
+    override fun createPlayer(
+        name: String,
+        email: String,
+    ): Token {
         val pid = nextPlayerId.getAndIncrement().toUInt()
         val player = Player(pid, name, Email(email))
         playersMap[pid] = player
@@ -31,4 +34,3 @@ class PlayerMemoryDB : PlayerRepository {
 
     override fun isEmailInUse(email: String): Boolean = playersMap.any { it.value.email.value == email }
 }
-

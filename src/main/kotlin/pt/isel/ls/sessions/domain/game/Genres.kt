@@ -12,8 +12,11 @@ enum class Genres(val text: String) {
     TURN_BASED("Turn-Based"),
     ACTION("Action"),
     MULTIPLAYER("Multiplayer"),
-    FIGHTING("Fighting"),
-    SPORTS("Sports");
+    FIGHTING(
+        "Fighting",
+    ),
+    SPORTS("Sports"),
+    ;
 
     /**
      * Initialization block to ensure that the genre text is not blank.

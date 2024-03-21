@@ -2,7 +2,6 @@ package pt.isel.ls.sessions.http.model.utils
 
 import kotlinx.serialization.Serializable
 
-
 /**
  * Data class representing a TokenDTO.
  *

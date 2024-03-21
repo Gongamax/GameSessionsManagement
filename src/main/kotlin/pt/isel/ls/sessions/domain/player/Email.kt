@@ -6,7 +6,7 @@ package pt.isel.ls.sessions.domain.player
  * @property value The email value.
  */
 @JvmInline
-value class Email(val value : String) {
+value class Email(val value: String) {
     init {
         require(isValidEmail(value)) { "The player email must be a valid email" }
     }

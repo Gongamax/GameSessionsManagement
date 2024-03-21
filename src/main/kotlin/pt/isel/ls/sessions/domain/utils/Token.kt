@@ -1,7 +1,6 @@
 package pt.isel.ls.sessions.domain.utils
 
-import java.util.UUID
-
+import java.util.*
 
 /**
  * Data class representing a Token.
@@ -10,4 +9,3 @@ import java.util.UUID
  * @property token The unique token associated with the player.
  */
 data class Token(val pid: UInt, val token: UUID)
-

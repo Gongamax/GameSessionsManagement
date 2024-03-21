@@ -6,7 +6,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class SessionTests {
-
     @Test
     fun `test session creation`() {
         // Arrange

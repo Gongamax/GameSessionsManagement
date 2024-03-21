@@ -8,7 +8,7 @@ import pt.isel.ls.sessions.services.session.SessionService
 
 class AppService(
     private val baseData: AppDB,
-    private val clock: Clock
+    private val clock: Clock,
 ) {
     val playerService = PlayerService(baseData.playerDB)
     val gameService = GameService(baseData)

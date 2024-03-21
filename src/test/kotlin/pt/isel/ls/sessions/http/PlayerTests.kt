@@ -2,23 +2,15 @@ package pt.isel.ls.sessions.http
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.eclipse.jetty.util.annotation.Name
-import org.http4k.filter.CachingFilters
 import org.http4k.core.Method
 import org.http4k.core.Request
-import org.http4k.routing.routes
 import org.junit.Test
-import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.util.Uris
-import pt.isel.ls.sessions.http.util.execStart
-import pt.isel.ls.sessions.http.util.jsonResponse
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
 import pt.isel.ls.sessions.services.player.PlayerService
-import kotlin.math.E
-import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -32,11 +24,9 @@ class PlayerTests {
         private val playerRouter = PlayerRouter(playerService)
     }
 
-
     @BeforeTest
     fun createPlayer() {
-        val createPlayer = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(PlayerDTO(NAME, EMAIL)))
+        val createPlayer = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(NAME, EMAIL)))
         playerRouter.routes(createPlayer)
     }
 
@@ -45,8 +35,7 @@ class PlayerTests {
         // Arrange
         val name = "Francisco"
         val email = "francisco@gmail.com"
-        val request = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(PlayerDTO(name, email)))
+        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, email)))
         // Act
         val response = playerRouter.routes(request)
         // Assert
@@ -62,8 +51,7 @@ class PlayerTests {
     fun `create return response with a player already exists`() {
         // Arrange
         val name = "Bob"
-        val request = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(PlayerDTO(name, EMAIL)))
+        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, EMAIL)))
         // Act
         val response = playerRouter.routes(request)
         // Assert
@@ -84,7 +72,6 @@ class PlayerTests {
         assertEquals(expected = 200, actual = response.status.code)
         assertEquals(expected = NAME, actual = content.name)
         assertEquals(expected = EMAIL, actual = content.email)
-
     }
 
     @Test
@@ -98,6 +85,4 @@ class PlayerTests {
         assertEquals(expected = 404, actual = response.status.code)
         assertEquals(expected = "Player not found", actual = content.message)
     }
-
-
 }

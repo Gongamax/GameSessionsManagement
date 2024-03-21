@@ -6,7 +6,6 @@ import kotlin.test.AfterTest
 import kotlin.test.Test
 
 class GameTests {
-
     @AfterTest
     fun cleanup() {
         gameMemoryDB.reset()
@@ -47,7 +46,7 @@ class GameTests {
         // Arrange
         // Act
         // Assert
-        //cleanup
+        // cleanup
     }
 
     @Test
@@ -55,7 +54,7 @@ class GameTests {
         // Arrange
         // Act
         // Assert
-        //cleanup
+        // cleanup
     }
 
     private companion object {

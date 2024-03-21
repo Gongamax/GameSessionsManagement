@@ -6,11 +6,11 @@ import pt.isel.ls.utils.Either
 
 sealed class PlayerCreationError {
     data object EmailExists : PlayerCreationError()
+
     data object InvalidEmail : PlayerCreationError()
 }
 
 typealias PlayerCreationResult = Either<PlayerCreationError, Token>
-
 
 sealed class PlayerGetError {
     data object PlayerNotFound : PlayerGetError()

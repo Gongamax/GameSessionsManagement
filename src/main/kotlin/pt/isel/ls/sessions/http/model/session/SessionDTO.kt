@@ -11,7 +11,5 @@ data class SessionDTO(
     val date: LocalDateTime,
     val gid: UInt,
     val associatedPlayers: List<PlayerDTO>,
-    val capacity: Int
+    val capacity: Int,
 )
-
-

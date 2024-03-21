@@ -17,16 +17,16 @@ import pt.isel.ls.sessions.services.AppService
  * @property httpHandler The http handler for the web API. This is used to handle incoming HTTP requests.
  */
 class AppWebApi(service: AppService) {
-
     /**
      * The routes for the web API. These are defined using the http4k routing DSL.
      * The routes are bound to the respective services for players, games, and sessions.
      */
-    private val routes: RoutingHttpHandler = routes(
-        Uris.Players.ROOT bind PlayerRouter.routes(service.playerService),
-        Uris.Games.ROOT bind GameRouter.routes(service.gameService),
-        Uris.Sessions.ROOT bind SessionRouter.routes(service.sessionService)
-    )
+    private val routes: RoutingHttpHandler =
+        routes(
+            Uris.Players.ROOT bind PlayerRouter.routes(service.playerService),
+            Uris.Games.ROOT bind GameRouter.routes(service.gameService),
+            Uris.Sessions.ROOT bind SessionRouter.routes(service.sessionService),
+        )
 
     /**
      * The http handler for the web API.

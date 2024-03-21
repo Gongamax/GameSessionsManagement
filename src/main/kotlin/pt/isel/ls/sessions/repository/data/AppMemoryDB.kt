@@ -2,9 +2,6 @@ package pt.isel.ls.sessions.repository.data
 
 import kotlinx.datetime.Clock
 import pt.isel.ls.sessions.repository.AppDB
-import pt.isel.ls.sessions.repository.GameRepository
-import pt.isel.ls.sessions.repository.PlayerRepository
-import pt.isel.ls.sessions.repository.SessionRepository
 import pt.isel.ls.sessions.repository.data.game.GameMemoryDB
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
 import pt.isel.ls.sessions.repository.data.session.SessionMemoryDB
@@ -15,7 +12,6 @@ import pt.isel.ls.sessions.repository.data.session.SessionMemoryDB
  * which are used to store and manage data related to players, sessions, and games respectively.
  */
 class AppMemoryDB(clock: Clock) : AppDB {
-
     // In-memory database for storing and managing player data
     override val playerDB = PlayerMemoryDB()
 

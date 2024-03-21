@@ -2,13 +2,11 @@ package pt.isel.ls.sessions.http
 
 import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.Clock
-
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.eclipse.jetty.util.annotation.Name
-import org.junit.Test
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.junit.Test
 import pt.isel.ls.sessions.domain.game.toGenre
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
@@ -17,21 +15,17 @@ import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.routes.session.SessionRouter
 import pt.isel.ls.sessions.http.util.Uris
-import pt.isel.ls.sessions.http.util.execStart
 import pt.isel.ls.sessions.repository.data.game.GameMemoryDB
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
 import pt.isel.ls.sessions.repository.data.session.SessionMemoryDB
 import pt.isel.ls.sessions.services.player.PlayerService
 import pt.isel.ls.sessions.services.session.SessionService
-import kotlin.jvm.Throws
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
-
 class SessionTests {
-
     companion object {
         private val clock: Clock = Clock.System
         private val sessionDB = SessionMemoryDB(clock)
@@ -58,16 +52,15 @@ class SessionTests {
         val capacity = 10
         val gid = 1u
         val date = "2030-03-14T10:58:00.123456789"
-        val request = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
+        val request =
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
         sessionRouter.routes(request)
     }
 
     private fun createPlayer() {
         val name = "Francisco"
         val email = "francisco@gmail.com"
-        val createPlayer = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(PlayerDTO(name, email)))
+        val createPlayer = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, email)))
         PlayerRouter(PlayerService(playerDB)).routes(createPlayer)
     }
 
@@ -77,8 +70,8 @@ class SessionTests {
         val capacity = 10
         val gid = 1u
         val date = "2025-03-14T10:58:00.123456789"
-        val request = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
+        val request =
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
         // Act
         println(request)
         val response = sessionRouter.routes(request)
@@ -97,8 +90,8 @@ class SessionTests {
         val capacity = 10
         val gid = 2u
         val date = "2025-03-14T10:58:00.123456789"
-        val request = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
+        val request =
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
         // Act
         val response = sessionRouter.routes(request)
         // Assert
@@ -113,8 +106,8 @@ class SessionTests {
         val capacity = 10
         val gid = 1u
         val date = "2020-03-14T10:58:00.123456789"
-        val request = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
+        val request =
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
         // Act
         val response = sessionRouter.routes(request)
         // Assert
@@ -129,8 +122,8 @@ class SessionTests {
         val capacity = 0
         val gid = 1u
         val date = "2025-03-14T10:58:00.123456789"
-        val request = Request(Method.POST, Uris.DEFAULT)
-            .body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
+        val request =
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
         // Act
         val response = sessionRouter.routes(request)
         // Assert
@@ -138,7 +131,6 @@ class SessionTests {
         assertEquals(expected = 400, actual = response.status.code)
         assertEquals(expected = "Invalid capacity", actual = content.message)
     }
-
 
     @Test
     fun `getSession return response with a session`() {
@@ -241,7 +233,7 @@ class SessionTests {
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
         assertEquals(expected = 400, actual = response.status.code)
-         assertEquals(expected = "Invalid request, invalid number format", actual = content.message)
+        assertEquals(expected = "Invalid request, invalid number format", actual = content.message)
     }
 
     @Test

@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class SessionCreateDTO(
     val gid: UInt,
     val date: String,
-    val capacity: Int
+    val capacity: Int,
 )

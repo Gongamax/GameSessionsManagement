@@ -1,8 +1,8 @@
 package pt.isel.ls.sessions.http.util
 
-
 object Uris {
     const val DEFAULT = ""
+
     object Players {
         const val ROOT = "player"
         const val BY_ID = "/{pid}"

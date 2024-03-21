@@ -5,7 +5,9 @@ import pt.isel.ls.utils.Either
 
 sealed class SessionCreationError {
     data object GameNotFound : SessionCreationError()
+
     data object InvalidDate : SessionCreationError()
+
     data object InvalidCapacity : SessionCreationError()
 }
 
@@ -13,8 +15,11 @@ typealias SessionCreationResult = Either<SessionCreationError, UInt>
 
 sealed class SessionsGetError {
     data object GameNotFound : SessionsGetError()
+
     data object InvalidDate : SessionsGetError()
+
     data object InvalidState : SessionsGetError()
+
     data object PlayerNotFound : SessionsGetError()
 }
 
@@ -28,8 +33,11 @@ typealias SessionGetResult = Either<SessionGetError, Session>
 
 sealed class SessionAddPlayerError {
     data object SessionNotFound : SessionAddPlayerError()
+
     data object PlayerNotFound : SessionAddPlayerError()
+
     data object SessionFull : SessionAddPlayerError()
+
     data object PlayerAlreadyInSession : SessionAddPlayerError()
 }
 

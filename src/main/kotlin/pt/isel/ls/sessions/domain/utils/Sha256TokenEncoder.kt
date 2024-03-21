@@ -15,8 +15,7 @@ class Sha256TokenEncoder : TokenEncoder {
      * @return The validation information for the token.
      */
 
-    override fun createValidationInformation(token: String): TokenValidationInfo =
-        TokenValidationInfo(hash(token))
+    override fun createValidationInformation(token: String): TokenValidationInfo = TokenValidationInfo(hash(token))
 
     /**
      * Hashes the input string using the SHA256 algorithm.
@@ -28,8 +27,8 @@ class Sha256TokenEncoder : TokenEncoder {
         val messageDigest = MessageDigest.getInstance("SHA256")
         return Base64.getUrlEncoder().encodeToString(
             messageDigest.digest(
-                Charsets.UTF_8.encode(input).array()
-            )
+                Charsets.UTF_8.encode(input).array(),
+            ),
         )
     }
 }
