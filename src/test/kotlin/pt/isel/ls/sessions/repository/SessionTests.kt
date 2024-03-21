@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.repository
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
@@ -8,10 +9,12 @@ import kotlin.test.*
 //TODO: ADD MORE TESTS
 class SessionTests {
 
+    private val clock = Clock.System
+
     @Test
     fun `session creation with valid params`() {
         // Arrange
-        val db = AppMemoryDB()
+        val db = AppMemoryDB(clock)
         val capacity = 10
         val gid = 1
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
@@ -27,7 +30,7 @@ class SessionTests {
     @Test
     fun `create and get a session`() {
         // Arrange
-        val db = AppMemoryDB()
+        val db = AppMemoryDB(clock)
         val capacity = 10
         val gid = 1
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
@@ -48,7 +51,7 @@ class SessionTests {
     @Test
     fun `create and get all sessions`() {
         // Arrange
-        val db = AppMemoryDB()
+        val db = AppMemoryDB(clock)
         val capacity = 10
         val gid = 1
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
@@ -69,7 +72,7 @@ class SessionTests {
     @Test
     fun `add player to session`() {
         // Arrange
-        val db = AppMemoryDB()
+        val db = AppMemoryDB(clock)
         val capacity = 10
         val gid = 1
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)

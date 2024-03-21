@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.repository.jdbc
 
+import kotlinx.datetime.Clock
 import org.postgresql.ds.PGSimpleDataSource
 import pt.isel.ls.sessions.repository.AppDB
 import pt.isel.ls.sessions.repository.GameRepository
@@ -11,7 +12,8 @@ import pt.isel.ls.sessions.repository.jdbc.player.PlayerJDBC
 import pt.isel.ls.sessions.repository.jdbc.session.SessionJDBC
 
 class AppJdbcDB(
-    private val jdbcDatabaseURL: String
+    private val jdbcDatabaseURL: String,
+    private val clock: Clock
 ) : AppDB {
     private val dataSource = PGSimpleDataSource().apply {
         setURL(jdbcDatabaseURL)
@@ -20,7 +22,7 @@ class AppJdbcDB(
     override val playerDB: PlayerRepository
         get() = PlayerJDBC(dataSource)
     override val sessionDB: SessionRepository
-        get() = SessionJDBC(dataSource)
+        get() = SessionJDBC(dataSource, clock)
     override val gameDB: GameRepository
         get() = GameJDBC(dataSource)
 }

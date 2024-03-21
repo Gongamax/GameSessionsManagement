@@ -1,6 +1,7 @@
 package pt.isel.ls.sessions.services
 
 import junit.framework.TestCase.assertEquals
+import kotlinx.datetime.Clock
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.utils.Either
@@ -90,7 +91,8 @@ class GameTests {
     }
 
     private companion object {
-        val appMemoryDB = AppMemoryDB()
+        private val clock : Clock = Clock.System
+        val appMemoryDB = AppMemoryDB(clock)
         val gameService = GameService(appMemoryDB)
         const val NAME = "name"
         const val DEVELOPER = "developer"

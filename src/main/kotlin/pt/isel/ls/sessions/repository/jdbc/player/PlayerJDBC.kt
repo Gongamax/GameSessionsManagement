@@ -1,6 +1,7 @@
 package pt.isel.ls.sessions.repository.jdbc.player
 
 import org.slf4j.LoggerFactory
+import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
 import pt.isel.ls.sessions.repository.PlayerRepository
@@ -23,7 +24,8 @@ class PlayerJDBC(
                 setString(2, email)
                 setObject(3, token)
             }
-            if (stm.executeUpdate() == 0)
+            val affectedRows = stm.executeUpdate()
+            if (affectedRows == 0)
                 throw SQLException("Creating player failed, no rows affected.")
             val generatedKeys = stm.generatedKeys
             if (generatedKeys.next())
@@ -71,7 +73,7 @@ class PlayerJDBC(
         val id = getInt("id").toUInt()
         val name = getString("name")
         val email = getString("email")
-        return Player(id, name, email)
+        return Player(id, name, Email(email))
     }
 
     companion object {

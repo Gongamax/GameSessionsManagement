@@ -14,9 +14,7 @@ import pt.isel.ls.sessions.repository.data.session.SessionMemoryDB
  * It contains instances of PlayerMemoryDB, SessionMemoryDB, and GameMemoryDB,
  * which are used to store and manage data related to players, sessions, and games respectively.
  */
-class AppMemoryDB : AppDB {
-    // Clock object used to get the current time
-    private val clock = Clock.System
+class AppMemoryDB(clock: Clock) : AppDB {
 
     // In-memory database for storing and managing player data
     override val playerDB = PlayerMemoryDB()

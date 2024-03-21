@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.services
 
+import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
@@ -12,11 +13,13 @@ import kotlin.test.assertNotNull
 //TODO: ADD MORE TESTS
 class SessionTests {
 
+    private val clock = Clock.System
+
     @Test
     fun `session creation with valid params`() {
         // Arrange
-        val db = AppMemoryDB()
-        val service = AppService(db)
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
         val capacity = 10
         val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
@@ -32,8 +35,8 @@ class SessionTests {
     @Test
     fun `create and get a session`() {
         // Arrange
-        val db = AppMemoryDB()
-        val service = AppService(db)
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
         val capacity = 10
         val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
@@ -61,8 +64,8 @@ class SessionTests {
     @Test
     fun `create and get all sessions`() {
         // Arrange
-        val db = AppMemoryDB()
-        val service = AppService(db)
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
         val capacity = 10
         val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
@@ -90,8 +93,8 @@ class SessionTests {
     @Test
     fun `create and get all sessions with date`() {
         // Arrange
-        val db = AppMemoryDB()
-        val service = AppService(db)
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
         val capacity = 10
         val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
@@ -119,8 +122,8 @@ class SessionTests {
     @Test
     fun `create a session and add player to session`() {
         // Arrange
-        val db = AppMemoryDB()
-        val service = AppService(db)
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
         val capacity = 10
         val gid = 1u
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)

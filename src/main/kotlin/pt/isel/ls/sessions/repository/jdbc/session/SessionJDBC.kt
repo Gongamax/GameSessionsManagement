@@ -1,6 +1,7 @@
 package pt.isel.ls.sessions.repository.jdbc.session
 
 import kotlinx.datetime.*
+import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.session.Session
 import pt.isel.ls.sessions.domain.session.SessionState
@@ -104,7 +105,7 @@ class SessionJDBC(
         val id = getInt("id").toUInt()
         val name = getString("name")
         val email = getString("email")
-        return Player(id, name, email)
+        return Player(id, name, Email(email))
     }
 
     private fun getSessionState(date: LocalDateTime, players: Set<Player>, capacity: Int): SessionState {

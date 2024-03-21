@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions
 
+import kotlinx.datetime.Clock
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.http4k.server.Jetty
@@ -10,8 +11,12 @@ import pt.isel.ls.sessions.repository.AppDB
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.AppService
 
-class AppServer(private val port: Int, private val database: AppDB) {
-    private val service = AppService(database)
+class AppServer(
+    private val port: Int,
+    private val database: AppDB,
+    private val clock: Clock
+) {
+    private val service = AppService(database, clock)
     private val webApi = AppWebApi(service)
 
     fun start() {

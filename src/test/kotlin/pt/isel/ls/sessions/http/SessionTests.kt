@@ -33,10 +33,10 @@ import kotlin.test.assertTrue
 class SessionTests {
 
     companion object {
-        private val sessionDB = SessionMemoryDB()
+        private val clock: Clock = Clock.System
+        private val sessionDB = SessionMemoryDB(clock)
         private val playerDB = PlayerMemoryDB()
         private val gameDB = GameMemoryDB()
-        private val clock: Clock = Clock.System
         private val sessionService = SessionService(sessionDB, playerDB, gameDB, clock)
         private val sessionRouter = SessionRouter(sessionService)
     }
@@ -270,6 +270,4 @@ class SessionTests {
         assertEquals(expected = 200, actual = response.status.code)
         assertEquals(expected = "Player added to session", actual = content.message)
     }
-
-
 }

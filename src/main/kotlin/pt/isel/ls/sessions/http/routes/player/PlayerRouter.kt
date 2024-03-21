@@ -56,7 +56,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
             else -> when (val player = services.getDetailsPlayer(numberPlayer)) {
                 is Failure -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Player not found"))
                 is Success -> Response(Status.OK).jsonResponse(
-                    PlayerDTO(player.value.name, player.value.email)
+                    PlayerDTO(player.value.name, player.value.email.value)
                 )
 
             }

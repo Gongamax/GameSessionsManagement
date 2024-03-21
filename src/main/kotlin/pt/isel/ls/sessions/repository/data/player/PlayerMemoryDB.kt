@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.repository.data.player
 
+import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
 import pt.isel.ls.sessions.repository.PlayerRepository
@@ -13,7 +14,7 @@ class PlayerMemoryDB : PlayerRepository {
 
     override fun createPlayer(name: String, email: String): Token {
         val pid = nextPlayerId.getAndIncrement().toUInt()
-        val player = Player(pid, name, email)
+        val player = Player(pid, name, Email(email))
         playersMap[pid] = player
         val token = UUID.randomUUID()
         return Token(pid, token)
@@ -28,6 +29,6 @@ class PlayerMemoryDB : PlayerRepository {
         nextPlayerId = AtomicInteger(1)
     }
 
-    override fun isEmailInUse(email: String): Boolean = playersMap.any { it.value.email == email }
+    override fun isEmailInUse(email: String): Boolean = playersMap.any { it.value.email.value == email }
 }
 

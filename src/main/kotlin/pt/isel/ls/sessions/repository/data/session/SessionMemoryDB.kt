@@ -13,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
 class SessionMemoryDB(
-    private val clock: Clock = Clock.System
+    private val clock: Clock
 ) : SessionRepository {
     val sessions = ConcurrentHashMap<UInt, Session>()
     private val nextSessionId = AtomicInteger(1)

@@ -55,7 +55,7 @@ class SessionRouter(
                 .jsonResponse(res.value.map {
                     SessionDTO(
                         it.sid, it.associatedPlayers.size, it.date,
-                        it.gid, it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email) },
+                        it.gid, it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
                         it.capacity
                     )
                 })
@@ -73,7 +73,7 @@ class SessionRouter(
                    res.value.numberOfPlayers,
                     res.value.date,
                     res.value.gid,
-                    res.value.associatedPlayers.map { p -> PlayerDTO(p.name, p.email) },
+                    res.value.associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
                     res.value.capacity
                 )
             )
