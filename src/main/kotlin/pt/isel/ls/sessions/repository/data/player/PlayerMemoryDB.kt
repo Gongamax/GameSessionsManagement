@@ -15,7 +15,7 @@ class PlayerMemoryDB : PlayerRepository {
         val pid = nextPlayerId.getAndIncrement().toUInt()
         val player = Player(pid, name, email)
         playersMap[pid] = player
-        val token = UUID.randomUUID().toString()
+        val token = UUID.randomUUID()
         return Token(pid, token)
     }
 

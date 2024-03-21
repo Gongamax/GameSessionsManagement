@@ -6,10 +6,8 @@ import pt.isel.ls.sessions.services.player.PlayerGetError
 import pt.isel.ls.sessions.services.player.PlayerService
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
-import pt.isel.ls.utils.failure
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
 class PlayerTests {
@@ -19,13 +17,13 @@ class PlayerTests {
     private val email = "francisco@gmail.com"
 
     init {
-        baseDate.playerMemoryDB.createPlayer(name, email)
+        baseDate.playerDB.createPlayer(name, email)
     }
 
     @Test
     fun createPlayer() {
         // arrange
-        val playerService = PlayerService(baseDate.playerMemoryDB)
+        val playerService = PlayerService(baseDate.playerDB)
         val nPlayer = "Alice"
         val ePlayer = "alice@email.com"
         // act
@@ -34,8 +32,8 @@ class PlayerTests {
             is Failure -> null
         }
         assertNotNull(pid)
-        val namePlayer = baseDate.playerMemoryDB.getPlayerById(pid)?.name
-        val emailPlayer = baseDate.playerMemoryDB.getPlayerById(pid)?.email
+        val namePlayer = baseDate.playerDB.getPlayerById(pid)?.name
+        val emailPlayer = baseDate.playerDB.getPlayerById(pid)?.email
 
         // assert
         assertEquals(nPlayer, namePlayer)
@@ -45,7 +43,7 @@ class PlayerTests {
     @Test
     fun getDetailsPlayer() {
         // arrange
-        val playerService = PlayerService(baseDate.playerMemoryDB)
+        val playerService = PlayerService(baseDate.playerDB)
         val pid = 1u
         // arrange
         val player = when (val res = playerService.getDetailsPlayer(pid)) {

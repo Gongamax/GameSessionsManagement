@@ -1,13 +1,14 @@
 package pt.isel.ls.sessions.services.game
 
 import pt.isel.ls.sessions.domain.game.toGenre
+import pt.isel.ls.sessions.repository.AppDB
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.success
 
-class GameService(private val memoryDB: AppMemoryDB) {
+class GameService(private val memoryDB: AppDB) {
     fun getGame(gid: UInt): GameGetByIdResult = run {
-        val game = memoryDB.gameMemoryDB.getGameById(gid)
+        val game = memoryDB.gameDB.getGameById(gid)
         if (game != null) success(game)
         else failure(GameGetError.GameNotFound)
     }
@@ -16,8 +17,8 @@ class GameService(private val memoryDB: AppMemoryDB) {
         val gen = genres.mapNotNull { it.toGenre() }
         if (gen.size != genres.size)
             return failure(GamesGetError.GenreNotFound)
-        val games = memoryDB.gameMemoryDB.getGames(gen, developer)
-        memoryDB.gameMemoryDB.getDeveloperByName(developer) ?: return failure(GamesGetError.DeveloperNotFound)
+        val games = memoryDB.gameDB.getGames(gen, developer)
+        memoryDB.gameDB.getDeveloperByName(developer) ?: return failure(GamesGetError.DeveloperNotFound)
         success(games)
     }
 
@@ -25,7 +26,7 @@ class GameService(private val memoryDB: AppMemoryDB) {
         val gen = genres.mapNotNull { it.toGenre() }
         if (gen.size < genres.size)
             return failure(GameCreationError.InvalidGenre)
-        val gid = memoryDB.gameMemoryDB.createGame(name, developer, gen)
+        val gid = memoryDB.gameDB.createGame(name, developer, gen)
         if (gid != null) success(gid)
         else failure(GameCreationError.NameAlreadyExists)
     }

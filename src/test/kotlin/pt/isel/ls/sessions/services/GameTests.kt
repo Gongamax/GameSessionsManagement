@@ -1,12 +1,9 @@
 package pt.isel.ls.sessions.services
 
 import junit.framework.TestCase.assertEquals
-import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
-import pt.isel.ls.sessions.repository.data.game.GameMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.utils.Either
-import pt.isel.ls.utils.failure
 import kotlin.test.AfterTest
 import kotlin.test.Test
 import kotlin.test.fail
@@ -15,7 +12,7 @@ class GameTests {
 
     @AfterTest
     fun cleanup() {
-        appMemoryDB.gameMemoryDB.reset()
+        appMemoryDB.gameDB.reset()
     }
 
     @Test

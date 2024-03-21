@@ -6,12 +6,11 @@ import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.http.AppWebApi
+import pt.isel.ls.sessions.repository.AppDB
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.AppService
 
-const val DEFAULT_PORT = 1904
-
-class AppServer(private val port: Int, private val database: AppMemoryDB) {
+class AppServer(private val port: Int, private val database: AppDB) {
     private val service = AppService(database)
     private val webApi = AppWebApi(service)
 
@@ -19,7 +18,6 @@ class AppServer(private val port: Int, private val database: AppMemoryDB) {
         val app = routes(
             API_PATH bind webApi.httpHandler,
         )
-
         try {
             val jettyServer = app.asServer(Jetty(port)).start()
             logger.info("server started listening on port $port")
@@ -37,11 +35,4 @@ class AppServer(private val port: Int, private val database: AppMemoryDB) {
         private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.AppServer")
         private const val API_PATH = "api"
     }
-}
-
-//TODO: Move this to a main file
-fun main() {
-    val database = AppMemoryDB()
-    val server = AppServer(DEFAULT_PORT, database)
-    server.start()
 }

@@ -17,8 +17,8 @@ class SessionTests {
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", GENRES)
-        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
 
         // Assert
         assertNotNull(sid)
@@ -33,9 +33,9 @@ class SessionTests {
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", GENRES)
-        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
-        val session = db.sessionMemoryDB.getSession(sid)
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
+        val session = db.sessionDB.getSession(sid)
 
         // Assert
         assertNotNull(session)
@@ -54,9 +54,9 @@ class SessionTests {
         val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1", GENRES)
-        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
-        val sessions = db.sessionMemoryDB.getSessions(gid.toUInt(), null, null, null)
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
+        val sessions = db.sessionDB.getSessions(gid.toUInt(), null, null, null)
 
         // Assert
         assertEquals(1, sessions.size)
@@ -76,13 +76,13 @@ class SessionTests {
         val pid : UInt = 1u
 
         // Act
-        db.gameMemoryDB.createGame("game1", "game1",GENRES)
-        val sid = db.sessionMemoryDB.createSession(capacity, gid.toUInt(), date)
-        db.playerMemoryDB.createPlayer("player1", "player1@isel.pt")
-        db.sessionMemoryDB.addPlayerToSession(sid, db.playerMemoryDB.getPlayerById(pid)!!)
+        db.gameDB.createGame("game1", "game1",GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
+        db.playerDB.createPlayer("player1", "player1@isel.pt")
+        db.sessionDB.addPlayerToSession(sid, db.playerDB.getPlayerById(pid)!!)
 
         // Assert
-        val session = db.sessionMemoryDB.getSession(sid)
+        val session = db.sessionDB.getSession(sid)
         assertNotNull(session)
         assertEquals(1, session.associatedPlayers.size)
         assertEquals(pid, session.associatedPlayers.first().pid)

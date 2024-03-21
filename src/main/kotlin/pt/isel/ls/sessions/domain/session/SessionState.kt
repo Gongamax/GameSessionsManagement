@@ -9,3 +9,4 @@ package pt.isel.ls.sessions.domain.session
 enum class SessionState {
     OPEN, CLOSED
 }
+//TODO: THIS NEEDS TO BE OKAY WITH UPPER AND LOWER CASE WHEN COMPARING

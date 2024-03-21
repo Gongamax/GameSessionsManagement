@@ -19,9 +19,10 @@ class GameMemoryDB : GameRepository {
             gid
         }
 
-    override fun getGames(genres: List<Genres>, developer: String): List<Game> = gameMap.values.filter { game ->
-        game.developer == developer && genres.any { genre -> game.genres.contains(genre) }
-    }
+    override fun getGames(genres: List<Genres>, developer: String, skip: Int, limit: Int): List<Game> =
+        gameMap.values.filter { game ->
+            game.developer == developer && genres.any { genre -> game.genres.contains(genre) }
+        }.subList(skip, skip + limit.coerceAtMost(gameMap.size))
 
     override fun getGameById(gid: UInt): Game? = gameMap[gid]
 
@@ -32,5 +33,4 @@ class GameMemoryDB : GameRepository {
 
     override fun getDeveloperByName(developer: String): String? =
         gameMap.values.find { it.developer == developer }?.developer
-
 }

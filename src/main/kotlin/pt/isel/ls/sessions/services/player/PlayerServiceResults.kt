@@ -4,17 +4,16 @@ import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
 import pt.isel.ls.utils.Either
 
-sealed class PlayerCreationError{
-
-    data object EmailExists: PlayerCreationError()
-
+sealed class PlayerCreationError {
+    data object EmailExists : PlayerCreationError()
+    data object InvalidEmail : PlayerCreationError()
 }
 
 typealias PlayerCreationResult = Either<PlayerCreationError, Token>
 
 
-sealed class  PlayerGetError{
+sealed class PlayerGetError {
     data object PlayerNotFound : PlayerGetError()
 }
 
-typealias PlayerGetResult = Either<PlayerGetError,Player>
+typealias PlayerGetResult = Either<PlayerGetError, Player>

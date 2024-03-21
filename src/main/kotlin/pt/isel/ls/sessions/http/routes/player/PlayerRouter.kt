@@ -17,6 +17,7 @@ import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.http.util.execStart
 import pt.isel.ls.sessions.http.util.jsonResponse
+import pt.isel.ls.sessions.services.player.PlayerCreationError
 import pt.isel.ls.sessions.services.player.PlayerService
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
@@ -27,11 +28,17 @@ class PlayerRouter(private val services: PlayerService) : Router {
         Uris.DEFAULT bind POST to ::createPlayer,
         Uris.Players.BY_ID bind GET to ::getDetailsPlayer
     )
-    
+
     private fun createPlayer(request: Request): Response = execStart(request) {
         val player = Json.decodeFromString<PlayerDTO>(request.bodyString())
         return when (val res = services.createPlayer(player.name, player.email)) {
-            is Failure -> Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Email already exists"))
+            is Failure -> when (res.value) {
+                PlayerCreationError.EmailExists -> Response(Status.CONFLICT)
+                    .jsonResponse(MessageResponse("Email already exists"))
+
+                PlayerCreationError.InvalidEmail -> Response(Status.BAD_REQUEST)
+                    .jsonResponse(MessageResponse("Invalid email"))
+            }
 
             is Success -> Response(Status.CREATED)
                 .header("Location", "/player/${res.value.pid}")

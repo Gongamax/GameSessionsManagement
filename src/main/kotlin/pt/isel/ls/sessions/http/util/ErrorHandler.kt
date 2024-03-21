@@ -5,6 +5,8 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.slf4j.LoggerFactory
+import pt.isel.ls.sessions.repository.jdbc.ExecuteSqlException
+import java.sql.SQLException
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 
 private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.util.ErrorHandler")
@@ -15,11 +17,15 @@ inline fun execStart(request: Request, block: () -> Response): Response =
         logRequest(request)
         block()
     } catch (error: SerializationException) {
-        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
-    } catch(error: NumberFormatException) {
-        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request, invalid number format"))
+        Response(Status.BAD_REQUEST).body("Invalid request")
+    } catch (error: ExecuteSqlException) {
+        Response(Status.INTERNAL_SERVER_ERROR).body(error.errorInfo)
+    } catch (e: SQLException) {
+        Response(Status.INTERNAL_SERVER_ERROR).body("SQL internal error")
+    } catch (error: NumberFormatException) {
+        Response(Status.BAD_REQUEST).body("Invalid request, invalid number format")
     } catch (error: IllegalArgumentException) {
-        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
+        Response(Status.BAD_REQUEST).body(error.message ?: "Invalid request")
     } catch (error: NoSuchElementException) {
         Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Not found"))
     } catch (error: IllegalStateException) {
@@ -33,7 +39,7 @@ fun logRequest(request: Request) {
         "incoming request: method={}, uri={}, content-type={} accept={}",
         request.method,
         request.uri,
-        request.header(CONTENT_TYPE ),
+        request.header(CONTENT_TYPE),
         request.header(ACCEPT),
     )
 }
