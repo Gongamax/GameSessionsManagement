@@ -26,7 +26,7 @@ class GameService(private val memoryDB: AppDB) {
     ): GamesGetResult =
         run {
             val gen = genres.mapNotNull { it.toGenre() }
-            if (gen.isEmpty()) {
+            if (gen.size != genres.size) {
                 return failure(GamesGetError.GenreNotFound)
             }
             memoryDB.gameDB.getDeveloperByName(developer) ?: return failure(GamesGetError.DeveloperNotFound)

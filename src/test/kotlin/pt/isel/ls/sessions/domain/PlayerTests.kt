@@ -9,16 +9,17 @@ import kotlin.test.assertTrue
 class PlayerTests {
     @Test
     fun testCreatePlayer() {
-        val player = Player(1u, "name", Email("email"))
+        val player = Player(1u, "name", Email("email@test.com"))
         assertEquals(1u, player.pid)
         assertEquals("name", player.name)
-        assertEquals("email", player.email.value)
+        assertEquals("email@test.com", player.email.value)
     }
 
     @Test
     fun `test Player toString`() {
-        val player = Player(1u, "name", Email("email"))
-        assertEquals("Player(pid=1, name=name, email=email)", player.toString())
+        val email = "email@test.com"
+        val player = Player(1u, "name", Email(email))
+        assertEquals("Player(pid=1, name=name, email=${Email(email)})", player.toString())
     }
 
     @Test(expected = IllegalArgumentException::class)

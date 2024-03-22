@@ -4,6 +4,7 @@ import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.game.GameMemoryDB
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class GameTests {
     @AfterTest
@@ -17,45 +18,69 @@ class GameTests {
         // Act
         val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
         // Assert
-        assert(id != null)
+        assertEquals(1u, id)
+
     }
 
-    @Test
-    fun testCreateGameWithSameName() {
-        // Arrange
-        // Act
-        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
-        val id2 = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
-        // Assert
-        assert(id != null)
-        assert(id2 == null)
-    }
 
     @Test
     fun testGetGameById() {
         // Arrange
         // Act
         val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
-        val game = gameMemoryDB.getGameById(id!!)
+        val game = gameMemoryDB.getGameById(id)
         // Assert
-        assert(game != null)
+        assertEquals(id, game?.gid)
+        assertEquals(NAME, game?.name)
+        assertEquals(DEVELOPER, game?.developer)
+        assertEquals(genres, game?.genres)
     }
 
     @Test
     fun testGetGames() {
         // Arrange
+        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
         // Act
+        val games = gameMemoryDB.getGames(genres, DEVELOPER, 10, 0)
         // Assert
-        // cleanup
+        assertEquals(1, games.size)
+        assertEquals(id, games[0].gid)
+        assertEquals(NAME, games[0].name)
+        assertEquals(DEVELOPER, games[0].developer)
+        assertEquals(genres, games[0].genres)
+    }
+
+    @Test
+    fun testGetDeveloperByName() {
+        // Arrange
+        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
+        // Act
+        val developer = gameMemoryDB.getDeveloperByName(DEVELOPER)
+        // Assert
+        assertEquals(DEVELOPER, developer)
     }
 
     @Test
     fun testGetGamesFails() {
         // Arrange
+        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
         // Act
+        val games = gameMemoryDB.getGames(genres, "another developer", 10, 0)
         // Assert
-        // cleanup
+        assertEquals(0, games.size)
     }
+
+    @Test
+    fun `get Games with limit and skip`() {
+        // Arrange
+        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
+        // Act
+        val games = gameMemoryDB.getGames(genres, DEVELOPER, 1, 0)
+        // Assert
+        assertEquals(1, games.size)
+    }
+
+
 
     private companion object {
         val gameMemoryDB = GameMemoryDB()

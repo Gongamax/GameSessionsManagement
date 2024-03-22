@@ -212,7 +212,7 @@ class GameTests {
         val request =
             Request(Method.GET, Uris.DEFAULT).body(
                 Json.encodeToString(
-                    GamesInputModel("d", listOf("sport", "multiplayer")),
+                    GamesInputModel("d", listOf("sports", "multiplayer")),
                 ),
             )
         // Act
