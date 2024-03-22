@@ -69,6 +69,8 @@ class SessionService(
         date: LocalDateTime? = null,
         state: SessionState? = null,
         pid: UInt? = null,
+        limit : Int,
+        skip : Int,
     ): SessionsGetResult =
         run {
             if (gameRepository.getGameById(gid) == null) {
@@ -84,7 +86,7 @@ class SessionService(
             if (pid != null && playerRepository.getPlayerById(pid) == null) {
                 return@run failure(SessionsGetError.PlayerNotFound)
             }
-            val sessions = sessionRepository.getSessions(gid, date, state, pid)
+            val sessions = sessionRepository.getSessions(gid, date, state, pid, limit, skip)
             success(sessions)
         }
 }

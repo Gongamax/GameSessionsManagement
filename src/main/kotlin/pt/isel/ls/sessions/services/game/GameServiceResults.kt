@@ -4,13 +4,10 @@ import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.utils.Either
 
 sealed class GameCreationError {
-    data object NameAlreadyExists : GameCreationError() {
-        override fun toString(): String = "The game name already exists."
-    }
+    data object NameAlreadyExists : GameCreationError()
+    data object InvalidGenre : GameCreationError()
 
-    data object InvalidGenre : GameCreationError() {
-        override fun toString(): String = "The genre is invalid."
-    }
+    data object UnknownError : GameCreationError()
 }
 
 typealias GameCreationResult = Either<GameCreationError, UInt>
@@ -27,6 +24,7 @@ sealed class GamesGetError {
     data object GenreNotFound : GamesGetError()
 
     data object DeveloperNotFound : GamesGetError()
+
 }
 
 typealias GamesGetResult = Either<GamesGetError, List<Game>>

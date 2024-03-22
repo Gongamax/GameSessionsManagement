@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.http
 
+import junit.framework.TestCase
 import kotlinx.datetime.Clock
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -8,6 +9,7 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import pt.isel.ls.sessions.http.model.game.GameDTO
 import pt.isel.ls.sessions.http.model.game.GamesInputModel
+import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.game.GameRouter
 import pt.isel.ls.sessions.http.util.APPLICATION_JSON
@@ -15,10 +17,7 @@ import pt.isel.ls.sessions.http.util.CONTENT_TYPE
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class GameTests {
     @AfterTest
@@ -38,6 +37,7 @@ class GameTests {
 
         assertTrue { response.header("Location").equals("/game/1") }
         assertTrue { response.status.successful }
+        assertEquals(Status.CREATED, response.status)
         assertTrue { content.message.isNotBlank() }
         assertTrue { content.message.contains("Game id:") }
     }
@@ -56,7 +56,8 @@ class GameTests {
         assertTrue { response.header(CONTENT_TYPE).equals(APPLICATION_JSON) }
         assertTrue { response.status.clientError }
         assertTrue { content.message.isNotBlank() }
-        assertTrue { content.message == "The game name already exists." }
+        assertTrue { content.message == "Game name already exists" }
+        assertEquals(Status.CONFLICT, response.status)
     }
 
     @Test
@@ -70,6 +71,7 @@ class GameTests {
 
         assertTrue { response.header(CONTENT_TYPE).equals(APPLICATION_JSON) }
         assertTrue { response.status.clientError }
+        assertEquals(Status.EXPECTATION_FAILED, response.status)
         assertTrue { content.message.isNotBlank() }
         assertTrue { content.message == "Invalid game data." }
     }
@@ -83,11 +85,14 @@ class GameTests {
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
 
-        assertTrue { response.header(CONTENT_TYPE).equals(APPLICATION_JSON) }
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals(response.header(CONTENT_TYPE), APPLICATION_JSON)
         assertTrue { response.status.clientError }
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertTrue { content.message.isNotBlank() }
-        assertTrue { content.message == "The genre is invalid." }
+        assertTrue { content.message == "Invalid genre, please check the genre name" }
     }
+
 
     @Test
     fun `get game by id with success`() {
@@ -117,6 +122,8 @@ class GameTests {
         val response = router.routes(request2)
         // Assert
         assertTrue { response.status == Status.NOT_FOUND }
+        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
+        assertTrue { response.bodyString().contains("Game not found") }
     }
 
     @Test
@@ -136,29 +143,33 @@ class GameTests {
 
         assertTrue { response.status.successful }
         assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.size == 2 }
+        assertTrue { content.size == 3 }
         assertFalse { content.contains(games[1]) }
     }
 
     @Test
-    fun `get all games fails because no game is returned`() {
+    fun `get all games success despite no games being returned`() {
         // Arrange
         games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
-        val request = Request(Method.GET, Uris.DEFAULT).body(Json.encodeToString(GamesInputModel("developer", listOf("Rpg"))))
+        val request =
+            Request(Method.GET, Uris.DEFAULT).body(Json.encodeToString(GamesInputModel("developer", listOf("Rpg"))))
         // Act
         val response = router.routes(request)
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
 
-        assertTrue { response.status == Status.NOT_FOUND }
+        assertTrue { response.status == Status.OK }
         assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.message == "Games not found" }
+        assertEquals(expected = Status.OK, actual = response.status)
+        assertTrue(content.isEmpty())
+        assertTrue(content.isEmpty())
+        TestCase.assertEquals("[]", content.toString())
     }
 
     @Test
     fun `get all games fails because developer doesn't exist`() {
         // Arrange
-        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))).also { println(it) } }
+        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
         val request =
             Request(
                 Method.GET,
@@ -194,19 +205,149 @@ class GameTests {
         assertTrue { content.message == "Genre not found" }
     }
 
+    @Test
+    fun `get all games fails because developer not found`() {
+        // Arrange
+        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
+        val request =
+            Request(Method.GET, Uris.DEFAULT).body(
+                Json.encodeToString(
+                    GamesInputModel("d", listOf("sport", "multiplayer")),
+                ),
+            )
+        // Act
+        val response = router.routes(request)
+        // Assert
+        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("Developer not found", content.message)
+    }
+
+    @Test
+    fun `get all game success with skip(DEFAULT) and limit`() {
+        // Arrange
+        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("limit", "2").body(
+                Json.encodeToString(
+                    GamesInputModel("developer", listOf("Action")),
+                ),
+            )
+        // Act
+        val response = router.routes(request)
+        // Assert
+        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+
+        assertTrue { response.status.successful }
+        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
+        assertTrue { content.size == 2 }
+        assertTrue { content.contains(games[0]) }
+        assertFalse { content.contains(games[1]) }
+        assertTrue { content.contains(games[2]) }
+        assertFalse(content.contains(games[3]))
+    }
+
+    @Test
+    fun `get all game success with skip and limit(DEFAULT)`() {
+        // Arrange
+        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("skip", "1").body(
+                Json.encodeToString(
+                    GamesInputModel("developer", listOf("Action")),
+                ),
+            )
+        // Act
+        val response = router.routes(request)
+        // Assert
+        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+        assertTrue { response.status.successful }
+        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
+        assertTrue { content.size == 2 }
+        assertFalse { content.contains(games[0]) }
+        assertFalse { content.contains(games[1]) }
+        assertTrue { content.contains(games[2]) }
+        assertTrue() { content.contains(games[3]) }
+    }
+
+    @Test
+    fun `get all game success with skip and limit`() {
+        // Arrange
+        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("limit", "1").query("skip", "1").body(
+                Json.encodeToString(
+                    GamesInputModel("developer", listOf("Action")),
+                ),
+            )
+        // Act
+        val response = router.routes(request)
+        // Assert
+        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+
+        assertTrue { response.status.successful }
+        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
+        assertTrue { content.size == 1 }
+        assertFalse { content.contains(games[0]) }
+        assertFalse { content.contains(games[1]) }
+        assertTrue { content.contains(games[2]) }
+        assertFalse { content.contains(games[3]) }
+    }
+
+    @Test
+    fun `get all game fails with skip negative`() {
+        // Arrange
+        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("skip", "-1").body(
+                Json.encodeToString(
+                    GamesInputModel("developer", listOf("Action")),
+                ),
+            )
+        // Act
+        val response = router.routes(request)
+        // Assert
+        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+
+        assertTrue { response.status == Status.BAD_REQUEST }
+        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
+        assertTrue { content.message == "Limit or skip is negative" }
+    }
+
+    @Test
+    fun `get all game fails with limit negative`() {
+        // Arrange
+        games.forEach { router.routes(Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))) }
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("limit", "-1").body(
+                Json.encodeToString(
+                    GamesInputModel("developer", listOf("Action")),
+                ),
+            )
+        // Act
+        val response = router.routes(request)
+        // Assert
+        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+
+        assertTrue { response.status == Status.BAD_REQUEST }
+        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
+        assertTrue { content.message == "Limit or skip is negative" }
+    }
+
     companion object {
         private val clock = Clock.System
         private val mem = AppMemoryDB(clock)
         private val service = GameService(mem)
         private val router = GameRouter(service)
         private val game = GameDTO("cod", "developer", listOf("Action", "Shooter"))
-        private val gameInvalidGenre = GameDTO("cod", "developer", listOf("Friendly"))
+        private val gameInvalidGenre = GameDTO("cod", "developer", listOf("multiplayer", "sport", "Action"))
         private val gameNoGenres = GameDTO("cod", "developer", listOf())
         private val games =
             listOf(
                 GameDTO("cod", "developer", listOf("Action", "Shooter")),
                 GameDTO("cs-go", "developer1", listOf("Action", "Shooter")),
                 GameDTO("over-watch", "developer", listOf("Action", "Shooter")),
+                GameDTO("FIFA", "developer", listOf("Action", "Sports")),
             )
     }
 }

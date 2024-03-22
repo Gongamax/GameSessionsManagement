@@ -5,6 +5,7 @@ import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.repository.jdbc.AppJdbcDB
 
 const val DEFAULT_PORT = 1904
+//const val JDBC_DATABASE_URL_ENV = ""
 const val JDBC_DATABASE_URL_ENV = "JDBC_DATABASE_URL"
 
 fun main() {

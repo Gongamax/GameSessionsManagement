@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.repository.jdbc.game
 
+import org.eclipse.jetty.server.ConnectionLimit
 import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.GameRepository
@@ -35,16 +36,18 @@ class GameJDBC(
     override fun getGames(
         genres: List<Genres>,
         developer: String,
-        skip: Int,
         limit: Int,
+        skip: Int
     ): List<Game> =
         dataSource.connection.execute("Failed to get games") { con ->
-            val query = "SELECT * FROM Game WHERE developer = ? AND genres = ?"
+            val query = "SELECT * FROM Game WHERE developer = ? AND genres @> ? LIMIT ? OFFSET ?"
             val genreOrdinals = getGenreOrdinals(genres)
             val stm =
                 con.prepareStatement(query).apply {
                     setString(1, developer)
                     setArray(2, con.createArrayOf("integer", genreOrdinals))
+                    setInt(3, limit)
+                    setInt(4, skip)
                 }
             val rs = stm.executeQuery()
             val games = mutableListOf<Game>()
@@ -81,6 +84,17 @@ class GameJDBC(
                 }
             val rs = stm.executeQuery()
             return@execute if (rs.next()) rs.getString("developer") else null
+        }
+
+    override fun getGameByName(name: String): Boolean =
+        dataSource.connection.execute("Failed to get game"){con ->
+            val query = "SELECT name FROM GAME where name = ?"
+            val stm =
+                con.prepareStatement(query).apply {
+                    setString(1,name)
+                }
+            val rs = stm.executeQuery()
+            return@execute rs.next()
         }
 
     private fun getGameResponse(rs: ResultSet): Game {

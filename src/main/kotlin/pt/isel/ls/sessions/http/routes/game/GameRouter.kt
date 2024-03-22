@@ -17,6 +17,8 @@ import pt.isel.ls.sessions.http.util.LOCATION
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.http.util.execStart
 import pt.isel.ls.sessions.http.util.jsonResponse
+import pt.isel.ls.sessions.services.game.GameCreationError
+import pt.isel.ls.sessions.services.game.GameGetError
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.sessions.services.game.GamesGetError
 import pt.isel.ls.utils.Either
@@ -35,14 +37,10 @@ class GameRouter(private val services: GameService) : Router {
         execStart(request) {
             val gid = request.path("gid")?.toUInt() ?: return Response(Status.BAD_REQUEST)
             return when (val game = services.getGame(gid)) {
-                is Either.Left -> Response(Status.NOT_FOUND)
-                is Either.Right ->
+                is Failure -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Game not found"))
+                is Success ->
                     Response(Status.OK).jsonResponse(
-                        GameDTO(
-                            game.value.name,
-                            game.value.developer,
-                            game.value.genres.map { it.text },
-                        ),
+                        GameDTO(game.value.name, game.value.developer, game.value.genres.map { g -> g.text }),
                     )
             }
         }
@@ -50,8 +48,12 @@ class GameRouter(private val services: GameService) : Router {
     private fun getGames(request: Request): Response =
         execStart(request) {
             val game = Json.decodeFromString<GamesInputModel>(request.bodyString())
+            if (game.genres.isEmpty() || game.developer.isBlank())
+                return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Genres or developer is empty"))
             val limit = request.query("limit")?.toInt() ?: DEFAULT_LIMIT
             val skip = request.query("skip")?.toInt() ?: DEFAULT_SKIP
+            if (limit < 0 || skip < 0)
+                return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Limit or skip is negative"))
             return when (val games = services.getGames(game.genres, game.developer, limit, skip)) {
                 is Failure ->
                     when (games.value) {
@@ -62,13 +64,12 @@ class GameRouter(private val services: GameService) : Router {
                         GamesGetError.DeveloperNotFound -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Developer not found"))
                     }
 
-                is Success -> {
-                    return Response(Status.OK).jsonResponse(
+                is Success ->
+                    Response(Status.OK).jsonResponse(
                         games.value.map {
-                            GameDTO(it.name, game.developer, it.genres.map { g -> g.name })
+                            GameDTO(it.name, game.developer, it.genres.map { g -> g.text })
                         },
                     )
-                }
             }
         }
 
@@ -80,8 +81,23 @@ class GameRouter(private val services: GameService) : Router {
                     MessageResponse("Invalid game data."),
                 )
             }
+
             return when (val gameId = services.createGame(game.name, game.developer, game.genres)) {
-                is Failure -> Response(Status.BAD_REQUEST).jsonResponse(MessageResponse(gameId.value.toString()))
+                is Failure ->
+                    when (gameId.value) {
+                        GameCreationError.InvalidGenre -> Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid genre, please check the genre name"))
+                        GameCreationError.NameAlreadyExists -> Response(Status.CONFLICT).jsonResponse(
+                            MessageResponse(
+                                "Game name already exists"
+                            )
+                        )
+
+                        is GameCreationError.UnknownError -> Response(Status.INTERNAL_SERVER_ERROR).jsonResponse(
+                            MessageResponse(
+                                "Failed to create game"
+                            )
+                        )
+                    }
 
                 is Success ->
                     Response(Status.CREATED).header(LOCATION, "/game/${gameId.value}").jsonResponse(

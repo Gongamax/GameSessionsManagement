@@ -79,7 +79,7 @@ class SessionTests {
                 is Failure -> null
             }
         val sessions =
-            when (val res = service.sessionService.getSessions(gid)) {
+            when (val res = service.sessionService.getSessions(gid, null, null, null, DEFAULT_LIMIT, DEFAULT_SKIP)) {
                 is Success -> res.value
                 is Failure -> null
             }
@@ -110,7 +110,7 @@ class SessionTests {
                 is Failure -> null
             }
         val sessions =
-            when (val res = service.sessionService.getSessions(gid, date)) {
+            when (val res = service.sessionService.getSessions(gid, date, null, null, DEFAULT_LIMIT, DEFAULT_SKIP)) {
                 is Success -> res.value
                 is Failure -> null
             }
@@ -159,5 +159,7 @@ class SessionTests {
 
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
+        private val DEFAULT_LIMIT = 10
+        private val DEFAULT_SKIP = 0
     }
 }

@@ -6,14 +6,18 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.Status
 import org.junit.Test
 import pt.isel.ls.sessions.domain.game.toGenre
+import pt.isel.ls.sessions.http.model.game.GameDTO
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.routes.session.SessionRouter
+import pt.isel.ls.sessions.http.util.APPLICATION_JSON
+import pt.isel.ls.sessions.http.util.CONTENT_TYPE
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.game.GameMemoryDB
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
@@ -33,6 +37,7 @@ class SessionTests {
         private val gameDB = GameMemoryDB()
         private val sessionService = SessionService(sessionDB, playerDB, gameDB, clock)
         private val sessionRouter = SessionRouter(sessionService)
+
     }
 
     @BeforeTest
@@ -73,14 +78,13 @@ class SessionTests {
         val request =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(SessionCreateDTO(gid, date, capacity)))
         // Act
-        println(request)
         val response = sessionRouter.routes(request)
         // Assert
         assertTrue { response.header("Location") != null }
         val sid = response.header("Location")?.split("/")?.last()
         assertEquals(expected = "/sessions/$sid", actual = response.header("Location"))
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 201, actual = response.status.code)
+        assertEquals(expected = Status.CREATED, actual = response.status)
         assertEquals(expected = "Session created: $sid", actual = content.message)
     }
 
@@ -96,7 +100,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 404, actual = response.status.code)
+        assertEquals(expected = Status.NOT_FOUND, actual = response.status)
         assertEquals(expected = "Game not found", actual = content.message)
     }
 
@@ -112,7 +116,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 400, actual = response.status.code)
+        assertEquals(expected = Status.BAD_REQUEST, actual = response.status)
         assertEquals(expected = "Invalid date", actual = content.message)
     }
 
@@ -128,7 +132,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 400, actual = response.status.code)
+        assertEquals(expected = Status.BAD_REQUEST, actual = response.status)
         assertEquals(expected = "Invalid capacity", actual = content.message)
     }
 
@@ -143,7 +147,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<SessionDTO>(response.bodyString())
         // Assert
-        assertEquals(expected = 200, actual = response.status.code)
+        assertEquals(expected = Status.OK, actual = response.status)
         assertEquals(expected = "application/json", actual = response.header("Content-Type"))
         assertEquals(expected = 1u, actual = content.sid)
         assertEquals(expected = gid, actual = content.gid)
@@ -159,7 +163,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 404, actual = response.status.code)
+        assertEquals(expected = Status.NOT_FOUND, actual = response.status)
         assertEquals(expected = "Session not found", actual = content.message)
     }
 
@@ -172,7 +176,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
-        assertEquals(expected = 200, actual = response.status.code)
+        assertEquals(expected = Status.OK, actual = response.status)
         assertEquals(expected = "application/json", actual = response.header("Content-Type"))
         assertEquals(expected = 1u, actual = content[0].sid)
         assertEquals(expected = 1u, actual = content[0].gid)
@@ -189,7 +193,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
-        assertEquals(expected = 200, actual = response.status.code)
+        assertEquals(expected = Status.OK, actual = response.status)
         assertEquals(expected = "application/json", actual = response.header("Content-Type"))
         assertEquals(expected = 1u, actual = content[0].sid)
         assertEquals(expected = 1u, actual = content[0].gid)
@@ -205,9 +209,12 @@ class SessionTests {
         // Act
         val response = sessionRouter.routes(request)
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 404, actual = response.status.code)
-        assertEquals(expected = "Game not found", actual = content.message)
+        val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
+        assertTrue { response.status == Status.OK }
+        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
+        assertTrue(content.isEmpty())
+        assertTrue(content.isEmpty())
+        assertEquals("[]", content.toString())
     }
 
     @Test
@@ -219,7 +226,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 400, actual = response.status.code)
+        assertEquals(expected = Status.BAD_REQUEST, actual = response.status)
         assertEquals(expected = "Invalid date", actual = content.message)
     }
 
@@ -232,7 +239,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 400, actual = response.status.code)
+        assertEquals(expected = Status.BAD_REQUEST, actual = response.status)
         assertEquals(expected = "Invalid request, invalid number format", actual = content.message)
     }
 
@@ -245,7 +252,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 404, actual = response.status.code)
+        assertEquals(expected = Status.NOT_FOUND, actual = response.status)
         assertEquals(expected = "Player not found", actual = content.message)
     }
 
@@ -259,7 +266,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 200, actual = response.status.code)
+        assertEquals(expected = Status.OK, actual = response.status)
         assertEquals(expected = "Player added to session", actual = content.message)
     }
 }

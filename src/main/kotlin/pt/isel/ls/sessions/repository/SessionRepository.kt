@@ -24,5 +24,8 @@ interface SessionRepository {
         date: LocalDateTime?,
         state: SessionState?,
         pid: UInt?,
+        limit: Int,
+        skip: Int,
     ): List<Session>
+
 }

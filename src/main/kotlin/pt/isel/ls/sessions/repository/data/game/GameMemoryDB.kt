@@ -14,24 +14,22 @@ class GameMemoryDB : GameRepository {
         name: String,
         developer: String,
         genres: List<Genres>,
-    ): UInt? =
-        if (gameMap.any { it.value.name == name }) {
-            null
-        } else {
-            val gid = nextGameId.getAndIncrement().toUInt()
-            gameMap[gid] = Game(gid, name, developer, genres)
-            gid
-        }
+    ): UInt {
+        val gid = nextGameId.getAndIncrement().toUInt()
+        gameMap[gid] = Game(gid, name, developer, genres)
+       return gid
+
+}
 
     override fun getGames(
         genres: List<Genres>,
         developer: String,
-        skip: Int,
         limit: Int,
+        skip: Int
     ): List<Game> =
         gameMap.values.filter { game ->
             game.developer == developer && genres.any { genre -> game.genres.contains(genre) }
-        }.subList(skip, skip + limit.coerceAtMost(gameMap.size))
+        }.drop(skip).take(limit)
 
     override fun getGameById(gid: UInt): Game? = gameMap[gid]
 
@@ -40,5 +38,8 @@ class GameMemoryDB : GameRepository {
         nextGameId = AtomicInteger(1)
     }
 
-    override fun getDeveloperByName(developer: String): String? = gameMap.values.find { it.developer == developer }?.developer
+    override fun getDeveloperByName(developer: String): String? =
+        gameMap.values.find { it.developer == developer }?.developer
+
+    override fun getGameByName(name: String): Boolean = gameMap.any { it.value.name == name }
 }

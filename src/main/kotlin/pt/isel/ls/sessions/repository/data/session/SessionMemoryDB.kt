@@ -46,6 +46,8 @@ class SessionMemoryDB(
         date: LocalDateTime?,
         state: SessionState?,
         pid: UInt?,
+        limit: Int,
+        skip: Int,
     ): List<Session> {
         return sessions.values.filter {
             (it.gid == gid) && (date == null || it.date == date) && (
@@ -56,7 +58,7 @@ class SessionMemoryDB(
                         it.capacity,
                     )
             ) && (pid == null || it.associatedPlayers.any { p -> p.pid == pid })
-        }
+        }.drop(skip).take(limit)
     }
 
     private fun getSessionState(

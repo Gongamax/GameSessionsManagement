@@ -44,9 +44,13 @@ class SessionRouter(
                 request.query(GAME_ID)?.toUInt() ?: return@execStart Response(Status.BAD_REQUEST).jsonResponse(
                     MessageResponse("Game id not found"),
                 )
+            val limit = request.query("limit")?.toInt() ?: DEFAULT_LIMIT
+            val skip = request.query("skip")?.toInt() ?: DEFAULT_SKIP
+            if(limit < 0 || skip < 0)
+                return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Limit or skip is negative"))
             val date = request.query(DATE)?.toLocalDateTime()
             val state = request.query(STATE)
-            return when (val res = services.getSessions(gid, date, state?.toSessionState(), pid)) {
+            return when (val res = services.getSessions(gid, date, state?.toSessionState(), pid,limit,skip)) {
                 is Failure ->
                     when (res.value) {
                         SessionsGetError.GameNotFound -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Game not found"))
@@ -159,6 +163,9 @@ class SessionRouter(
         private const val GAME_ID = "gid"
         private const val DATE = "date"
         private const val STATE = "state"
+
+        private const val DEFAULT_SKIP = 0
+        private const val DEFAULT_LIMIT = 10
 
         private fun String.toLocalDateTime() = LocalDateTime.parse(this)
 

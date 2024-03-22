@@ -60,7 +60,7 @@ class SessionTests {
         // Act
         db.gameDB.createGame("game1", "game1", GENRES)
         val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
-        val sessions = db.sessionDB.getSessions(gid.toUInt(), null, null, null)
+        val sessions = db.sessionDB.getSessions(gid.toUInt(), null, null, null, DEFAULT_LIMIT, DEFAULT_SKIP)
 
         // Assert
         assertEquals(1, sessions.size)
@@ -94,5 +94,8 @@ class SessionTests {
 
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
+        private const val DEFAULT_LIMIT = 10
+        private const val DEFAULT_SKIP = 0
+
     }
 }

@@ -20,15 +20,15 @@ inline fun execStart(
         logRequest(request)
         block()
     } catch (error: SerializationException) {
-        Response(Status.BAD_REQUEST).body("Invalid request")
+        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
     } catch (error: ExecuteSqlException) {
-        Response(Status.INTERNAL_SERVER_ERROR).body(error.errorInfo)
+        Response(Status.INTERNAL_SERVER_ERROR).jsonResponse(MessageResponse(error.errorInfo))
     } catch (e: SQLException) {
-        Response(Status.INTERNAL_SERVER_ERROR).body("SQL internal error")
+        Response(Status.INTERNAL_SERVER_ERROR).jsonResponse(MessageResponse("SQL internal error"))
     } catch (error: NumberFormatException) {
-        Response(Status.BAD_REQUEST).body("Invalid request, invalid number format")
+        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request, invalid number format"))
     } catch (error: IllegalArgumentException) {
-        Response(Status.BAD_REQUEST).body(error.message ?: "Invalid request")
+        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse(error.message ?: "Invalid request"))
     } catch (error: NoSuchElementException) {
         Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Not found"))
     } catch (error: IllegalStateException) {

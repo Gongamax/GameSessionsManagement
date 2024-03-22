@@ -70,6 +70,8 @@ class SessionJDBC(
         date: LocalDateTime?,
         state: SessionState?,
         pid: UInt?,
+        limit: Int,
+        skip: Int,
     ): List<Session> =
         dataSource.connection.execute("Sessions not found") { con ->
             val query =
@@ -78,10 +80,13 @@ class SessionJDBC(
                 WHERE game = ?
                 ${if (date != null) "AND date = ?" else ""}
                 ${if (pid != null) "AND id IN (SELECT session_id FROM Session_Player WHERE player_id = ?)" else ""}
+                ${"LIMIT ? OFFSET ?"}
                 """.trimIndent()
             val stm =
                 con.prepareStatement(query).apply {
                     setInt(1, gid.toInt())
+                    setInt(2, limit)
+                    setInt(3, skip)
                     var index = 2
                     if (date != null) {
                         setTimestamp(index++, Timestamp.valueOf(date.toJavaLocalDateTime()))

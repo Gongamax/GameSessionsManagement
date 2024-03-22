@@ -4,6 +4,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
 import org.http4k.core.Request
+import org.http4k.core.Status
 import org.junit.Test
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
@@ -43,7 +44,7 @@ class PlayerTests {
         val pid = response.header("Location")?.split("/")?.last()
         assertEquals(expected = "/player/$pid", actual = response.header("Location"))
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 201, actual = response.status.code)
+        assertEquals(expected = Status.CREATED, actual = response.status)
         assertEquals(expected = "Player create: $pid", actual = content.message)
     }
 
@@ -56,7 +57,7 @@ class PlayerTests {
         val response = playerRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 400, actual = response.status.code)
+        assertEquals(expected = Status.CONFLICT, actual = response.status)
         assertEquals(expected = "Email already exists", actual = content.message)
     }
 
@@ -69,7 +70,7 @@ class PlayerTests {
         val response = playerRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<PlayerDTO>(response.bodyString())
-        assertEquals(expected = 200, actual = response.status.code)
+        assertEquals(expected = Status.OK, actual = response.status)
         assertEquals(expected = NAME, actual = content.name)
         assertEquals(expected = EMAIL, actual = content.email)
     }
@@ -82,7 +83,7 @@ class PlayerTests {
         val response = playerRouter.routes(request)
         // Assert
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = 404, actual = response.status.code)
+        assertEquals(expected = Status.NOT_FOUND, actual = response.status)
         assertEquals(expected = "Player not found", actual = content.message)
     }
 }

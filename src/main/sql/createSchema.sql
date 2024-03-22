@@ -14,7 +14,7 @@ create table Player
 create table Game
 (
     id        serial unique primary key,
-    name      varchar(255) not null,
+    name      varchar(255) unique not null,
     developer varchar(255) not null,
     genres    integer[]    not null -- guarda o número de ordem dos géneros
 );
