@@ -6,8 +6,6 @@ import pt.isel.ls.utils.Either
 sealed class GameCreationError {
     data object NameAlreadyExists : GameCreationError()
     data object InvalidGenre : GameCreationError()
-
-    data object UnknownError : GameCreationError()
 }
 
 typealias GameCreationResult = Either<GameCreationError, UInt>

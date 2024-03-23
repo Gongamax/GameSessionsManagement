@@ -19,10 +19,7 @@ class AppServer(
     private val webApi = AppWebApi(service)
 
     fun start() {
-        val app =
-            routes(
-                API_PATH bind webApi.httpHandler,
-            )
+        val app = routes(API_PATH bind webApi.httpHandler)
         try {
             val jettyServer = app.asServer(Jetty(port)).start()
             logger.info("server started listening on port $port")
@@ -37,7 +34,7 @@ class AppServer(
     // TODO: Think about having a stop function, probably useful for testing
 
     companion object {
-        private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.AppServer")
+        private val logger = LoggerFactory.getLogger(AppServer::class.java)
         private const val API_PATH = "api"
     }
 }

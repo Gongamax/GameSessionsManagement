@@ -7,15 +7,13 @@ import org.http4k.core.Request
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.routing.bind
-import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
-import pt.isel.ls.sessions.http.util.Uris
-import pt.isel.ls.sessions.http.util.execStart
-import pt.isel.ls.sessions.http.util.jsonResponse
+import pt.isel.ls.sessions.http.routes.bearerTokenOrThrow
+import pt.isel.ls.sessions.http.util.*
 import pt.isel.ls.sessions.services.player.PlayerCreationError
 import pt.isel.ls.sessions.services.player.PlayerService
 import pt.isel.ls.utils.Failure
@@ -34,9 +32,8 @@ class PlayerRouter(private val services: PlayerService) : Router {
             return when (val res = services.createPlayer(player.name, player.email)) {
                 is Failure ->
                     when (res.value) {
-                        PlayerCreationError.EmailExists -> Response(Status.CONFLICT).jsonResponse(MessageResponse("Email already exists"))
-
-                        PlayerCreationError.InvalidEmail -> Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid email"))
+                        PlayerCreationError.EmailExists -> Problem.emailAlreadyExists(request.uri, player.email)
+                        PlayerCreationError.InvalidEmail -> Problem.invalidEmail(request.uri)
                     }
 
                 is Success ->
@@ -47,25 +44,17 @@ class PlayerRouter(private val services: PlayerService) : Router {
 
     private fun getDetailsPlayer(request: Request): Response =
         execStart(request) {
-            val numberPlayer = request.path("pid")?.toUInt()
-            return when {
-                numberPlayer == null -> Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid pid "))
-
-                else ->
-                    when (val player = services.getDetailsPlayer(numberPlayer)) {
-                        is Failure -> Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Player not found"))
-                        is Success ->
-                            Response(Status.OK).jsonResponse(
-                                PlayerDTO(player.value.name, player.value.email.value),
-                            )
-                    }
+            val token = request.bearerTokenOrThrow()
+            val numberPlayer = request.getPathSegments(PLAYER_ID).first().toUInt()
+            return when (val player = services.getDetailsPlayer(numberPlayer)) {
+                is Failure -> Problem.playerNotFound(request.uri, numberPlayer)
+                is Success -> Response(Status.OK).jsonResponse(PlayerDTO(player.value.name, player.value.email.value))
             }
         }
 
     companion object {
-        private const val DEFAULT_SKIP = 0
-        private const val DEFAULT_LIMIT = 10
-        private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.routes.player.PlayerRouter")
+        private val logger = LoggerFactory.getLogger(PlayerRouter::class.java)
+        private const val PLAYER_ID = "pid"
 
         fun routes(services: PlayerService) = PlayerRouter(services).routes
     }

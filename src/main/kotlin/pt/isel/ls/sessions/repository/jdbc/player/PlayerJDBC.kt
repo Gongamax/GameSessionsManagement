@@ -28,8 +28,7 @@ class PlayerJDBC(
                     setString(2, email)
                     setObject(3, token)
                 }
-            val affectedRows = stm.executeUpdate()
-            if (affectedRows == 0) {
+            if (stm.executeUpdate() == 0) {
                 throw SQLException("Creating player failed, no rows affected.")
             }
             val generatedKeys = stm.generatedKeys

@@ -1,11 +1,11 @@
 package pt.isel.ls.sessions.repository.jdbc.game
 
-import org.eclipse.jetty.server.ConnectionLimit
 import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.GameRepository
 import pt.isel.ls.sessions.repository.jdbc.execute
 import java.sql.ResultSet
+import java.sql.SQLException
 import java.sql.Statement
 import javax.sql.DataSource
 
@@ -16,7 +16,7 @@ class GameJDBC(
         name: String,
         developer: String,
         genres: List<Genres>,
-    ): UInt? =
+    ): UInt =
         dataSource.connection.execute("Failed to create game") { con ->
             val query = "INSERT INTO Game (name, developer, genres) VALUES (?, ?, ?)".trimIndent()
             val genreOrdinals = getGenreOrdinals(genres)
@@ -27,17 +27,21 @@ class GameJDBC(
                     setArray(3, con.createArrayOf("integer", genreOrdinals))
                 }
             if (stm.executeUpdate() == 0) {
-                return null
+                throw SQLException("Failed to create game")
             }
             val generatedKeys = stm.generatedKeys
-            return@execute if (generatedKeys.next()) generatedKeys.getInt(1).toUInt() else null
+            return@execute if (generatedKeys.next()) {
+                generatedKeys.getInt(1).toUInt()
+            } else {
+                throw SQLException("Failed to create game")
+            }
         }
 
     override fun getGames(
         genres: List<Genres>,
         developer: String,
         limit: Int,
-        skip: Int
+        skip: Int,
     ): List<Game> =
         dataSource.connection.execute("Failed to get games") { con ->
             val query = "SELECT * FROM Game WHERE developer = ? AND genres @> ? LIMIT ? OFFSET ?"
@@ -87,11 +91,11 @@ class GameJDBC(
         }
 
     override fun getGameByName(name: String): Boolean =
-        dataSource.connection.execute("Failed to get game"){con ->
+        dataSource.connection.execute("Failed to get game") { con ->
             val query = "SELECT name FROM GAME where name = ?"
             val stm =
                 con.prepareStatement(query).apply {
-                    setString(1,name)
+                    setString(1, name)
                 }
             val rs = stm.executeQuery()
             return@execute rs.next()

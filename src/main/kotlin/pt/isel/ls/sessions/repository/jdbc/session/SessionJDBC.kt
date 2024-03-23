@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package pt.isel.ls.sessions.repository.jdbc.session
 
 import kotlinx.datetime.*
