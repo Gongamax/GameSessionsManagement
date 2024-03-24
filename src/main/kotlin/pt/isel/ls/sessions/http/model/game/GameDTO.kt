@@ -4,6 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GameDTO(
+    val gid: UInt,
     val name: String,
     val developer: String,
     val genres: List<String>,

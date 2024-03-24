@@ -4,6 +4,7 @@ import kotlinx.serialization.SerializationException
 import org.http4k.core.Request
 import org.http4k.core.Response
 import org.slf4j.LoggerFactory
+import pt.isel.ls.sessions.http.routes.utils.TokenNotFoundException
 import pt.isel.ls.sessions.repository.jdbc.ExecuteSqlException
 import java.sql.SQLException
 
@@ -24,6 +25,8 @@ inline fun execStart(
         Problem.internalServerError(request.uri, "SQL internal error")
     } catch (error: NumberFormatException) {
         Problem.invalidRequest(request.uri, "Invalid number format")
+    } catch (error: TokenNotFoundException) {
+        Problem.tokenNotFound(request.uri, "Unauthorized, token not found")
     } catch (error: IllegalArgumentException) {
         Problem.invalidRequest(request.uri, error.message ?: "Invalid request")
     } catch (error: NoSuchElementException) {

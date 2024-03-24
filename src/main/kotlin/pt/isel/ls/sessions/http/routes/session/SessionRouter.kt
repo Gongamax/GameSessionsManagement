@@ -9,6 +9,7 @@ import org.http4k.core.Status
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import pt.isel.ls.sessions.domain.session.Session
 import pt.isel.ls.sessions.domain.session.SessionState
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
@@ -38,18 +39,15 @@ class SessionRouter(
     private fun getSessions(request: Request): Response =
         execStart(request) {
             val pid = request.query(PLAYER_ID)?.toUInt()
-            val gid =
-                request.query(GAME_ID)?.toUInt() ?: return@execStart Response(Status.BAD_REQUEST).jsonResponse(
-                    MessageResponse("Game id not found"),
-                )
-            val limit = request.query("limit")?.toInt() ?: DEFAULT_LIMIT
-            val skip = request.query("skip")?.toInt() ?: DEFAULT_SKIP
+            val gid = request.query(GAME_ID)?.toUInt() ?: return@execStart Problem.gameNotFound(request.uri)
+            val limit = request.query(LIMIT)?.toInt() ?: DEFAULT_LIMIT
+            val skip = request.query(SKIP)?.toInt() ?: DEFAULT_SKIP
             if (limit < 0 || skip < 0) {
-                return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Limit or skip is negative"))
+                return@execStart Problem.invalidSkipOrLimit(request.uri)
             }
             val date = request.query(DATE)?.toLocalDateTime()
-            val state = request.query(STATE)
-            return when (val res = services.getSessions(gid, date, state?.toSessionState(), pid, limit, skip)) {
+            val state = request.query(STATE)?.toSessionState()
+            return when (val res = services.getSessions(gid, date, state, pid, limit, skip)) {
                 is Failure ->
                     when (res.value) {
                         SessionsGetError.GameNotFound -> Problem.gameNotFound(request.uri)
@@ -58,40 +56,17 @@ class SessionRouter(
                         SessionsGetError.PlayerNotFound -> Problem.playerNotFound(request.uri, pid)
                     }
 
-                is Success ->
-                    Response(Status.OK).jsonResponse(
-                        res.value.content.map {
-                            SessionDTO(
-                                it.sid,
-                                it.associatedPlayers.size,
-                                it.date,
-                                it.gid,
-                                it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
-                                it.capacity,
-                            )
-                        },
-                    )
+                is Success -> Response(Status.OK).jsonResponse(res.value.map { s -> s.toSessionDTO() })
             }
         }
 
     private fun getSession(request: Request): Response =
         execStart(request) {
-            val token = request.bearerTokenOrThrow()
             val sid = request.getPathSegments(SESSION_ID).first().toUInt()
             return when (val res = services.getSession(sid)) {
                 is Failure -> Problem.sessionNotFound(request.uri, sid)
 
-                is Success ->
-                    Response(Status.OK).jsonResponse(
-                        SessionDTO(
-                            res.value.sid,
-                            res.value.numberOfPlayers,
-                            res.value.date,
-                            res.value.gid,
-                            res.value.associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
-                            res.value.capacity,
-                        ),
-                    )
+                is Success -> Response(Status.OK).jsonResponse(res.value.toSessionDTO())
             }
         }
 
@@ -139,6 +114,8 @@ class SessionRouter(
         private const val GAME_ID = "gid"
         private const val DATE = "date"
         private const val STATE = "state"
+        private const val LIMIT = "limit"
+        private const val SKIP = "skip"
 
         private const val DEFAULT_SKIP = 0
         private const val DEFAULT_LIMIT = 10
@@ -146,5 +123,15 @@ class SessionRouter(
         private fun String.toLocalDateTime() = LocalDateTime.parse(this)
 
         private fun String.toSessionState() = SessionState.valueOf(this)
+
+        private fun Session.toSessionDTO() =
+            SessionDTO(
+                sid,
+                associatedPlayers.size,
+                date,
+                gid,
+                associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
+                capacity,
+            )
     }
 }
