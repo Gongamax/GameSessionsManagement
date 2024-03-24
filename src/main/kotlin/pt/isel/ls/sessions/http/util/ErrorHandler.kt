@@ -3,15 +3,12 @@ package pt.isel.ls.sessions.http.util
 import kotlinx.serialization.SerializationException
 import org.http4k.core.Request
 import org.http4k.core.Response
-import org.http4k.core.Status
 import org.slf4j.LoggerFactory
-import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.repository.jdbc.ExecuteSqlException
 import java.sql.SQLException
 
 private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.util.ErrorHandler")
 
-// TODO: Improve error handling
 inline fun execStart(
     request: Request,
     block: () -> Response,
@@ -20,21 +17,21 @@ inline fun execStart(
         logRequest(request)
         block()
     } catch (error: SerializationException) {
-        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
+        Problem.invalidRequest(request.uri)
     } catch (error: ExecuteSqlException) {
-        Response(Status.INTERNAL_SERVER_ERROR).jsonResponse(MessageResponse(error.errorInfo))
+        Problem.internalServerError(request.uri, error.errorInfo)
     } catch (e: SQLException) {
-        Response(Status.INTERNAL_SERVER_ERROR).jsonResponse(MessageResponse("SQL internal error"))
+        Problem.internalServerError(request.uri, "SQL internal error")
     } catch (error: NumberFormatException) {
-        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request, invalid number format"))
+        Problem.invalidRequest(request.uri, "Invalid number format")
     } catch (error: IllegalArgumentException) {
-        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse(error.message ?: "Invalid request"))
+        Problem.invalidRequest(request.uri, error.message ?: "Invalid request")
     } catch (error: NoSuchElementException) {
-        Response(Status.NOT_FOUND).jsonResponse(MessageResponse("Not found"))
+        Problem.notFound(request.uri)
     } catch (error: IllegalStateException) {
-        Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid request"))
+        Problem.invalidRequest(request.uri)
     } catch (error: Exception) {
-        Response(Status.INTERNAL_SERVER_ERROR).jsonResponse(MessageResponse("Internal server error"))
+        Problem.internalServerError(request.uri, "Internal server error")
     }
 
 fun logRequest(request: Request) {

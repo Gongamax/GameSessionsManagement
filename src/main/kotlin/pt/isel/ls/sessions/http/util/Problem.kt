@@ -24,6 +24,7 @@ class Problem(
         private val invalidState = Uri.of(BASE_URL + "invalid-state")
         private val invalidCapacity = Uri.of(BASE_URL + "invalid-capacity")
         private val invalidEmail = Uri.of(BASE_URL + "invalid-email")
+        private val invalidRequest = Uri.of(BASE_URL + "invalid-request")
         //endregion
 
         //region Conflict, Already Exists
@@ -32,10 +33,12 @@ class Problem(
         private val sessionIsFull = Uri.of(BASE_URL + "session-is-full")
         private val gameNameAlreadyExists = Uri.of(BASE_URL + "game-name-already-exists")
         private val emailAlreadyExists = Uri.of(BASE_URL + "email-already-exists")
+        private val internalServerError = Uri.of(BASE_URL + "internal-server-error")
 
         //endregion
 
         //region Not Found
+        private val notFound = Uri.of(BASE_URL + "not-found")
         private val gameNotFound = Uri.of(BASE_URL + "game-not-found")
         private val playerNotFound = Uri.of(BASE_URL + "player-not-found")
         private val sessionNotFound = Uri.of(BASE_URL + "session-not-found")
@@ -188,6 +191,39 @@ class Problem(
                 detail = "Email is invalid",
                 instance = instance,
             ).toResponse()
+
+        fun invalidRequest(
+            uri: Uri,
+            detail: String = "Invalid request",
+        ) = Problem(
+            typeUri = invalidRequest,
+            title = "Invalid Request",
+            status = Status.BAD_REQUEST,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun internalServerError(
+            uri: Uri,
+            detail: String = "Internal server error",
+        ) = Problem(
+            typeUri = internalServerError,
+            title = "Internal Server Error",
+            status = Status.INTERNAL_SERVER_ERROR,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun notFound(
+            uri: Uri,
+            detail: String = "Not found",
+        ) = Problem(
+            typeUri = notFound,
+            title = "Not Found",
+            status = Status.NOT_FOUND,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
     }
 }
 
