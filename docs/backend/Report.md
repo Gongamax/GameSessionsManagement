@@ -216,7 +216,7 @@ curl --location --request GET 'http://localhost:8080/api/game/1' --header 'Autho
 
 ### POST /api/game/{gid}
 
-**Description:** Updates the specified game. The game is updated only if it already exists.
+**Description:** Create a new game.
 
 **Request:**
 
@@ -245,7 +245,7 @@ curl --location --request POST 'http://localhost:8080/api/game/1' --header 'Cont
 
 **Success Response:**
 
-- **Status Code:** 204 No Content
+- **Status Code:** 201 Created
 
 **Error Responses:**
 
@@ -315,7 +315,7 @@ curl --location --request GET 'http://localhost:8080/api/session/1' --header 'Au
 - **Content Type:** application/json
 - **Schema:**
 
-````json
+````
   {
   "sid": Integer,
   "numPlayers": Integer,
@@ -334,7 +334,7 @@ curl --location --request GET 'http://localhost:8080/api/session/1' --header 'Au
 
 ### POST /api/session/{sid}
 
-**Description:** Updates the specified session. The session is updated only if it already exists.
+**Description:** Create a new session.
 
 **Request:**
 
@@ -363,7 +363,7 @@ curl --location --request POST 'http://localhost:8080/api/session/1' --header 'C
 
 **Success Response:**
 
-- **Status Code:** 204 No Content
+- **Status Code:** 201 Created
 
 **Error Responses:**
 
@@ -429,8 +429,8 @@ of the data access layer.
 A centralized error handling function is responsible for managing exceptions and returning corresponding HTTP responses.
 The execStart function is specifically used to intercept and manage exceptions across all router functions. When
 errors occur at the service layer, they are conveyed to the router as a Failure, which is a variant of the Either type.
-All errors adhere to the Problem Details for HTTP APIs as outlined in RFC 7807, ensuring a standardized approach to
-error reporting.
+All errors adhere to the Problem Details for HTTP APIs as outlined
+in [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807), ensuring a standardized approach to error reporting.
 
 ## Critical Evaluation
 

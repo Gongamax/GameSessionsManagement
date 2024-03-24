@@ -17,7 +17,6 @@ import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.bearerTokenOrThrow
 import pt.isel.ls.sessions.http.util.*
-import pt.isel.ls.sessions.http.util.getPathSegments
 import pt.isel.ls.sessions.services.session.SessionAddPlayerError
 import pt.isel.ls.sessions.services.session.SessionCreationError
 import pt.isel.ls.sessions.services.session.SessionService
@@ -36,41 +35,44 @@ class SessionRouter(
             Uris.Sessions.ADD_PLAYER bind Method.PUT to ::addPlayerToSession,
         )
 
-    private fun getSessions(request: Request): Response = execStart(request) {
-        val pid = request.query(PLAYER_ID)?.toUInt()
-        val gid = request.query(GAME_ID)?.toUInt() ?: return@execStart Response(Status.BAD_REQUEST).jsonResponse(
-            MessageResponse("Game id not found")
-        )
-        val limit = request.query("limit")?.toInt() ?: DEFAULT_LIMIT
-        val skip = request.query("skip")?.toInt() ?: DEFAULT_SKIP
-        if (limit < 0 || skip < 0)
-            return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Limit or skip is negative"))
-        val date = request.query(DATE)?.toLocalDateTime()
-        val state = request.query(STATE)
-        return when (val res = services.getSessions(gid, date, state?.toSessionState(), pid, limit, skip)) {
-            is Failure ->
-                when (res.value) {
-                    SessionsGetError.GameNotFound -> Problem.gameNotFound(request.uri)
-                    SessionsGetError.InvalidDate -> Problem.invalidDate(request.uri)
-                    SessionsGetError.InvalidState -> Problem.invalidState(request.uri)
-                    SessionsGetError.PlayerNotFound -> Problem.playerNotFound(request.uri, pid)
-                }
-
-            is Success ->
-                Response(Status.OK).jsonResponse(
-                    res.value.map {
-                        SessionDTO(
-                            it.sid,
-                            it.associatedPlayers.size,
-                            it.date,
-                            it.gid,
-                            it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
-                            it.capacity,
-                        )
-                    },
+    private fun getSessions(request: Request): Response =
+        execStart(request) {
+            val pid = request.query(PLAYER_ID)?.toUInt()
+            val gid =
+                request.query(GAME_ID)?.toUInt() ?: return@execStart Response(Status.BAD_REQUEST).jsonResponse(
+                    MessageResponse("Game id not found"),
                 )
+            val limit = request.query("limit")?.toInt() ?: DEFAULT_LIMIT
+            val skip = request.query("skip")?.toInt() ?: DEFAULT_SKIP
+            if (limit < 0 || skip < 0) {
+                return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Limit or skip is negative"))
+            }
+            val date = request.query(DATE)?.toLocalDateTime()
+            val state = request.query(STATE)
+            return when (val res = services.getSessions(gid, date, state?.toSessionState(), pid, limit, skip)) {
+                is Failure ->
+                    when (res.value) {
+                        SessionsGetError.GameNotFound -> Problem.gameNotFound(request.uri)
+                        SessionsGetError.InvalidDate -> Problem.invalidDate(request.uri)
+                        SessionsGetError.InvalidState -> Problem.invalidState(request.uri)
+                        SessionsGetError.PlayerNotFound -> Problem.playerNotFound(request.uri, pid)
+                    }
+
+                is Success ->
+                    Response(Status.OK).jsonResponse(
+                        res.value.map {
+                            SessionDTO(
+                                it.sid,
+                                it.associatedPlayers.size,
+                                it.date,
+                                it.gid,
+                                it.associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
+                                it.capacity,
+                            )
+                        },
+                    )
+            }
         }
-    }
 
     private fun getSession(request: Request): Response =
         execStart(request) {
@@ -125,7 +127,7 @@ class SessionRouter(
                         SessionAddPlayerError.PlayerAlreadyInSession -> Problem.playerAlreadyInSession(request.uri)
                     }
 
-                is Success -> Response(Status.OK).jsonResponse(MessageResponse("Player added to session"))
+                is Success -> Response(Status.NO_CONTENT).jsonResponse(MessageResponse("Player added to session"))
             }
         }
 
