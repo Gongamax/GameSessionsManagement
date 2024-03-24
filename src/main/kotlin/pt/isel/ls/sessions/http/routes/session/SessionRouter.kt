@@ -15,7 +15,7 @@ import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
-import pt.isel.ls.sessions.http.routes.bearerTokenOrThrow
+import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
 import pt.isel.ls.sessions.http.util.*
 import pt.isel.ls.sessions.services.session.SessionAddPlayerError
 import pt.isel.ls.sessions.services.session.SessionCreationError
@@ -60,7 +60,7 @@ class SessionRouter(
 
                 is Success ->
                     Response(Status.OK).jsonResponse(
-                        res.value.map {
+                        res.value.content.map {
                             SessionDTO(
                                 it.sid,
                                 it.associatedPlayers.size,

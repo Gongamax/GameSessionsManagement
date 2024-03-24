@@ -11,7 +11,7 @@ class AppService(
     private val clock: Clock,
 ) {
     val playerService = PlayerService(baseData.playerDB)
-    val gameService = GameService(baseData)
+    val gameService = GameService(baseData.gameDB)
     val sessionService = SessionService(baseData.sessionDB, baseData.playerDB, baseData.gameDB, clock)
 
     fun reset() {

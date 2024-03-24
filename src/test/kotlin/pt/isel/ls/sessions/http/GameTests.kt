@@ -9,7 +9,6 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import pt.isel.ls.sessions.http.model.game.GameDTO
 import pt.isel.ls.sessions.http.model.game.GamesInputModel
-import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.game.GameRouter
 import pt.isel.ls.sessions.http.util.APPLICATION_JSON
@@ -92,7 +91,6 @@ class GameTests {
         assertTrue { content.message.isNotBlank() }
         assertTrue { content.message == "Invalid genre, please check the genre name" }
     }
-
 
     @Test
     fun `get game by id with success`() {
@@ -267,7 +265,7 @@ class GameTests {
         assertFalse { content.contains(games[0]) }
         assertFalse { content.contains(games[1]) }
         assertTrue { content.contains(games[2]) }
-        assertTrue() { content.contains(games[3]) }
+        assertTrue { content.contains(games[3]) }
     }
 
     @Test
@@ -337,7 +335,7 @@ class GameTests {
     companion object {
         private val clock = Clock.System
         private val mem = AppMemoryDB(clock)
-        private val service = GameService(mem)
+        private val service = GameService(mem.gameDB)
         private val router = GameRouter(service)
         private val game = GameDTO("cod", "developer", listOf("Action", "Shooter"))
         private val gameInvalidGenre = GameDTO("cod", "developer", listOf("multiplayer", "sport", "Action"))

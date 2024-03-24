@@ -1,16 +1,15 @@
 package pt.isel.ls.sessions.services
 
 import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertTrue
 import kotlinx.datetime.Clock
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.sessions.services.game.GamesGetError
 import pt.isel.ls.utils.Either
 import pt.isel.ls.utils.Failure
-import pt.isel.ls.utils.Success
 import kotlin.test.AfterTest
 import kotlin.test.Test
+import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 class GameTests {
@@ -98,8 +97,10 @@ class GameTests {
                 is Either.Right -> value.value
             }
         // Assert
-        assertEquals(1, result.size)
-        assertEquals(NAME, result[0].name)
+        assertEquals(1, result.content.size)
+        assertNotNull(result.firstPage)
+        println(result)
+        assertEquals(NAME, result.content.first().name)
     }
 
     @Test
@@ -110,7 +111,7 @@ class GameTests {
         val result = gameService.getGames(listOf("rpg", "Action", "Unknown"), DEVELOPER, 10, 0)
         println(result)
         // Assert
-       assertEquals(Failure(GamesGetError.GenreNotFound), result)
+        assertEquals(Failure(GamesGetError.GenreNotFound), result)
     }
 
     @Test
@@ -123,11 +124,10 @@ class GameTests {
         assertEquals(Failure(GamesGetError.DeveloperNotFound), result)
     }
 
-
     private companion object {
         private val clock: Clock = Clock.System
         val appMemoryDB = AppMemoryDB(clock)
-        val gameService = GameService(appMemoryDB)
+        val gameService = GameService(appMemoryDB.gameDB)
         const val NAME = "name"
         const val DEVELOPER = "developer"
         val genres = listOf("rpg", "Action")

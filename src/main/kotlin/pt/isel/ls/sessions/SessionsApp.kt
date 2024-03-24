@@ -11,6 +11,7 @@ fun main() {
     val clock = Clock.System
     val jdbcURL: String? = System.getenv(JDBC_DATABASE_URL_ENV)
     val database = jdbcURL?.let { AppJdbcDB(jdbcURL, clock) } ?: AppMemoryDB(clock)
+    println("Using database: ${database.javaClass.simpleName}")
     val server = AppServer(DEFAULT_PORT, database, clock)
     server.start()
 }

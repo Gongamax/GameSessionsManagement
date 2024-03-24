@@ -1,6 +1,8 @@
-package pt.isel.ls.sessions.http.routes
+package pt.isel.ls.sessions.http.routes.utils
 
 import org.http4k.core.Request
+
+data class NotAuthorized(override val message: String) : Exception(message)
 
 private fun Request.getBearToken(): String? {
     val authHeader = header("Authorization") ?: return null
@@ -11,7 +13,4 @@ private fun Request.getBearToken(): String? {
     return parts[1]
 }
 
-fun Request.bearerTokenOrThrow(): String =
-    getBearToken() ?: throw IllegalArgumentException("No bearer token found")
-
-fun Request.authenticated(): Boolean = getBearToken() != null
+fun Request.bearerTokenOrThrow(): String = getBearToken() ?: throw NotAuthorized("No bearer token found")

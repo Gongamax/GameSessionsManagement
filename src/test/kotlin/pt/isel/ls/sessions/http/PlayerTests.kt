@@ -9,6 +9,7 @@ import org.junit.Test
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
+import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
 import pt.isel.ls.sessions.services.player.PlayerService
@@ -56,9 +57,9 @@ class PlayerTests {
         // Act
         val response = playerRouter.routes(request)
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         assertEquals(expected = Status.CONFLICT, actual = response.status)
-        assertEquals(expected = "Email already exists", actual = content.message)
+        assertEquals(expected = "Player with given email $EMAIL already exists", actual = content.detail)
     }
 
     @Test

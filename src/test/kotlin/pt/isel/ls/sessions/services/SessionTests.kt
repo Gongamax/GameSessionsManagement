@@ -86,11 +86,11 @@ class SessionTests {
 
         // Assert
         assertNotNull(sessions)
-        assertEquals(1, sessions.size)
-        assertEquals(sid, sessions[0].sid)
-        assertEquals(capacity, sessions[0].capacity)
-        assertEquals(gid, sessions[0].gid)
-        assertEquals(date, sessions[0].date)
+        assertEquals(1, sessions.content.size)
+        assertEquals(sid, sessions.content[0].sid)
+        assertEquals(capacity, sessions.content[0].capacity)
+        assertEquals(gid, sessions.content[0].gid)
+        assertEquals(date, sessions.content[0].date)
     }
 
     @Test
@@ -117,11 +117,11 @@ class SessionTests {
 
         // Assert
         assertNotNull(sessions)
-        assertEquals(1, sessions.size)
-        assertEquals(sid, sessions[0].sid)
-        assertEquals(capacity, sessions[0].capacity)
-        assertEquals(gid, sessions[0].gid)
-        assertEquals(date, sessions[0].date)
+        assertEquals(1, sessions.content.size)
+        assertEquals(sid, sessions.content[0].sid)
+        assertEquals(capacity, sessions.content[0].capacity)
+        assertEquals(gid, sessions.content[0].gid)
+        assertEquals(date, sessions.content[0].date)
     }
 
     @Test
@@ -159,7 +159,7 @@ class SessionTests {
 
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
-        private val DEFAULT_LIMIT = 10
-        private val DEFAULT_SKIP = 0
+        private const val DEFAULT_LIMIT = 10
+        private const val DEFAULT_SKIP = 0
     }
 }
