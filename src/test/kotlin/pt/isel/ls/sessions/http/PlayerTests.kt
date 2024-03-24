@@ -46,7 +46,7 @@ class PlayerTests {
         assertEquals(expected = "/player/$pid", actual = response.header("Location"))
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
         assertEquals(expected = Status.CREATED, actual = response.status)
-        assertEquals(expected = "Player create: $pid", actual = content.message)
+        assertEquals(expected = "Player created: $pid", actual = content.message)
     }
 
     @Test
@@ -56,21 +56,24 @@ class PlayerTests {
         val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, EMAIL)))
         // Act
         val response = playerRouter.routes(request)
-        // Assert
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
         assertEquals(expected = Status.CONFLICT, actual = response.status)
-        assertEquals(expected = "Player with given email $EMAIL already exists", actual = content.detail)
+        assertTrue(content.detail.contains("Player with given email Alice@gmail.com already exists"))
+        assertTrue(content.type.equals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists"))
+        assertTrue(content.title.equals("Email already exists"))
+
     }
 
     @Test
     fun `getDetailsPlayer return response with a player`() {
         // Arrange
         createPlayer()
-        val request = Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "1"))
+        val request = Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "1")).header("Authorization", "Bearer token")
         // Act
         val response = playerRouter.routes(request)
-        // Assert
         val content = Json.decodeFromString<PlayerDTO>(response.bodyString())
+        // Assert
         assertEquals(expected = Status.OK, actual = response.status)
         assertEquals(expected = NAME, actual = content.name)
         assertEquals(expected = EMAIL, actual = content.email)
@@ -79,12 +82,15 @@ class PlayerTests {
     @Test
     fun `getDetailsPlayer return response with a player not found`() {
         // Arrange
-        val request = Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "99"))
+        val request = Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "99")).header("Authorization", "Bearer token")
         // Act
         val response = playerRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        println(content)
         assertEquals(expected = Status.NOT_FOUND, actual = response.status)
-        assertEquals(expected = "Player not found", actual = content.message)
+        assertTrue(content.detail.contains("Player with given id: 99 not found"))
+        assertTrue(content.type.equals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found"))
+        assertTrue(content.title.equals("Player not found"))
     }
 }
