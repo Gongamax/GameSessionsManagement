@@ -43,9 +43,7 @@ We highlight the following aspects of this model:
 
 ### Open-API Specification ###
 
-(_include a link to the YAML file containing the Open-API Specification_)
-
-In our [Open-API specification](), we highlight the following aspects:
+In our [Open-API specification](http-api.yaml), we highlight the following aspects:
 
 * The API provides endpoints for managing players, games, and sessions.
 * All GET operations that return a sequence support paging.

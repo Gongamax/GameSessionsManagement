@@ -1,0 +1,493 @@
+openapi: "3.1.0"
+info:
+  title: Api documentation
+  version: 0.1.0
+paths:
+  /player:
+    post:
+      operationId: CreatePlayer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+            example:
+              player:
+                summary: Example of a player
+                value:
+                  name: Player0
+                  email: player0@gmail.com
+      responses:
+        '200':
+          description: Player created with success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              value:
+                message: "Player created: $pid"
+        '400':
+          description: Player creation fails because email is invalid
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-email
+                title: "Invalid email"
+                status: 404
+                detail: "Email is invalid"
+                instance: http://localhost:1904/api/player
+        '409':
+          description: Player creation fails because email already exists
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists
+                title: "Email already exists"
+                status: 409
+                detail: "Player with given email $email already exists"
+                instance: http://localhost:1904/api/player
+  /player/{pid}:
+    get:
+      operationId: GetDetailsPlayer
+      parameters:
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: The player details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  email:
+                    type: string
+              value:
+                name: Player0
+                email: player0@gmail.com
+        '404':
+          description: Player not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found
+                title: "Player not found"
+                status: 404
+                detail: "Player with given id: $id not found"
+                instance: http://localhost:1904/api/player/{pid}
+  /game:
+    get:
+      operationId: GetGames
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          required: false
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                genres:
+                  type: array
+                  items:
+                    type: string
+                developer:
+                  type: string
+            example:
+              body:
+                value:
+                  genres: [ "Adventure", "Rpg" ]
+                  developer: "Developer0"
+      responses:
+        '200':
+          description: Games filtered by genres and developer succeeds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    developer:
+                      type: string
+                    genres:
+                      type: array
+                      items:
+                        type: string
+              examples:
+                found:
+                  value:
+                    games: [
+                      {
+                        name: "game1",
+                        developer: "developer0",
+                        genres: [ "Adventure", "Rpg", "Action" ]
+                      },
+                      name: "game2",
+                      developer: "developer0",
+                      genres: [ "Adventure", "Rpg" ]
+                      }
+                    ]
+                notFound:
+                  value:
+                    games: [ ]
+        '404':
+          description: genres or developer not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                genres-not-found:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found
+                    title: "Genre not found"
+                    status: 404
+                    detail: "Genre or genres not found"
+                    instance: http://localhost:1904/api/game
+                developer-not-found:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found
+                    title: "Developer not found",
+                    status: 404,
+                    detail: "Developer not found",
+                    instance: http://localhost:1904/api/game
+        '400':
+          description: Bad request for invalid parameters or invalid request body
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                invalid-arguments:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-parameters
+                    title: "Invalid parameters"
+                    status: 400
+                    detail: ""
+                    instance: http://localhost:1904/api/game
+                invalid-body:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-request-body
+                    title: "Invalid request body"
+                    status: 400
+                    detail: ""
+                    instance: http://localhost:1904/api/game
+    post:
+      operationId: CreateGame
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                developer:
+                  type: string
+                genres:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: Game created with success
+          headers:
+            location:
+              schema:
+                type: string
+              value: "game/$gameId"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              value:
+                message: "Game id: $gameId"
+        '404':
+          description: Game creation fails because genre not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found
+                title: "Genre not found"
+                status: 404
+                detail: "Genre or genres not found"
+                instance: http://localhost:1904/api/game
+        '409':
+          description: Game creation fails because name already exists
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-name-already-exists
+                title: "Game name already exists"
+                status: 409
+                detail: "Game with given name $name already exists"
+                instance: http://localhost:1904/api/game
+        '400':
+          description: Game creation fails because of invalid request body
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-request-body
+                title: "Invalid request body"
+                status: 400
+                detail: ""
+                instance: http://localhost:1904/api/game
+  /game/{gid}:
+    get:
+      operationId: GetGameById
+      parameters:
+        - name: gid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Game information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  developer:
+                    type: string
+                  genres:
+                    type: array
+                    items:
+                      type: string
+              example:
+                value:
+                  name: "game1",
+                  developer: "developer0",
+                  genres: [ "Adventure", "Rpg", "Action" ]
+        '400':
+          description: Get game fails because of invalid parameter
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-request
+                title: "Invalid request"
+                status: 400
+                detail: ""
+                instance: http://localhost:1904/api/game/{gid}
+        '404':
+          description: Game not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found
+                title: "Game not found",
+                status: 404,
+                detail: "Game with given id not found"
+                instance: http://localhost:1904/api/game{gid}
+  /sessions:
+    get:
+      operationId: GetSessions
+    post:
+      operationId: CreateSession
+  /sessions/{sid}:
+    get:
+      operationId: GetSessionById
+      parameters:
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Game information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  developer:
+                    type: string
+                  genres:
+                    type: array
+                    items:
+                      type: string
+              example:
+                value:
+                  name: "game1",
+                  developer: "developer0",
+                  genres: [ "Adventure", "Rpg", "Action" ]
+  /sessions/{sid}/player/{pid}:
+    put:
+      operationId: AddPlayerToSession
+      parameters:
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: integer
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: jwt
+      description: 'note: non-oauth scopes are not defined at the securityScheme level'
