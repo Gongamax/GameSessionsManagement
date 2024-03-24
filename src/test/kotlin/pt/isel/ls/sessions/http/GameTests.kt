@@ -28,7 +28,7 @@ class GameTests {
     private fun createGame() {
         games.forEach {
             router.routes(
-                Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it)).header("Authorization", "Bearer token")
+                Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it)).header("Authorization", "Bearer token"),
             )
         }
     }
@@ -36,7 +36,7 @@ class GameTests {
     @Test
     fun `game created with success`() {
         //  Arrange
-        val game = GameDTO("cod", "developer", listOf("Action", "Shooter"))
+        val game = GameDTO(1u, "cod", "developer", listOf("Action", "Shooter"))
         val request =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(game)).header("Authorization", "Bearer token")
 
@@ -54,7 +54,7 @@ class GameTests {
     @Test
     fun `game creation fails because name already exists`() {
         // Arrange
-        val game = GameDTO("cod", "developer", listOf("Action", "Shooter"))
+        val game = GameDTO(1u, "cod", "developer", listOf("Action", "Shooter"))
         val request =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(game)).header("Authorization", "Bearer token")
         // Act
@@ -71,8 +71,9 @@ class GameTests {
     @Test
     fun `game creation fails because no genre is passed`() {
         // Arrange
-        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(gameNoGenres))
-            .header("Authorization", "Bearer token")
+        val request =
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(gameNoGenres))
+                .header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
         // Assert
@@ -88,8 +89,9 @@ class GameTests {
     @Test
     fun `game creation fails because genre is invalid`() {
         // Arrange
-        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(gameInvalidGenre))
-            .header("Authorization", "Bearer token")
+        val request =
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(gameInvalidGenre))
+                .header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
@@ -99,7 +101,6 @@ class GameTests {
         assertTrue(content.detail == "Genre or genres not found")
         assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found")
     }
-
 
     @Test
     fun `get game by id with success`() {
@@ -162,7 +163,10 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).body(Json.encodeToString(GamesInputModel("developer", listOf("Rpg")))).header("Authorization", "Bearer token")
+            Request(
+                Method.GET,
+                Uris.DEFAULT,
+            ).body(Json.encodeToString(GamesInputModel("developer", listOf("Rpg")))).header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
@@ -189,10 +193,9 @@ class GameTests {
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
         assertTrue { response.status == Status.NOT_FOUND }
-        assertTrue(content.type=="https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found")
+        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found")
         assertTrue { content.title == "Developer not found" }
         assertTrue { content.detail == "Developer not found" }
-
     }
 
     @Test
@@ -210,7 +213,7 @@ class GameTests {
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
         assertTrue { response.status == Status.NOT_FOUND }
-        assertTrue(content.type=="https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found")
+        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found")
         assertTrue { content.title == "Genre not found" }
         assertTrue { content.detail == "Genre or genres not found" }
     }
@@ -233,8 +236,6 @@ class GameTests {
         assertTrue(content.title == "Developer not found")
         assertTrue(content.detail == "Developer not found")
         assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found")
-
-
     }
 
     @Test
@@ -273,15 +274,16 @@ class GameTests {
             )
         // Act
         val response = router.routes(request)
+        println(response.bodyString())
         // Assert
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
         assertTrue { response.status.successful }
-        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.size == 2 }
+        assertEquals(response.header(CONTENT_TYPE), APPLICATION_JSON)
+        assertEquals(2, content.size)
         assertFalse { content.contains(games[0]) }
         assertFalse { content.contains(games[1]) }
         assertTrue { content.contains(games[2]) }
-        assertTrue() { content.contains(games[3]) }
+        assertTrue { content.contains(games[3]) }
     }
 
     @Test
@@ -289,7 +291,7 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("limit", "1").query("skip", "1").body(
+            Request(Method.GET, Uris.DEFAULT).query("limit", "3").query("skip", "0").body(
                 Json.encodeToString(
                     GamesInputModel("developer", listOf("Action")),
                 ),
@@ -300,12 +302,11 @@ class GameTests {
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
         println(content)
         assertTrue { response.status.successful }
-        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.size == 1 }
-        assertFalse { content.contains(games[0]) }
-        assertFalse { content.contains(games[1]) }
-        assertTrue { content.contains(games[2]) }
-        assertFalse { content.contains(games[3]) }
+        assertEquals(Status.OK, response.status)
+        assertEquals(3, content.size)
+        assertContains(content, games[0])
+        assertContains(content, games[2])
+        assertContains(content, games[3])
     }
 
     @Test
@@ -352,15 +353,15 @@ class GameTests {
         private val mem = AppMemoryDB(clock)
         private val service = GameService(mem.gameDB)
         private val router = GameRouter(service)
-        private val game = GameDTO("cod", "developer", listOf("Action", "Shooter"))
-        private val gameInvalidGenre = GameDTO("cod", "developer", listOf("multiplayer", "sport", "Action"))
-        private val gameNoGenres = GameDTO("cod", "developer", listOf())
+        private val game = GameDTO(1u, "cod", "developer", listOf("Action", "Shooter"))
+        private val gameInvalidGenre = GameDTO(1u, "cod", "developer", listOf("multiplayer", "sport", "Action"))
+        private val gameNoGenres = GameDTO(1u, "cod", "developer", listOf())
         private val games =
             listOf(
-                GameDTO("cod", "developer", listOf("Action", "Shooter")),
-                GameDTO("cs-go", "developer1", listOf("Action", "Shooter")),
-                GameDTO("over-watch", "developer", listOf("Action", "Shooter")),
-                GameDTO("FIFA", "developer", listOf("Action", "Sports")),
+                GameDTO(1u, "cod", "developer", listOf("Action", "Shooter")),
+                GameDTO(2u, "cs-go", "developer1", listOf("Action", "Shooter")),
+                GameDTO(3u, "over-watch", "developer", listOf("Action", "Shooter")),
+                GameDTO(4u, "FIFA", "developer", listOf("Action", "Sports")),
             )
     }
 }

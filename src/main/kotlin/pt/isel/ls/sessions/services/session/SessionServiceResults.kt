@@ -1,7 +1,6 @@
 package pt.isel.ls.sessions.services.session
 
 import pt.isel.ls.sessions.domain.session.Session
-import pt.isel.ls.sessions.utils.PageResult
 import pt.isel.ls.utils.Either
 
 sealed class SessionCreationError {
@@ -24,7 +23,7 @@ sealed class SessionsGetError {
     data object PlayerNotFound : SessionsGetError()
 }
 
-typealias SessionsGetResult = Either<SessionsGetError, PageResult<Session>>
+typealias SessionsGetResult = Either<SessionsGetError, List<Session>>
 
 sealed class SessionGetError {
     data object SessionNotFound : SessionGetError()

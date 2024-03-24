@@ -25,6 +25,9 @@ class Problem(
         private val invalidCapacity = Uri.of(BASE_URL + "invalid-capacity")
         private val invalidEmail = Uri.of(BASE_URL + "invalid-email")
         private val invalidRequest = Uri.of(BASE_URL + "invalid-request")
+        private val invalidGameData = Uri.of(BASE_URL + "invalid-game-data")
+        private val invalidSkipOrLimit = Uri.of(BASE_URL + "invalid-skip-or-limit")
+        private val genresOrDeveloperMissing = Uri.of(BASE_URL + "genres-or-developer-missing")
         //endregion
 
         //region Conflict, Already Exists
@@ -34,6 +37,7 @@ class Problem(
         private val gameNameAlreadyExists = Uri.of(BASE_URL + "game-name-already-exists")
         private val emailAlreadyExists = Uri.of(BASE_URL + "email-already-exists")
         private val internalServerError = Uri.of(BASE_URL + "internal-server-error")
+        private val tokenNotFound = Uri.of(BASE_URL + "token-not-found")
 
         //endregion
 
@@ -221,6 +225,50 @@ class Problem(
             typeUri = notFound,
             title = "Not Found",
             status = Status.NOT_FOUND,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun tokenNotFound(
+            uri: Uri,
+            detail: String = "Token not found",
+        ) = Problem(
+            typeUri = tokenNotFound,
+            title = "Token not found",
+            status = Status.UNAUTHORIZED,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun invalidGameData(
+            uri: Uri,
+            detail: String = "Invalid game data",
+        ) = Problem(
+            typeUri = invalidGameData,
+            title = "Invalid game data",
+            status = Status.BAD_REQUEST,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun invalidSkipOrLimit(
+            uri: Uri,
+            detail: String = "Invalid skip or limit",
+        ) = Problem(
+            typeUri = invalidSkipOrLimit,
+            title = "Invalid skip or limit",
+            status = Status.BAD_REQUEST,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun genresOrDeveloperMissing(
+            uri: Uri,
+            detail: String = "Genres or developer is empty",
+        ) = Problem(
+            typeUri = genresOrDeveloperMissing,
+            title = "Genres or developer is empty",
+            status = Status.BAD_REQUEST,
             detail = detail,
             instance = uri,
         ).toResponse()

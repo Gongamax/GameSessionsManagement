@@ -8,7 +8,6 @@ import pt.isel.ls.sessions.domain.session.SessionState
 import pt.isel.ls.sessions.repository.GameRepository
 import pt.isel.ls.sessions.repository.PlayerRepository
 import pt.isel.ls.sessions.repository.SessionRepository
-import pt.isel.ls.sessions.utils.PageResult
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.success
 
@@ -88,6 +87,6 @@ class SessionService(
                 return@run failure(SessionsGetError.PlayerNotFound)
             }
             val sessions = sessionRepository.getSessions(gid, date, state, pid, limit, skip)
-            success(PageResult.toPage(sessions, skip, limit))
+            success(sessions)
         }
 }

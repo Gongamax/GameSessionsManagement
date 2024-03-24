@@ -1,4 +1,16 @@
-# Phase 1
+# Report
+
+## Table of Contents
+
+1. [Introduction](#introduction)
+2. [Modeling the database](#modeling-the-database)
+3. [Software organization](#software-organization)
+4. [Open-API Specification](#open-api-specification)
+5. [Request Details](#request-details)
+6. [Connection Management](#connection-management)
+7. [Data Access](#data-access)
+8. [Error Handling/Processing](#error-handlingprocessing)
+9. [Critical Evaluation](#critical-evaluation)
 
 ## Introduction
 
@@ -12,7 +24,7 @@ requests and kotlinx.serialization library for body serialization/deserializatio
 
 The following diagram holds the Entity-Relationship model for the information managed by the system.
 
-![Entity Relationship Diagram](Diagram-ER.png)
+![Entity Relationship Diagram](diagrams/Diagram-ER.png)
 
 We highlight the following aspects:
 
@@ -41,7 +53,7 @@ We highlight the following aspects of this model:
 
 ## Software organization
 
-### Open-API Specification ###
+### Open-API Specification
 
 In our [Open-API specification](http-api.yaml), we highlight the following aspects:
 
@@ -50,15 +62,15 @@ In our [Open-API specification](http-api.yaml), we highlight the following aspec
 
 **API endpoints** are organized as follows:
 
-| Endpoints                       | HTTP Methods                                           |
-|---------------------------------|--------------------------------------------------------|
-| /api/player/{pid}               | [GET](#get-apiplayerpid)                               |
-| /api/player                     | [POST](#post-apiplayer)                                |
-| /api/game                       | [GET](#get-apigame)                                    |
-| /api/game/{gid}                 | [GET](#get-apigamegid), [POST](#post-apigamegid)       |
-| /api/session                    | [GET](#get-apisession), [POST](#post-apisession)       |
-| /api/session/{sid}              | [GET](#get-apisessionsid), [POST](#post-apisessionsid) |
-| /api/session/{sid}/player/{pid} | [PUT](#put-apisessionsidplayerpid)                     | 
+| Endpoints                       | HTTP Methods                                     |
+|---------------------------------|--------------------------------------------------|
+| /api/player                     | [POST](#post-apiplayer)                          |
+| /api/player/{pid}               | [GET](#get-apiplayerpid)                         |
+| /api/game                       | [GET](#get-apigame), [POST](#post-apigame)       |
+| /api/game/{gid}                 | [GET](#get-apigamegid)                           |
+| /api/session                    | [GET](#get-apisession), [POST](#post-apisession) |
+| /api/session/{sid}              | [GET](#get-apisessionsid)                        |
+| /api/session/{sid}/player/{pid} | [PUT](#put-apisessionsidplayerpid)               | 
 
 ### GET api/player/{pid}
 
@@ -134,7 +146,7 @@ curl --location --request POST 'http://localhost:8080/api/player' --header 'Cont
 **Error Responses:**
 
 - 400 Bad Request
-- 401 Unauthorized
+- 409 Conflict
 
 ### GET /api/game
 
@@ -142,7 +154,9 @@ curl --location --request POST 'http://localhost:8080/api/player' --header 'Cont
 
 **Request:**
 
-No parameters required
+* **Query String:**
+  * skip (_Integer_, _Optional_) - Number of elements to skip
+  * limit (_Integer_, _Optional_) - Maximum number of elements to return
 
 **Example:**
 
@@ -172,7 +186,7 @@ curl --location --request GET 'http://localhost:8080/api/game' --header 'Authori
 
 **Error Responses:**
 
-- 401 Unauthorized
+- 404 Not Found
 
 ### GET /api/game/{gid}
 
@@ -212,7 +226,7 @@ curl --location --request GET 'http://localhost:8080/api/game/1' --header 'Autho
 - 404 Not Found
 - 401 Unauthorized
 
-### POST /api/game/{gid}
+### POST /api/game
 
 **Description:** Create a new game.
 
@@ -247,7 +261,7 @@ curl --location --request POST 'http://localhost:8080/api/game/1' --header 'Cont
 
 **Error Responses:**
 
-- 400 Bad Request
+- 409 Conflict
 - 401 Unauthorized
 - 404 Not Found
 
@@ -257,7 +271,9 @@ curl --location --request POST 'http://localhost:8080/api/game/1' --header 'Cont
 
 **Request:**
 
-No parameters required
+* **Query String:**
+  * skip (_Integer_, _Optional_) - Number of elements to skip
+  * limit (_Integer_, _Optional_) - Maximum number of elements to return
 
 **Example:**
 
@@ -289,7 +305,47 @@ curl --location --request GET 'http://localhost:8080/api/session' --header 'Auth
 
 **Error Responses:**
 
+- 400 Bad Request
+- 404 Not Found
+
+### POST /api/session
+
+**Description:** Create a new session.
+
+**Request:**
+
+- **URI Params:**
+  - sid (Integer) Session ID
+
+**Content:** An object with the information of the session
+
+- **Content Type:** application/json
+- **Schema:**
+
+````
+  {
+  "numPlayers": Integer,
+  "sessionDate": String,
+  "game": Integer,
+  "players": [Integer]
+  }
+````
+
+**Example:**
+
+```shell
+curl --location --request POST 'http://localhost:8080/api/session/1' --header 'Content-Type: application/json' --header 'Authorization: Bearer {Access Token} ' --data-raw '{ "numPlayers": 4, "sessionDate": "2022-01-01T00:00:00Z", "game": 1, "players": [1, 2, 3, 4] }'
+```
+
+**Success Response:**
+
+- **Status Code:** 201 Created
+
+**Error Responses:**
+
+- 400 Bad Request
 - 401 Unauthorized
+- 404 Not Found
 
 ### GET /api/session/{sid}
 
@@ -328,46 +384,6 @@ curl --location --request GET 'http://localhost:8080/api/session/1' --header 'Au
 **Error Responses:**
 
 - 404 Not Found
-- 401 Unauthorized
-
-### POST /api/session/{sid}
-
-**Description:** Create a new session.
-
-**Request:**
-
-- **URI Params:**
-    - sid (Integer) Session ID
-
-**Content:** An object with the information of the session
-
-- **Content Type:** application/json
-- **Schema:**
-
-````
-  {
-  "numPlayers": Integer,
-  "sessionDate": String,
-  "game": Integer,
-  "players": [Integer]
-  }
-````
-
-**Example:**
-
-```shell
-curl --location --request POST 'http://localhost:8080/api/session/1' --header 'Content-Type: application/json' --header 'Authorization: Bearer {Access Token} ' --data-raw '{ "numPlayers": 4, "sessionDate": "2022-01-01T00:00:00Z", "game": 1, "players": [1, 2, 3, 4] }'
-```
-
-**Success Response:**
-
-- **Status Code:** 201 Created
-
-**Error Responses:**
-
-- 400 Bad Request
-- 401 Unauthorized
-- 404 Not Found
 
 ### PUT /api/session/{sid}/player/{pid}
 
@@ -391,7 +407,7 @@ curl --location --request PUT 'http://localhost:8080/api/session/1/player/1' --h
 
 **Error Responses:**
 
-- 400 Bad Request
+- 409 Conflict
 - 401 Unauthorized
 - 404 Not Found
 
@@ -401,7 +417,7 @@ Requests are handled by the HTTP4K library. The request parameters are validated
 before being used.
 The following diagram shows the structure of the API:
 
-![API Structure](API-Arquitecture.png)
+![API Structure](diagrams/API-Arquitecture.png)
 
 ### Connection Management
 

@@ -8,6 +8,7 @@ import org.http4k.core.Status
 import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.sessions.http.model.game.GameDTO
 import pt.isel.ls.sessions.http.model.game.GamesInputModel
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
@@ -33,10 +34,7 @@ class GameRouter(private val services: GameService) : Router {
             val gid = request.getPathSegments(GAME_ID).first().toUInt()
             return when (val game = services.getGame(gid)) {
                 is Failure -> Problem.gameNotFound(request.uri)
-                is Success ->
-                    Response(Status.OK).jsonResponse(
-                        GameDTO(game.value.name, game.value.developer, game.value.genres.map { g -> g.text }),
-                    )
+                is Success -> Response(Status.OK).jsonResponse(game.value.toGameDTO())
             }
         }
 
@@ -44,29 +42,23 @@ class GameRouter(private val services: GameService) : Router {
         execStart(request) {
             val game = Json.decodeFromString<GamesInputModel>(request.bodyString())
             if (game.genres.isEmpty() || game.developer.isBlank()) {
-                return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Genres or developer is empty"))
+                return@execStart Problem.genresOrDeveloperMissing(request.uri)
             }
 
-            val limit = request.query("limit")?.toInt() ?: DEFAULT_LIMIT
-            val skip = request.query("skip")?.toInt() ?: DEFAULT_SKIP
+            val limit = request.query(LIMIT)?.toInt() ?: DEFAULT_LIMIT
+            val skip = request.query(SKIP)?.toInt() ?: DEFAULT_SKIP
             if (limit < 0 || skip < 0) {
-                return Response(Status.BAD_REQUEST).jsonResponse(MessageResponse("Invalid limit or skip"))
+                return@execStart Problem.invalidSkipOrLimit(request.uri)
             }
 
             return when (val games = services.getGames(game.genres, game.developer, limit, skip)) {
                 is Failure ->
                     when (games.value) {
-                        GamesGetError.NoGamesFound -> Problem.gameNotFound(request.uri)
                         GamesGetError.GenreNotFound -> Problem.genreNotFound(request.uri)
                         GamesGetError.DeveloperNotFound -> Problem.developerNotFound(request.uri)
                     }
 
-                is Success ->
-                    Response(Status.OK).jsonResponse(
-                        games.value.content.map {
-                            GameDTO(it.name, game.developer, it.genres.map { g -> g.text })
-                        },
-                    )
+                is Success -> Response(Status.OK).jsonResponse(games.value.map { g -> g.toGameDTO() })
             }
         }
 
@@ -75,7 +67,7 @@ class GameRouter(private val services: GameService) : Router {
             val game = Json.decodeFromString<GameDTO>(request.bodyString())
             val token = request.bearerTokenOrThrow()
             if (game.name.isBlank() || game.developer.isBlank() || game.genres.isEmpty()) {
-                return Response(Status.EXPECTATION_FAILED).jsonResponse(MessageResponse("Invalid game data."))
+                return@execStart Problem.invalidGameData(request.uri)
             }
 
             return when (val gameId = services.createGame(game.name, game.developer, game.genres)) {
@@ -96,7 +88,11 @@ class GameRouter(private val services: GameService) : Router {
         private const val DEFAULT_SKIP = 0
         private const val DEFAULT_LIMIT = 10
         private const val GAME_ID = "gid"
+        private const val LIMIT = "limit"
+        private const val SKIP = "skip"
 
         fun routes(services: GameService) = GameRouter(services).routes
+
+        private fun Game.toGameDTO() = GameDTO(gid, name, developer, genres.map { g -> g.text })
     }
 }

@@ -9,7 +9,6 @@ import pt.isel.ls.utils.Either
 import pt.isel.ls.utils.Failure
 import kotlin.test.AfterTest
 import kotlin.test.Test
-import kotlin.test.assertNotNull
 import kotlin.test.fail
 
 class GameTests {
@@ -97,10 +96,9 @@ class GameTests {
                 is Either.Right -> value.value
             }
         // Assert
-        assertEquals(1, result.content.size)
-        assertNotNull(result.firstPage)
+        assertEquals(1, result.size)
         println(result)
-        assertEquals(NAME, result.content.first().name)
+        assertEquals(NAME, result.first().name)
     }
 
     @Test

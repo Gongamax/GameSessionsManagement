@@ -2,7 +2,6 @@ package pt.isel.ls.sessions.services.game
 
 import pt.isel.ls.sessions.domain.game.toGenre
 import pt.isel.ls.sessions.repository.GameRepository
-import pt.isel.ls.sessions.utils.PageResult
 import pt.isel.ls.utils.failure
 import pt.isel.ls.utils.success
 
@@ -30,7 +29,7 @@ class GameService(private val gameDB: GameRepository) {
             }
             gameDB.getDeveloperByName(developer) ?: return failure(GamesGetError.DeveloperNotFound)
             val games = gameDB.getGames(gen, developer, limit, skip)
-            success(PageResult.toPage(games, skip, limit))
+            success(games)
         }
 
     fun createGame(
