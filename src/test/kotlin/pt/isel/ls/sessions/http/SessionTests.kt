@@ -56,7 +56,8 @@ class SessionTests {
 
     private fun createPlayer(email: String = "francisco@gmail.com") {
         val name = "Francisco"
-        val createPlayer = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, email))).header("Authorization", "Bearer token")
+        val createPlayer = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, email)))
+            .header("Authorization", "Bearer token")
         PlayerRouter(PlayerService(playerDB)).routes(createPlayer)
     }
 
@@ -299,35 +300,45 @@ class SessionTests {
         ).header("Authorization", "Bearer token")
         // Act<
         val response = sessionRouter.routes(request)
-        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
         // Assert
-        println(content)
-        assertEquals(expected = Status.OK, actual = response.status)
+        assertEquals(expected = Status.NO_CONTENT, actual = response.status)
+        assertEquals(expected = "Player added to session", actual = content.message)
     }
 
     @Test
     fun `addPlayerToSession return response with a session Player not found`() {
         // Arrange
         createSession()
-        val request = Request(Method.PUT, Uris.Sessions.ADD_PLAYER.replace("{sid}", "1").replace("{pid}", "999"))
+        val request = Request(
+            Method.PUT,
+            Uris.Sessions.ADD_PLAYER.replace("{sid}", "1").replace("{pid}", "999")
+        ).header("Authorization", "Bearer token")
         // Act
         val response = sessionRouter.routes(request)
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         assertEquals(expected = Status.NOT_FOUND, actual = response.status)
-        assertEquals(expected = "Player not found", actual = content.message)
+        assertEquals(expected = "Player with given id: 999 not found", actual = content.detail)
+        assertEquals(expected = "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found", actual = content.type)
+        assertEquals(expected = "Player not found", actual = content.title)
     }
 
     @Test
     fun `addPlayerToSession return response with a session Session not found`() {
         // Arrange
-        val request = Request(Method.PUT, Uris.Sessions.ADD_PLAYER.replace("{sid}", "99").replace("{pid}", "1"))
+        val request = Request(
+            Method.PUT,
+            Uris.Sessions.ADD_PLAYER.replace("{sid}", "99").replace("{pid}", "1")
+        ).header("Authorization", "Bearer token")
         // Act
         val response = sessionRouter.routes(request)
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         assertEquals(expected = Status.NOT_FOUND, actual = response.status)
-        assertEquals(expected = "Session not found", actual = content.message)
+        assertEquals(expected = "Session with given id: 99 not found", actual = content.detail)
+        assertEquals(expected = "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found", actual = content.type)
+        assertEquals(expected = "Session not found", actual = content.title)
     }
 
     @Test
@@ -338,14 +349,17 @@ class SessionTests {
         }
         createSession()
 
-        val request = Request(Method.PUT, Uris.Sessions.ADD_PLAYER.replace("{sid}", "1").replace("{pid}", "1"))
+        val request = Request(Method.PUT, Uris.Sessions.ADD_PLAYER.replace("{sid}", "1").replace("{pid}", "1")).header("Authorization", "Bearer token")
         sessionRouter.routes(request)
         // Act
         val response = sessionRouter.routes(request)
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        println(content)
         assertEquals(expected = Status.BAD_REQUEST, actual = response.status)
-        assertEquals(expected = "Player already in session", actual = content.message)
+        assertEquals(expected = "Player already in session", actual = content.detail)
+        assertEquals(expected = "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found", actual = content.type)
+        assertEquals(expected = "Player not found", actual = content.title)
     }
 
     @Test
@@ -355,7 +369,7 @@ class SessionTests {
         repeat(5) { i ->
             createPlayer("player2$i@gmail.com")
             val request =
-                Request(Method.PUT, Uris.Sessions.ADD_PLAYER.replace("{sid}", "10").replace("{pid}", "${i + 1}"))
+                Request(Method.PUT, Uris.Sessions.ADD_PLAYER.replace("{sid}", "10").replace("{pid}", "${i + 1}")).header("Authorization", "Bearer token")
             val response = sessionRouter.routes(request)
             println(response)
             assertEquals(expected = Status.OK, actual = response.status)
@@ -365,9 +379,10 @@ class SessionTests {
         val request = Request(Method.PUT, Uris.Sessions.ADD_PLAYER.replace("{sid}", "10").replace("{pid}", "6"))
         val response = sessionRouter.routes(request)
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        println(content)
+
         assertEquals(expected = Status.BAD_REQUEST, actual = response.status)
-        assertEquals(expected = "Session is full", actual = content.message)
     }
 
     @Test
