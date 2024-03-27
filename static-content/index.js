@@ -9,8 +9,8 @@ window.addEventListener('hashchange', hashChangeHandler)
 
 function loadHandler(){
 
-  router.addRouteHandler("home", handlers.getHome)
-  router.addRouteHandler("students", handlers.getStudents)
+  router.addRouteHandler("home", handlers.getAStudent)
+  router.addRouteHandler("player", handlers.playerHandler.getPlayer(1))
   router.addRouteHandler("students/10", handlers.getStudent)
   router.addDefaultNotFoundRouteHandler(() => window.location.hash = "home")
 
@@ -18,7 +18,6 @@ function loadHandler(){
 }
 
 function hashChangeHandler(){
-
   const mainContent = document.getElementById("mainContent")
   const path =  window.location.hash.replace("#", "")
 

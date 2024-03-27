@@ -44,7 +44,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
 
     private fun getDetailsPlayer(request: Request): Response =
         execStart(request) {
-            val token = request.bearerTokenOrThrow()
+            //val token = request.bearerTokenOrThrow()
             val numberPlayer = request.getPathSegments(PLAYER_ID).first().toUInt()
             return when (val player = services.getDetailsPlayer(numberPlayer)) {
                 is Failure -> Problem.playerNotFound(request.uri, numberPlayer)

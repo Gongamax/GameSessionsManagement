@@ -1,8 +1,10 @@
 package pt.isel.ls.sessions
 
 import kotlinx.datetime.Clock
+import org.http4k.routing.ResourceLoader
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import org.http4k.routing.singlePageApp
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.slf4j.LoggerFactory
@@ -19,7 +21,10 @@ class AppServer(
     private val webApi = AppWebApi(service)
 
     fun start() {
-        val app = routes(API_PATH bind webApi.httpHandler)
+        val app = routes(
+            API_PATH bind webApi.httpHandler,
+            singlePageApp(ResourceLoader.Directory("static-content"))
+        )
         try {
             val jettyServer = app.asServer(Jetty(port)).start()
             logger.info("server started listening on port $port")

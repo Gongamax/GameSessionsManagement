@@ -1,17 +1,4 @@
-/*
-This example creates the students views using directly the DOM Api
-But you can create the views in a different way, for example, for the student details you can:
-    createElement("ul",
-        createElement("li", "Name : " + student.name),
-        createElement("li", "Number : " + student.number)
-    )
-or
-    ul(
-        li("Name : " + student.name),
-        li("Number : " + student.name)
-    )
-Note: You have to use the DOM Api, but not directly
-*/
+import playerHandler from './player-handler';
 
 const API_BASE_URL = 'http://localhost:9000/';
 
@@ -68,10 +55,18 @@ function getStudent(mainContent) {
     });
 }
 
+async function getAStudent(mainContent) {
+  const a = await handlers.playerHandler.getPlayer(1)
+  const text = document.createTextNode(a.name);
+  mainContent.replaceChildren(text);
+}
+
 export const handlers = {
   getHome,
   getStudent,
   getStudents,
+  playerHandler,
+  getAStudent
 };
 
 export default handlers;
