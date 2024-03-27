@@ -11,6 +11,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import pt.isel.ls.sessions.domain.session.Session
 import pt.isel.ls.sessions.domain.session.SessionState
+import pt.isel.ls.sessions.domain.session.toSessionState
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
@@ -24,6 +25,7 @@ import pt.isel.ls.sessions.services.session.SessionService
 import pt.isel.ls.sessions.services.session.SessionsGetError
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
+import java.time.DateTimeException
 
 class SessionRouter(
     private val services: SessionService,
@@ -46,7 +48,9 @@ class SessionRouter(
                 return@execStart Problem.invalidSkipOrLimit(request.uri)
             }
             val date = request.query(DATE)?.toLocalDateTime()
-            val state = request.query(STATE)?.toSessionState()
+            val state = request.query(STATE)
+                ?.let { s -> s.toSessionState() ?: return@execStart Problem.invalidState(request.uri) }
+
             return when (val res = services.getSessions(gid, date, state, pid, limit, skip)) {
                 is Failure ->
                     when (res.value) {
@@ -119,10 +123,11 @@ class SessionRouter(
 
         private const val DEFAULT_SKIP = 0
         private const val DEFAULT_LIMIT = 10
-
-        private fun String.toLocalDateTime() = LocalDateTime.parse(this)
-
-        private fun String.toSessionState() = SessionState.valueOf(this)
+        private fun String.toLocalDateTime() = try {
+            LocalDateTime.parse(this)
+        } catch (e: IllegalArgumentException) {
+            throw DateTimeException("Invalid date format")
+        }
 
         private fun Session.toSessionDTO() =
             SessionDTO(

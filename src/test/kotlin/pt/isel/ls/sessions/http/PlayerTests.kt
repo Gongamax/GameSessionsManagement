@@ -80,6 +80,7 @@ class PlayerTests {
         assertEquals("Invalid email", content.title)
     }
 
+
     @Test
     fun `getDetailsPlayer return response with a player`() {
         // Arrange
@@ -108,6 +109,22 @@ class PlayerTests {
         assertEquals("Player with given id: 99 not found", content.detail)
         assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found", content.type)
         assertEquals("Player not found", content.title)
+    }
+
+    @Test
+    fun `getDetailsPlayer return response with a player invalid token`() {
+        // Arrange
+        val request =
+            Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "1"))
+        // Act
+        val response = playerRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.UNAUTHORIZED, response.status)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Unauthorized, token not found", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/token-not-found", content.type)
+        assertEquals("Token not found", content.title)
     }
 
     companion object {

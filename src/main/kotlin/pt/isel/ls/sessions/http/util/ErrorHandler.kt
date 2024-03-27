@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.http.routes.utils.TokenNotFoundException
 import pt.isel.ls.sessions.repository.jdbc.ExecuteSqlException
 import java.sql.SQLException
+import java.time.DateTimeException
 
 private val logger = LoggerFactory.getLogger("pt.isel.ls.sessions.http.util.ErrorHandler")
 
@@ -28,14 +29,13 @@ inline fun execStart(
     } catch (error: TokenNotFoundException) {
         Problem.tokenNotFound(request.uri, "Unauthorized, token not found")
     } catch (error: IllegalArgumentException) {
-        if (request.uri.query.contains("state=")) {
-            Problem.invalidState(request.uri)
-        } else {
-            Problem.invalidRequest(request.uri, error.message ?: "Invalid request")
-        }
+        Problem.invalidRequest(request.uri, error.message ?: "Invalid request")
     } catch (error: NoSuchElementException) {
         Problem.notFound(request.uri)
-    } catch (error: IllegalStateException) {
+    }catch (error: DateTimeException) {
+        Problem.invalidDate(request.uri)
+    }
+    catch (error: IllegalStateException) {
         Problem.invalidRequest(request.uri)
     } catch (error: Exception) {
         Problem.internalServerError(request.uri, "Internal server error")
