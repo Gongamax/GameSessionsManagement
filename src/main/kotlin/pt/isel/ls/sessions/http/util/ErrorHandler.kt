@@ -28,7 +28,11 @@ inline fun execStart(
     } catch (error: TokenNotFoundException) {
         Problem.tokenNotFound(request.uri, "Unauthorized, token not found")
     } catch (error: IllegalArgumentException) {
-        Problem.invalidRequest(request.uri, error.message ?: "Invalid request")
+        if (request.uri.query.contains("state=")) {
+            Problem.invalidState(request.uri)
+        } else {
+            Problem.invalidRequest(request.uri, error.message ?: "Invalid request")
+        }
     } catch (error: NoSuchElementException) {
         Problem.notFound(request.uri)
     } catch (error: IllegalStateException) {

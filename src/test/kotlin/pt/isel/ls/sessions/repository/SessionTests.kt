@@ -8,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-// TODO: ADD MORE TESTS
+
 class SessionTests {
     private val clock = Clock.System
 

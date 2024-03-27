@@ -15,7 +15,7 @@ class SessionMemoryDB(
     private val clock: Clock,
 ) : SessionRepository {
     val sessions = ConcurrentHashMap<UInt, Session>()
-    private val nextSessionId = AtomicInteger(1)
+    private var nextSessionId = AtomicInteger(1)
 
     override fun createSession(
         capacity: Int,
@@ -59,6 +59,11 @@ class SessionMemoryDB(
                     )
             ) && (pid == null || it.associatedPlayers.any { p -> p.pid == pid })
         }.drop(skip).take(limit)
+    }
+
+    override fun reset() {
+        sessions.clear()
+        nextSessionId = AtomicInteger(1)
     }
 
     private fun getSessionState(

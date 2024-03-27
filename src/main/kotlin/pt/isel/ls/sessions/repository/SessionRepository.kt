@@ -28,4 +28,5 @@ interface SessionRepository {
         skip: Int,
     ): List<Session>
 
+    fun reset()
 }

@@ -1,5 +1,6 @@
 package pt.isel.ls.sessions.http
 
+import kotlinx.datetime.Clock
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
@@ -11,42 +12,40 @@ import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
+import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
 import pt.isel.ls.sessions.services.player.PlayerService
+import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class PlayerTests {
-    companion object {
-        const val NAME = "Alice"
-        const val EMAIL = "Alice@gmail.com"
-        private val playerDB = PlayerMemoryDB()
-        private val playerService = PlayerService(playerDB)
-        private val playerRouter = PlayerRouter(playerService)
+
+    @AfterTest
+    fun clear() {
+        mem.playerDB.reset()
     }
 
     @BeforeTest
     fun createPlayer() {
-        val createPlayer = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(NAME, EMAIL)))
+        val createPlayer = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(player))
         playerRouter.routes(createPlayer)
     }
 
     @Test
     fun `create return response with a player`() {
         // Arrange
-        val name = "Francisco"
-        val email = "francisco@gmail.com"
-        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, email)))
+        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(player2))
         // Act
         val response = playerRouter.routes(request)
-        // Assert
-        assertTrue { response.header("Location") != null }
         val pid = response.header("Location")?.split("/")?.last()
-        assertEquals(expected = "/player/$pid", actual = response.header("Location"))
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-        assertEquals(expected = Status.CREATED, actual = response.status)
-        assertEquals(expected = "Player created: $pid", actual = content.message)
+        // Assert
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals ("/player/$pid",response.header("Location"))
+        assertEquals( Status.CREATED, response.status)
+        assertEquals( "Player created: $pid",  content.message)
     }
 
     @Test
@@ -58,39 +57,71 @@ class PlayerTests {
         val response = playerRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(expected = Status.CONFLICT, actual = response.status)
-        assertTrue(content.detail.contains("Player with given email Alice@gmail.com already exists"))
-        assertTrue(content.type.equals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists"))
-        assertTrue(content.title.equals("Email already exists"))
+        assertEquals(Status.CONFLICT, response.status)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Player with given email Alice@gmail.com already exists",  content.detail)
+        assertEquals( "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists", content.type)
+        assertEquals("Email already exists", content.title)
 
+    }
+
+    @Test
+    fun `create return response with a player invalid email`() {
+        // Arrange
+        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(playerInvalidEmail))
+        // Act
+        val response = playerRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals( Status.BAD_REQUEST,response.status)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Email is invalid",  content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-email", content.type)
+        assertEquals("Invalid email", content.title)
     }
 
     @Test
     fun `getDetailsPlayer return response with a player`() {
         // Arrange
-        createPlayer()
-        val request = Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "1")).header("Authorization", "Bearer token")
+        val request =
+            Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "1")).header("Authorization", "Bearer token")
         // Act
         val response = playerRouter.routes(request)
         val content = Json.decodeFromString<PlayerDTO>(response.bodyString())
         // Assert
-        assertEquals(expected = Status.OK, actual = response.status)
-        assertEquals(expected = NAME, actual = content.name)
-        assertEquals(expected = EMAIL, actual = content.email)
+        assertEquals(Status.OK,  response.status)
+        assertEquals( NAME, content.name)
+        assertEquals( EMAIL, content.email)
     }
 
     @Test
     fun `getDetailsPlayer return response with a player not found`() {
         // Arrange
-        val request = Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "99")).header("Authorization", "Bearer token")
+        val request =
+            Request(Method.GET, Uris.Players.BY_ID.replace("{pid}", "99")).header("Authorization", "Bearer token")
         // Act
         val response = playerRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        println(content)
-        assertEquals(expected = Status.NOT_FOUND, actual = response.status)
-        assertTrue(content.detail.contains("Player with given id: 99 not found"))
-        assertTrue(content.type.equals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found"))
-        assertTrue(content.title.equals("Player not found"))
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Player with given id: 99 not found", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found", content.type)
+        assertEquals("Player not found", content.title)
     }
+
+    companion object {
+        private val clock = Clock.System
+        private val mem = AppMemoryDB(clock)
+        private val playerService = PlayerService(mem.playerDB)
+        private val playerRouter = PlayerRouter(playerService)
+        const val NAME = "Alice"
+        const val EMAIL = "Alice@gmail.com"
+        private val player = PlayerDTO(NAME, EMAIL)
+        private val player2 = PlayerDTO("Bob", "Bob@gmail.com")
+        private val playerInvalidEmail = PlayerDTO(NAME, "Alice@gmail")
+
+    }
+
+
 }

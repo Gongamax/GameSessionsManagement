@@ -79,7 +79,7 @@ class GameRouter(private val services: GameService) : Router {
 
                 is Success ->
                     Response(Status.CREATED).header(LOCATION, "/game/${gameId.value}").jsonResponse(
-                        MessageResponse("Game id: ${gameId.value}"),
+                        MessageResponse("Game created: ${gameId.value}"),
                     )
             }
         }

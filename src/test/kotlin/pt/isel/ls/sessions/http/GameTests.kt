@@ -28,7 +28,8 @@ class GameTests {
     private fun createGame() {
         games.forEach {
             router.routes(
-                Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it)).header("Authorization", "Bearer token"),
+                Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))
+                    .header("Authorization", "Bearer token")
             )
         }
     }
@@ -44,11 +45,11 @@ class GameTests {
         val response = router.routes(request)
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
         // Assert
-        assertTrue { response.header("Location").equals("/game/1") }
+        assertEquals("/game/1", response.header("Location"))
         assertTrue { response.status.successful }
         assertEquals(Status.CREATED, response.status)
         assertTrue { content.message.isNotBlank() }
-        assertTrue { content.message.contains("Game id:") }
+        assertEquals("Game created: 1", content.message)
     }
 
     @Test
@@ -64,8 +65,11 @@ class GameTests {
         // Assert
         assertEquals(content.status, Status.CONFLICT.code)
         assertTrue(content.title.isNotBlank())
-        assertTrue(content.title.contains("Game name already exists"))
-        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-name-already-exists")
+        assertEquals("Game name already exists", content.title)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-name-already-exists",
+            content.type
+        )
     }
 
     @Test
@@ -76,15 +80,18 @@ class GameTests {
                 .header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-
-        assertTrue { response.header(CONTENT_TYPE).equals(APPLICATION_JSON) }
+        assertEquals("application/problem+json", response.header("Content-Type"))
         assertTrue { response.status.clientError }
-        assertEquals(Status.EXPECTATION_FAILED, response.status)
-        assertTrue { content.message.isNotBlank() }
-        assertTrue { content.message == "Invalid game data." }
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("Invalid game data", content.title)
+        assertEquals("Invalid game data", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-game-data", content.type)
     }
+
+
+
 
     @Test
     fun `game creation fails because genre is invalid`() {
@@ -96,10 +103,10 @@ class GameTests {
         val response = router.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(content.status, Status.NOT_FOUND.code)
-        assertTrue(content.title == "Genre not found")
-        assertTrue(content.detail == "Genre or genres not found")
-        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found")
+        assertEquals(Status.NOT_FOUND.code, content.status)
+        assertEquals("Genre not found", content.title)
+        assertEquals("Genre or genres not found", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found", content.type)
     }
 
     @Test
@@ -113,11 +120,11 @@ class GameTests {
         val response = router.routes(request2)
         val content = Json.decodeFromString<GameDTO>(response.bodyString())
         // Assert
-        assertTrue { response.header(CONTENT_TYPE).equals(APPLICATION_JSON) }
-        assertTrue { response.status.successful }
-        assertTrue { content.name == game.name }
-        assertTrue { content.developer == game.developer }
-        assertTrue { content.genres == game.genres }
+        assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
+        assertEquals(game.name, content.name)
+        assertEquals(game.developer, content.developer)
+        assertEquals(game.genres, content.genres)
     }
 
     @Test
@@ -131,11 +138,11 @@ class GameTests {
         val response = router.routes(request2)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertTrue { response.status == Status.NOT_FOUND }
-        assertTrue(content.title == "Game not found")
-        assertTrue(content.detail == "Game with given id not found")
-        assertEquals(content.status, Status.NOT_FOUND.code)
-        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found")
+        assertEquals(Status.NOT_FOUND , response.status)
+        assertEquals("application/problem+json" , response.header(CONTENT_TYPE))
+        assertEquals("Game not found", content.title)
+        assertEquals("Game with given id not found", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found", content.type)
     }
 
     @Test
@@ -166,15 +173,14 @@ class GameTests {
             Request(
                 Method.GET,
                 Uris.DEFAULT,
-            ).body(Json.encodeToString(GamesInputModel("developer", listOf("Rpg")))).header("Authorization", "Bearer token")
+            ).body(Json.encodeToString(GamesInputModel("developer", listOf("Rpg"))))
+                .header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
         // Assert
-        assertTrue { response.status == Status.OK }
-        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertEquals(expected = Status.OK, actual = response.status)
-        assertTrue(content.isEmpty())
+        assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
         assertTrue(content.isEmpty())
         TestCase.assertEquals("[]", content.toString())
     }
@@ -192,10 +198,11 @@ class GameTests {
         val response = router.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertTrue { response.status == Status.NOT_FOUND }
-        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found")
-        assertTrue { content.title == "Developer not found" }
-        assertTrue { content.detail == "Developer not found" }
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("application/problem+json", response.header(CONTENT_TYPE))
+        assertEquals("Developer not found", content.title)
+        assertEquals("Developer not found", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found", content.type)
     }
 
     @Test
@@ -212,10 +219,11 @@ class GameTests {
         val response = router.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertTrue { response.status == Status.NOT_FOUND }
-        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found")
-        assertTrue { content.title == "Genre not found" }
-        assertTrue { content.detail == "Genre or genres not found" }
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("application/problem+json", response.header(CONTENT_TYPE))
+        assertEquals("Genre not found", content.title)
+        assertEquals("Genre or genres not found", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found", content.type)
     }
 
     @Test
@@ -233,9 +241,10 @@ class GameTests {
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
         assertEquals(Status.NOT_FOUND, response.status)
-        assertTrue(content.title == "Developer not found")
-        assertTrue(content.detail == "Developer not found")
-        assertTrue(content.type == "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found")
+        assertEquals("application/problem+json", response.header(CONTENT_TYPE))
+        assertEquals("Developer not found", content.title)
+        assertEquals("Developer not found", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found", content.type)
     }
 
     @Test
@@ -250,15 +259,14 @@ class GameTests {
             )
         // Act
         val response = router.routes(request)
-        // Assert
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
-
-        assertTrue { response.status.successful }
-        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.size == 2 }
-        assertTrue { content.contains(games[0]) }
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
+        assertEquals(2, content.size)
+        assertEquals(games[0], content[0])
+        assertEquals(games[2], content[1])
         assertFalse { content.contains(games[1]) }
-        assertTrue { content.contains(games[2]) }
         assertFalse(content.contains(games[3]))
     }
 
@@ -274,16 +282,15 @@ class GameTests {
             )
         // Act
         val response = router.routes(request)
-        println(response.bodyString())
-        // Assert
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
-        assertTrue { response.status.successful }
-        assertEquals(response.header(CONTENT_TYPE), APPLICATION_JSON)
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
         assertEquals(2, content.size)
+        assertEquals(games[2], content[0])
+        assertEquals(games[3], content[1])
         assertFalse { content.contains(games[0]) }
         assertFalse { content.contains(games[1]) }
-        assertTrue { content.contains(games[2]) }
-        assertTrue { content.contains(games[3]) }
     }
 
     @Test
@@ -298,11 +305,10 @@ class GameTests {
             )
         // Act
         val response = router.routes(request)
-        // Assert
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
-        println(content)
-        assertTrue { response.status.successful }
+        // Assert
         assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
         assertEquals(3, content.size)
         assertContains(content, games[0])
         assertContains(content, games[2])
@@ -313,39 +319,46 @@ class GameTests {
     fun `get all game fails with skip negative`() {
         // Arrange
         createGame()
+        val skip = -1
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("skip", "-1").body(
+            Request(Method.GET, Uris.DEFAULT).query("skip", "$skip").body(
                 Json.encodeToString(
                     GamesInputModel("developer", listOf("Action")),
                 ),
             )
         // Act
         val response = router.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
-
-        assertTrue { response.status == Status.BAD_REQUEST }
-        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.message == "Invalid limit or skip" }
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/problem+json", response.header(CONTENT_TYPE))
+        assertEquals("Invalid skip or limit", content.title)
+        assertEquals("Invalid skip or limit", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit", content.type)
+        assertEquals("?skip=$skip", content.instance)
     }
 
     @Test
     fun `get all game fails with limit negative`() {
         // Arrange
         createGame()
+        val limit = -1
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("limit", "-1").body(
+            Request(Method.GET, Uris.DEFAULT).query("limit", "$limit").body(
                 Json.encodeToString(
                     GamesInputModel("developer", listOf("Action")),
                 ),
             )
         // Act
         val response = router.routes(request)
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertTrue { response.status == Status.BAD_REQUEST }
-        assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.message == "Invalid limit or skip" }
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/problem+json", response.header(CONTENT_TYPE))
+        assertEquals("Invalid skip or limit", content.title)
+        assertEquals("Invalid skip or limit", content.detail)
+        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit", content.type)
+        assertEquals("?limit=$limit", content.instance)
     }
 
     companion object {

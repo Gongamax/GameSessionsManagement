@@ -109,6 +109,13 @@ class SessionJDBC(
             return@execute sessions
         }
 
+    override fun reset() {
+        return dataSource.connection.execute("Failed to reset sessions"){con  ->
+            val query = "DELETE FROM Session"
+            con.prepareStatement(query).executeUpdate()
+        }
+    }
+
     private fun UInt.getAssociatedPlayers(): AssociatedPlayers =
         dataSource.connection.execute("Players not found") { con ->
             val query = "SELECT * FROM Player WHERE id IN (SELECT player_id FROM Session_Player WHERE session_id = ?)"
