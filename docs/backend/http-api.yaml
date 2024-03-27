@@ -18,10 +18,8 @@ paths:
                   type: string
             example:
               player:
-                summary: Example of a player
-                value:
-                  name: Player0
-                  email: player0@gmail.com
+                name: Player0
+                email: player0@gmail.com
       responses:
         '200':
           description: Player created with success
@@ -54,7 +52,7 @@ paths:
               value:
                 typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-email
                 title: "Invalid email"
-                status: 404
+                status: 400
                 detail: "Email is invalid"
                 instance: http://localhost:1904/api/player
         '409':
@@ -83,6 +81,8 @@ paths:
   /player/{pid}:
     get:
       operationId: GetDetailsPlayer
+      security:
+        - bearerAuth: [ ]
       parameters:
         - name: pid
           in: path
@@ -185,9 +185,10 @@ paths:
                         developer: "developer0",
                         genres: [ "Adventure", "Rpg", "Action" ]
                       },
-                      name: "game2",
-                      developer: "developer0",
-                      genres: [ "Adventure", "Rpg" ]
+                      {
+                        name: "game2",
+                        developer: "developer0",
+                        genres: [ "Adventure", "Rpg" ]
                       }
                     ]
                 notFound:
@@ -221,9 +222,9 @@ paths:
                 developer-not-found:
                   value:
                     typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found
-                    title: "Developer not found",
-                    status: 404,
-                    detail: "Developer not found",
+                    title: "Developer not found"
+                    status: 404
+                    detail: "Developer not found"
                     instance: http://localhost:1904/api/game
         '400':
           description: Bad request for invalid parameters or invalid request body
@@ -259,6 +260,8 @@ paths:
                     instance: http://localhost:1904/api/game
     post:
       operationId: CreateGame
+      security:
+        - bearerAuth: [ ]
       requestBody:
         content:
           application/json:
@@ -385,8 +388,8 @@ paths:
                       type: string
               example:
                 value:
-                  name: "game1",
-                  developer: "developer0",
+                  name: "game1"
+                  developer: "developer0"
                   genres: [ "Adventure", "Rpg", "Action" ]
         '400':
           description: Get game fails because of invalid parameter
@@ -409,7 +412,7 @@ paths:
                 typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-request
                 title: "Invalid request"
                 status: 400
-                detail: ""
+                detail: "Invalid parameters"
                 instance: http://localhost:1904/api/game/{gid}
         '404':
           description: Game not found
@@ -430,15 +433,261 @@ paths:
                     type: Uri?
               value:
                 typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found
-                title: "Game not found",
-                status: 404,
+                title: "Game not found"
+                status: 404
                 detail: "Game with given id not found"
                 instance: http://localhost:1904/api/game{gid}
   /sessions:
     get:
       operationId: GetSessions
+      parameters:
+        - name: gid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: date
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: state
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: pid
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+        - name: skip
+          in: query
+          required: false
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Sessions filtered by game, date, state and player succeeds
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    sid:
+                      type: integer
+                    numberOfPlayers:
+                      type: integer
+                    date:
+                      type: string
+                    gid:
+                      type: integer
+                    associatedPlayers:
+                      type: array
+                    items:
+                      type: object
+                    properties:
+                      name:
+                        type: string
+                      email:
+                      type: string
+                    capacity: integer,
+              example:
+                sessions:
+                  value: [
+                    {
+                      sid: 1,
+                      numPlayers: 2,
+                      sessionDate: "2024-03-250T18:43",
+                      gid: 2,
+                      players": [
+                        {
+                          name: "Player0",
+                          email: "player0@gmail.com"
+                        },
+                        {
+                          name: "Player1",
+                          email: "player1@gmail.com"
+                        }
+                      ]
+                    },
+                    {
+                      sid: 2,
+                      numPlayers: 1,
+                      sessionDate: "2024-03-250T18:43",
+                      gid: 2,
+                      players": [
+                        {
+                          name: "Player0",
+                          email: "player0@gmail.com"
+                        }
+                      ]
+                    }
+                  ]
+        '400':
+          description: Bad request for invalid parameters
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                invalid-date:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-date
+                    title: "Invalid date"
+                    status: 400
+                    detail: "Date is invalid"
+                    instance: http://localhost:1904/api/session
+                invalid-state:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-state
+                    title: "Invalid request"
+                    status: 400
+                    detail: "Invalid parameters"
+                    instance: http://localhost:1904/api/session
+        '404':
+          description: Given game or player not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                game-not-found:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found
+                    title: "Game not found"
+                    status: 404
+                    detail: "Game with given id not found"
+                    instance: http://localhost:1904/api/sessions
+                player-not-found:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found
+                    title: "Player not found"
+                    status: 404
+                    detail: "Player with given id not found"
+                    instance: http://localhost:1904/api/sessions
     post:
       operationId: CreateSession
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gid:
+                  type: integer
+                date:
+                  type: string
+                capacity:
+                  type: integer
+            example:
+              session:
+                gid: 1
+                date: "2024-03-250T18:43"
+                capacity: 10
+      responses:
+        '200':
+          description: Session created with success
+          headers:
+            location:
+              schema:
+                type: string
+              value: "session/$sessionId"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              value:
+                message: "Session created: $sessionId"
+        '400':
+          description: Bad request for invalid request body
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                invalid-date:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-date
+                    title: "Invalid date"
+                    status: 400
+                    detail: "Date is invalid"
+                    instance: http://localhost:1904/api/session
+                invalid-capacity:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-capacity
+                    title: "Invalid capacity"
+                    status: 400
+                    detail: "Capacity is invalid"
+                    instance: http://localhost:1904/api/session
+        '404':
+          description: Session creation fails because game not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found
+                title: "Game not found"
+                status: 404
+                detail: "Game with given id not found"
+                instance: http://localhost:1904/api/sessions
   /sessions/{sid}:
     get:
       operationId: GetSessionById
@@ -450,28 +699,115 @@ paths:
             type: integer
       responses:
         '200':
-          description: Game information
+          description: Session information
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  name:
+                  sid:
+                    type: integer
+                  numberOfPlayers:
+                    type: integer
+                  date:
                     type: string
-                  developer:
-                    type: string
-                  genres:
+                  gid:
+                    type: integer
+                  associatedPlayers:
                     type: array
                     items:
-                      type: string
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        email:
+                          type: string
+                  capacity: integer,
               example:
                 value:
-                  name: "game1",
-                  developer: "developer0",
-                  genres: [ "Adventure", "Rpg", "Action" ]
+                  sid: 1
+                  numPlayers: 2
+                  sessionDate: "2024-03-250T18:43"
+                  gid: 2
+                  players": [
+                    {
+                      name: "Player0",
+                      email: "player0@gmail.com"
+                    },
+                    {
+                      name: "Player1",
+                      email: "player1@gmail.com"
+                    }
+                  ]
+        '400':
+          description: Get game fails because of invalid parameter
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-request
+                title: "Invalid request"
+                status: 400
+                detail: "Invalid parameters"
+                instance: http://localhost:1904/api/session/{sid}
+        '404':
+          description: Game not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found
+                title: "Session not found"
+                status: 404
+                detail: "Session with given id not found"
+                instance: http://localhost:1904/api/session{sid}
+    put:
+      operationId: UpdateSession
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                capacity:
+                  type: integer
+                date:
+                  type: string
+            example:
+              changes:
+                capacity: 10
+                date: "2024-03-250T18:43"
   /sessions/{sid}/player/{pid}:
     put:
       operationId: AddPlayerToSession
+      security:
+        - bearerAuth: [ ]
       parameters:
         - name: sid
           in: path
@@ -483,7 +819,86 @@ paths:
           required: true
           schema:
             type: integer
-
+      responses:
+        '204':
+          description: Player added with success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              value:
+                message: "Player added to session"
+        404:
+          description: Player not added because session not found or player not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                session-not-found:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found
+                    title: "Session not found"
+                    status: 404
+                    detail: "Session with given id not found"
+                    instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
+                player-not-found:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found
+                    title: "Player not found"
+                    status: 404
+                    detail: "Player with given id not found"
+                    instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
+        '409':
+          description: Player not added because session is full or player already in session
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                session-is-full:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-is-full
+                    title: "Session is full"
+                    status: 409
+                    detail: "Session is full"
+                    instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
+                player-already-in-session:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-already-in-session
+                    title: "Player already in session"
+                    status: 409
+                    detail: "Player is already in session"
+                    instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
+    delete:
+      operationId: DeletePlayerFromSession
+      security:
+        - bearerAuth: [ ]
 components:
   securitySchemes:
     bearerAuth:
