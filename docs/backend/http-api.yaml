@@ -244,19 +244,19 @@ paths:
                   instance:
                     type: Uri?
               examples:
-                invalid-arguments:
+                invalid-arguments-skip-or-limit:
                   value:
-                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-parameters
-                    title: "Invalid parameters"
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit
+                    title: "Invalid skip or limit"
                     status: 400
-                    detail: ""
+                    detail: "Invalid skip or limit"
                     instance: http://localhost:1904/api/game
-                invalid-body:
+                invalid-request-body-arguments-missing:
                   value:
-                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-request-body
-                    title: "Invalid request body"
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genres-or-developer-missing
+                    title: "Genres or developer is empty"
                     status: 400
-                    detail: ""
+                    detail: "Genres or developer is empty"
                     instance: http://localhost:1904/api/game
     post:
       operationId: CreateGame
@@ -292,6 +292,29 @@ paths:
                     type: string
               value:
                 message: "Game id: $gameId"
+        '400':
+          description: Game creation fails because of invalid data
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-game-data
+                title: "Invalid game data"
+                status: 400
+                detail: "Invalid game data"
+                instance: http://localhost:1904/api/game
         '404':
           description: Game creation fails because genre not found
           content:
@@ -337,29 +360,6 @@ paths:
                 title: "Game name already exists"
                 status: 409
                 detail: "Game with given name $name already exists"
-                instance: http://localhost:1904/api/game
-        '400':
-          description: Game creation fails because of invalid request body
-          content:
-            application/json+problem:
-              schema:
-                type: object
-                properties:
-                  typeUri:
-                    type: Uri
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                  detail:
-                    type: string
-                  instance:
-                    type: Uri?
-              value:
-                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-request-body
-                title: "Invalid request body"
-                status: 400
-                detail: ""
                 instance: http://localhost:1904/api/game
   /game/{gid}:
     get:
