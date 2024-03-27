@@ -19,7 +19,6 @@ class Problem(
         private const val BASE_URL = "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/"
 
         //region Bad Request
-        private val missGenreAndDeveloper = Uri.of(BASE_URL + "genres-or-developer-missing")
         private val invalidDate = Uri.of(BASE_URL + "invalid-date")
         private val invalidState = Uri.of(BASE_URL + "invalid-state")
         private val invalidCapacity = Uri.of(BASE_URL + "invalid-capacity")
@@ -31,7 +30,6 @@ class Problem(
         //endregion
 
         //region Conflict, Already Exists
-        private val nameAlreadyExists = Uri.of(BASE_URL + "name-already-exists")
         private val playerAlreadyInSession = Uri.of(BASE_URL + "player-already-in-session")
         private val sessionIsFull = Uri.of(BASE_URL + "session-is-full")
         private val gameNameAlreadyExists = Uri.of(BASE_URL + "game-name-already-exists")
@@ -49,27 +47,6 @@ class Problem(
         private val genreNotFound = Uri.of(BASE_URL + "genre-not-found")
         private val developerNotFound = Uri.of(BASE_URL + "developer-not-found")
         //endregion
-
-        fun missingParameters(
-            instance: Uri?,
-            missingParams: List<String>,
-        ) = Problem(
-            typeUri = missGenreAndDeveloper,
-            title = "Missing parameter(s)",
-            status = Status.BAD_REQUEST,
-            detail = "Missing parameter(s): ${missingParams.joinToString()}",
-            instance = instance,
-        ).toResponse()
-
-        fun nameAlreadyExists(
-            instance: Uri?,
-            name: String,
-        ) = Problem(
-            typeUri = nameAlreadyExists,
-            title = "Name already exists",
-            status = Status.CONFLICT,
-            detail = "Game with given name $name already exists",
-        ).toResponse()
 
         fun gameNotFound(instance: Uri?) =
             Problem(

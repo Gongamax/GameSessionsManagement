@@ -24,7 +24,7 @@ requests and kotlinx.serialization library for body serialization/deserializatio
 
 The following diagram holds the Entity-Relationship model for the information managed by the system.
 
-![Entity Relationship Diagram](diagrams/Diagram-ER.png)
+![Entity Relationship Diagram](backend/diagrams/Diagram-ER.png)
 
 We highlight the following aspects:
 
@@ -43,8 +43,8 @@ The conceptual model has the following restrictions:
 
 The physical model of the database is available in:
 
-- create tables: [createTables.sql](../../src/main/sql/createSchema.sql)
-- insert data: [insertData.sql](../../src/main/sql/addData.sql)
+- create tables: [createTables.sql](../src/main/sql/createSchema.sql)
+- insert data: [insertData.sql](../src/main/sql/addData.sql)
 
 We highlight the following aspects of this model:
 
@@ -55,7 +55,7 @@ We highlight the following aspects of this model:
 
 ### Open-API Specification
 
-In our [Open-API specification](http-api.yaml), we highlight the following aspects:
+In our [Open-API specification](backend/http-api.yaml), we highlight the following aspects:
 
 * The API provides endpoints for managing players, games, and sessions.
 * All GET operations that return a sequence support paging.
@@ -417,7 +417,7 @@ Requests are handled by the HTTP4K library. The request parameters are validated
 before being used.
 The following diagram shows the structure of the API:
 
-![API Structure](diagrams/API-Arquitecture.png)
+![API Structure](backend/diagrams/API-Arquitecture.png)
 
 ### Connection Management
 
