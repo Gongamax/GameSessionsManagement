@@ -1,6 +1,6 @@
 package pt.isel.ls.sessions.domain.utils
 
-import java.util.*
+import java.util.UUID
 
 /**
  * Data class representing a Token.

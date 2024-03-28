@@ -27,5 +27,3 @@ internal fun Request.getPathSegments(vararg list: String): List<String> =
         }
         value
     }
-
-

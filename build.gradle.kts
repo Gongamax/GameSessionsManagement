@@ -33,3 +33,12 @@ tasks.register<Copy>("copyRuntimeDependencies") {
     into("build/libs")
     from(configurations.runtimeClasspath)
 }
+
+// The following configuration is necessary to generate a JAR file with the necessary dependencies
+tasks.named<Jar>("jar") {
+    dependsOn("copyRuntimeDependencies")
+    manifest {
+        attributes["Main-Class"] = "pt.isel.ls.sessions.SessionsAppKt"
+        attributes["Class-Path"] = configurations.runtimeClasspath.get().joinToString(" ") { it.name }
+    }
+}

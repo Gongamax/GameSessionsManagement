@@ -13,15 +13,12 @@ import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
-import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
 import pt.isel.ls.sessions.services.player.PlayerService
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class PlayerTests {
-
     @AfterTest
     fun clear() {
         mem.playerDB.reset()
@@ -43,9 +40,9 @@ class PlayerTests {
         val content = Json.decodeFromString<MessageResponse>(response.bodyString())
         // Assert
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals ("/player/$pid",response.header("Location"))
-        assertEquals( Status.CREATED, response.status)
-        assertEquals( "Player created: $pid",  content.message)
+        assertEquals("/player/$pid", response.header("Location"))
+        assertEquals(Status.CREATED, response.status)
+        assertEquals("Player created: $pid", content.message)
     }
 
     @Test
@@ -59,10 +56,12 @@ class PlayerTests {
         // Assert
         assertEquals(Status.CONFLICT, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
-        assertEquals("Player with given email Alice@gmail.com already exists",  content.detail)
-        assertEquals( "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists", content.type)
+        assertEquals("Player with given email Alice@gmail.com already exists", content.detail)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists",
+            content.type,
+        )
         assertEquals("Email already exists", content.title)
-
     }
 
     @Test
@@ -73,13 +72,15 @@ class PlayerTests {
         val response = playerRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals( Status.BAD_REQUEST,response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
-        assertEquals("Email is invalid",  content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-email", content.type)
+        assertEquals("Email is invalid", content.detail)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-email",
+            content.type,
+        )
         assertEquals("Invalid email", content.title)
     }
-
 
     @Test
     fun `getDetailsPlayer return response with a player`() {
@@ -90,9 +91,9 @@ class PlayerTests {
         val response = playerRouter.routes(request)
         val content = Json.decodeFromString<PlayerDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.OK,  response.status)
-        assertEquals( NAME, content.name)
-        assertEquals( EMAIL, content.email)
+        assertEquals(Status.OK, response.status)
+        assertEquals(NAME, content.name)
+        assertEquals(EMAIL, content.email)
     }
 
     @Test
@@ -107,7 +108,10 @@ class PlayerTests {
         assertEquals(Status.NOT_FOUND, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Player with given id: 99 not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found",
+            content.type,
+        )
         assertEquals("Player not found", content.title)
     }
 
@@ -123,7 +127,10 @@ class PlayerTests {
         assertEquals(Status.UNAUTHORIZED, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Unauthorized, token not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/token-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/token-not-found",
+            content.type,
+        )
         assertEquals("Token not found", content.title)
     }
 
@@ -137,8 +144,5 @@ class PlayerTests {
         private val player = PlayerDTO(NAME, EMAIL)
         private val player2 = PlayerDTO("Bob", "Bob@gmail.com")
         private val playerInvalidEmail = PlayerDTO(NAME, "Alice@gmail")
-
     }
-
-
 }

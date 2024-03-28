@@ -1,8 +1,11 @@
-@file:Suppress("ktlint:standard:no-wildcard-imports")
-
 package pt.isel.ls.sessions.repository.jdbc.session
 
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.session.Session
@@ -110,7 +113,7 @@ class SessionJDBC(
         }
 
     override fun reset() {
-        return dataSource.connection.execute("Failed to reset sessions"){con  ->
+        return dataSource.connection.execute("Failed to reset sessions") { con ->
             val query = "DELETE FROM Session"
             con.prepareStatement(query).executeUpdate()
         }

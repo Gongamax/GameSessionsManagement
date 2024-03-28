@@ -4,7 +4,7 @@ import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
 import pt.isel.ls.sessions.repository.PlayerRepository
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 

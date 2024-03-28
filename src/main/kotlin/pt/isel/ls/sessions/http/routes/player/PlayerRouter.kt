@@ -13,7 +13,11 @@ import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
-import pt.isel.ls.sessions.http.util.*
+import pt.isel.ls.sessions.http.util.Problem
+import pt.isel.ls.sessions.http.util.Uris
+import pt.isel.ls.sessions.http.util.execStart
+import pt.isel.ls.sessions.http.util.getPathSegments
+import pt.isel.ls.sessions.http.util.jsonResponse
 import pt.isel.ls.sessions.services.player.PlayerCreationError
 import pt.isel.ls.sessions.services.player.PlayerService
 import pt.isel.ls.utils.Failure
@@ -44,7 +48,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
 
     private fun getDetailsPlayer(request: Request): Response =
         execStart(request) {
-            //val token = request.bearerTokenOrThrow()
+            request.bearerTokenOrThrow() // Throws if no token is present
             val numberPlayer = request.getPathSegments(PLAYER_ID).first().toUInt()
             return when (val player = services.getDetailsPlayer(numberPlayer)) {
                 is Failure -> Problem.playerNotFound(request.uri, numberPlayer)

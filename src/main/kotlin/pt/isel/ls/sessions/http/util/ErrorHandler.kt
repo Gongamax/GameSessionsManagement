@@ -32,10 +32,9 @@ inline fun execStart(
         Problem.invalidRequest(request.uri, error.message ?: "Invalid request")
     } catch (error: NoSuchElementException) {
         Problem.notFound(request.uri)
-    }catch (error: DateTimeException) {
+    } catch (error: DateTimeException) {
         Problem.invalidDate(request.uri)
-    }
-    catch (error: IllegalStateException) {
+    } catch (error: IllegalStateException) {
         Problem.invalidRequest(request.uri)
     } catch (error: Exception) {
         Problem.internalServerError(request.uri, "Internal server error")

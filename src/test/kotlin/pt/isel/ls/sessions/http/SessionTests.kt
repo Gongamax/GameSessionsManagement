@@ -15,14 +15,11 @@ import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.routes.session.SessionRouter
-import pt.isel.ls.sessions.http.util.APPLICATION_JSON
-import pt.isel.ls.sessions.http.util.CONTENT_TYPE
 import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.repository.data.game.GameMemoryDB
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
-import pt.isel.ls.sessions.repository.data.session.SessionMemoryDB
 import pt.isel.ls.sessions.services.player.PlayerService
 import pt.isel.ls.sessions.services.session.SessionService
 import kotlin.test.AfterTest
@@ -50,7 +47,7 @@ class SessionTests {
         sessions.forEach {
             sessionRouter.routes(
                 Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))
-                    .header("Authorization", "Bearer token")
+                    .header("Authorization", "Bearer token"),
             )
         }
     }
@@ -100,7 +97,7 @@ class SessionTests {
         assertEquals("Game with given id not found", content.detail)
         assertEquals(
             "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found",
-            content.type
+            content.type,
         )
         assertEquals("Game not found", content.title)
     }
@@ -122,7 +119,8 @@ class SessionTests {
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Date is invalid", content.detail)
         assertEquals(
-            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-date", content.type
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-date",
+            content.type,
         )
         assertEquals("Invalid date", content.title)
     }
@@ -144,7 +142,9 @@ class SessionTests {
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Capacity is invalid", content.detail)
         assertEquals(
-            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-capacity",content.type)
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-capacity",
+            content.type,
+        )
         assertEquals("Invalid capacity", content.title)
     }
 
@@ -160,8 +160,8 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<SessionDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.OK,  response.status)
-        assertEquals( "application/json", response.header("Content-Type"))
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
         assertEquals(1u, content.sid)
         assertEquals(gid, content.gid)
         assertEquals(10, content.capacity)
@@ -177,10 +177,13 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.NOT_FOUND,response.status)
+        assertEquals(Status.NOT_FOUND, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Session with given id: 99 not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found",
+            content.type,
+        )
         assertEquals("Session not found", content.title)
     }
 
@@ -193,10 +196,10 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
         // Assert
-        assertEquals( Status.OK,response.status)
-        assertEquals("application/json",  response.header("Content-Type"))
-        assertEquals( 1u,  content[0].sid)
-        assertEquals(1u,  content[0].gid)
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(1u, content[0].sid)
+        assertEquals(1u, content[0].gid)
         assertEquals(10, content[0].capacity)
         assertEquals("2025-03-14T10:58:00.123456789", content[0].date.toString())
     }
@@ -211,10 +214,10 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
         // Assert
-        assertEquals(Status.OK,response.status)
-        assertEquals( "application/json", response.header("Content-Type"))
-        assertEquals( 1u,  content[0].sid)
-        assertEquals( 1u, content[0].gid)
+        assertEquals(Status.OK, response.status)
+        assertEquals("application/json", response.header("Content-Type"))
+        assertEquals(1u, content[0].sid)
+        assertEquals(1u, content[0].gid)
         assertEquals(10, content[0].capacity)
         assertEquals("2025-03-14T10:58:00.123456789", content[0].date.toString())
     }
@@ -243,10 +246,13 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.BAD_REQUEST,  response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Date is invalid", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-date", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-date",
+            content.type,
+        )
         assertEquals("Invalid date", content.title)
     }
 
@@ -259,10 +265,13 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.BAD_REQUEST,response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("State is invalid", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-state", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-state",
+            content.type,
+        )
         assertEquals("Invalid state", content.title)
     }
 
@@ -275,10 +284,13 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.NOT_FOUND,response.status)
+        assertEquals(Status.NOT_FOUND, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Player with given id: 99 not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found",
+            content.type,
+        )
         assertEquals("Player not found", content.title)
     }
 
@@ -293,10 +305,13 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.BAD_REQUEST,  response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Invalid skip or limit", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit",
+            content.type,
+        )
         assertEquals("Invalid skip or limit", content.title)
     }
 
@@ -332,9 +347,12 @@ class SessionTests {
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
         assertEquals(Status.NOT_FOUND, response.status)
-        assertEquals( "Player with given id: 999 not found", content.detail)
+        assertEquals("Player with given id: 999 not found", content.detail)
         assertEquals("application/problem+json", response.header("Content-Type"))
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found", content.type,)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-not-found",
+            content.type,
+        )
         assertEquals("Player not found", content.title)
     }
 
@@ -350,11 +368,14 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.NOT_FOUND,response.status)
+        assertEquals(Status.NOT_FOUND, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
-        assertEquals("Session with given id: 99 not found",content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found",content.type,)
-        assertEquals("Session not found",content.title)
+        assertEquals("Session with given id: 99 not found", content.detail)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found",
+            content.type,
+        )
+        assertEquals("Session not found", content.title)
     }
 
     @Test
@@ -375,7 +396,10 @@ class SessionTests {
         assertEquals(Status.CONFLICT, response.status)
         assertEquals("Player is already in session", content.detail)
         assertEquals("application/problem+json", response.header("Content-Type"))
-        assertEquals( "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-already-in-session", content.type,)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-already-in-session",
+            content.type,
+        )
         assertEquals("Player already in session", content.title)
     }
 
@@ -408,7 +432,10 @@ class SessionTests {
         assertEquals(Status.CONFLICT, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Session is full", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-is-full", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-is-full",
+            content.type,
+        )
         assertEquals("Session is full", content.title)
         assertEquals("/$sid/player/$pid", content.instance)
     }

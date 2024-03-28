@@ -9,7 +9,7 @@ import pt.isel.ls.sessions.repository.jdbc.execute
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
-import java.util.*
+import java.util.UUID
 import javax.sql.DataSource
 
 class PlayerJDBC(

@@ -14,7 +14,12 @@ import pt.isel.ls.sessions.http.model.game.GamesInputModel
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
-import pt.isel.ls.sessions.http.util.*
+import pt.isel.ls.sessions.http.util.LOCATION
+import pt.isel.ls.sessions.http.util.Problem
+import pt.isel.ls.sessions.http.util.Uris
+import pt.isel.ls.sessions.http.util.execStart
+import pt.isel.ls.sessions.http.util.getPathSegments
+import pt.isel.ls.sessions.http.util.jsonResponse
 import pt.isel.ls.sessions.services.game.GameCreationError
 import pt.isel.ls.sessions.services.game.GameService
 import pt.isel.ls.sessions.services.game.GamesGetError
@@ -65,7 +70,7 @@ class GameRouter(private val services: GameService) : Router {
     private fun createGame(request: Request): Response =
         execStart(request) {
             val game = Json.decodeFromString<GameDTO>(request.bodyString())
-            val token = request.bearerTokenOrThrow()
+            request.bearerTokenOrThrow()
             if (game.name.isBlank() || game.developer.isBlank() || game.genres.isEmpty()) {
                 return@execStart Problem.invalidGameData(request.uri)
             }

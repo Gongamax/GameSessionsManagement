@@ -17,7 +17,12 @@ import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class GameTests {
     @AfterTest
@@ -29,7 +34,7 @@ class GameTests {
         games.forEach {
             router.routes(
                 Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))
-                    .header("Authorization", "Bearer token")
+                    .header("Authorization", "Bearer token"),
             )
         }
     }
@@ -68,7 +73,7 @@ class GameTests {
         assertEquals("Game name already exists", content.title)
         assertEquals(
             "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-name-already-exists",
-            content.type
+            content.type,
         )
     }
 
@@ -89,9 +94,6 @@ class GameTests {
         assertEquals("Invalid game data", content.detail)
         assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-game-data", content.type)
     }
-
-
-
 
     @Test
     fun `game creation fails because genre is invalid`() {
@@ -138,8 +140,8 @@ class GameTests {
         val response = router.routes(request2)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.NOT_FOUND , response.status)
-        assertEquals("application/problem+json" , response.header(CONTENT_TYPE))
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("application/problem+json", response.header(CONTENT_TYPE))
         assertEquals("Game not found", content.title)
         assertEquals("Game with given id not found", content.detail)
         assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found", content.type)

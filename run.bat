@@ -1,0 +1,1 @@
+docker build -t sessions . && docker run -p 1904:1904 sessions

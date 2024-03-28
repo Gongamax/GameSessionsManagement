@@ -19,9 +19,7 @@ class GameTests {
         val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
         // Assert
         assertEquals(1u, id)
-
     }
-
 
     @Test
     fun testGetGameById() {
@@ -79,8 +77,6 @@ class GameTests {
         // Assert
         assertEquals(1, games.size)
     }
-
-
 
     private companion object {
         val gameMemoryDB = GameMemoryDB()

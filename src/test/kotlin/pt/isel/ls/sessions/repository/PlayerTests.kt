@@ -1,13 +1,11 @@
 package pt.isel.ls.sessions.repository
 
-
 import junit.framework.TestCase.assertEquals
 import pt.isel.ls.sessions.repository.data.player.PlayerMemoryDB
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 
 class PlayerTests {
-
     @Test
     fun `create player`() {
         val token = gameMemoryDB.createPlayer(NAME, EMAIL)
@@ -65,7 +63,5 @@ class PlayerTests {
         val gameMemoryDB = PlayerMemoryDB()
         const val NAME = "name"
         const val EMAIL = "email@gmai.com"
-
     }
-
 }

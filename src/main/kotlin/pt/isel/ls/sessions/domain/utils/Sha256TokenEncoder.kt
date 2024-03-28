@@ -1,7 +1,7 @@
 package pt.isel.ls.sessions.domain.utils
 
 import java.security.MessageDigest
-import java.util.*
+import java.util.Base64
 
 /**
  * This class is responsible for encoding tokens.

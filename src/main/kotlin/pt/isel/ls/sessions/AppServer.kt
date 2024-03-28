@@ -21,10 +21,11 @@ class AppServer(
     private val webApi = AppWebApi(service)
 
     fun start() {
-        val app = routes(
-            API_PATH bind webApi.httpHandler,
-            singlePageApp(ResourceLoader.Directory("static-content"))
-        )
+        val app =
+            routes(
+                API_PATH bind webApi.httpHandler,
+                singlePageApp(ResourceLoader.Directory("static-content")),
+            )
         try {
             val jettyServer = app.asServer(Jetty(port)).start()
             logger.info("server started listening on port $port")

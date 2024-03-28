@@ -10,7 +10,6 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import pt.isel.ls.sessions.domain.session.Session
-import pt.isel.ls.sessions.domain.session.SessionState
 import pt.isel.ls.sessions.domain.session.toSessionState
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
@@ -18,7 +17,12 @@ import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
-import pt.isel.ls.sessions.http.util.*
+import pt.isel.ls.sessions.http.util.LOCATION
+import pt.isel.ls.sessions.http.util.Problem
+import pt.isel.ls.sessions.http.util.Uris
+import pt.isel.ls.sessions.http.util.execStart
+import pt.isel.ls.sessions.http.util.getPathSegments
+import pt.isel.ls.sessions.http.util.jsonResponse
 import pt.isel.ls.sessions.services.session.SessionAddPlayerError
 import pt.isel.ls.sessions.services.session.SessionCreationError
 import pt.isel.ls.sessions.services.session.SessionService
@@ -48,8 +52,9 @@ class SessionRouter(
                 return@execStart Problem.invalidSkipOrLimit(request.uri)
             }
             val date = request.query(DATE)?.toLocalDateTime()
-            val state = request.query(STATE)
-                ?.let { s -> s.toSessionState() ?: return@execStart Problem.invalidState(request.uri) }
+            val state =
+                request.query(STATE)
+                    ?.let { s -> s.toSessionState() ?: return@execStart Problem.invalidState(request.uri) }
 
             return when (val res = services.getSessions(gid, date, state, pid, limit, skip)) {
                 is Failure ->
@@ -76,7 +81,7 @@ class SessionRouter(
 
     private fun createSession(request: Request): Response =
         execStart(request) {
-            val token = request.bearerTokenOrThrow()
+            request.bearerTokenOrThrow()
             val sessionDTO = Json.decodeFromString<SessionCreateDTO>(request.bodyString())
             val date = LocalDateTime.parse(sessionDTO.date)
             return when (val res = services.createSession(sessionDTO.capacity, sessionDTO.gid, date)) {
@@ -88,14 +93,14 @@ class SessionRouter(
                     }
 
                 is Success ->
-                    Response(Status.CREATED).header("Location", "/sessions/${res.value}")
+                    Response(Status.CREATED).header(LOCATION, "/sessions/${res.value}")
                         .jsonResponse(MessageResponse("Session created: ${res.value}"))
             }
         }
 
     private fun addPlayerToSession(request: Request): Response =
         execStart(request) {
-            val token = request.bearerTokenOrThrow()
+            request.bearerTokenOrThrow()
             val (sid, pid) = request.getPathSegments(SESSION_ID, PLAYER_ID).map { it.toUInt() }
             return when (val res = services.addPlayerToSession(sid, pid)) {
                 is Failure ->
@@ -123,11 +128,13 @@ class SessionRouter(
 
         private const val DEFAULT_SKIP = 0
         private const val DEFAULT_LIMIT = 10
-        private fun String.toLocalDateTime() = try {
-            LocalDateTime.parse(this)
-        } catch (e: IllegalArgumentException) {
-            throw DateTimeException("Invalid date format")
-        }
+
+        private fun String.toLocalDateTime() =
+            try {
+                LocalDateTime.parse(this)
+            } catch (e: IllegalArgumentException) {
+                throw DateTimeException("Invalid date format")
+            }
 
         private fun Session.toSessionDTO() =
             SessionDTO(

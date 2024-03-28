@@ -9,11 +9,12 @@ package pt.isel.ls.sessions.domain.session
 enum class SessionState {
     OPEN,
     CLOSED,
-    INVALID
+    INVALID,
 }
 
-fun String.toSessionState(): SessionState? = when (this.uppercase()) {
-    "OPEN" -> SessionState.OPEN
-    "CLOSED" -> SessionState.CLOSED
-    else -> null
-}
+fun String.toSessionState(): SessionState? =
+    when (this.uppercase()) {
+        "OPEN" -> SessionState.OPEN
+        "CLOSED" -> SessionState.CLOSED
+        else -> null
+    }

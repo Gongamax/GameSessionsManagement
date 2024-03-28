@@ -17,15 +17,14 @@ class GameMemoryDB : GameRepository {
     ): UInt {
         val gid = nextGameId.getAndIncrement().toUInt()
         gameMap[gid] = Game(gid, name, developer, genres)
-       return gid
-
-}
+        return gid
+    }
 
     override fun getGames(
         genres: List<Genres>,
         developer: String,
         limit: Int,
-        skip: Int
+        skip: Int,
     ): List<Game> =
         gameMap.values.filter { game ->
             game.developer == developer && genres.any { genre -> game.genres.contains(genre) }
@@ -38,8 +37,7 @@ class GameMemoryDB : GameRepository {
         nextGameId = AtomicInteger(1)
     }
 
-    override fun getDeveloperByName(developer: String): String? =
-        gameMap.values.find { it.developer == developer }?.developer
+    override fun getDeveloperByName(developer: String): String? = gameMap.values.find { it.developer == developer }?.developer
 
     override fun getGameByName(name: String): Boolean = gameMap.any { it.value.name == name }
 }

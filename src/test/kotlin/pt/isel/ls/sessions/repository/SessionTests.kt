@@ -8,7 +8,6 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-
 class SessionTests {
     private val clock = Clock.System
 
@@ -96,6 +95,5 @@ class SessionTests {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
         private const val DEFAULT_LIMIT = 10
         private const val DEFAULT_SKIP = 0
-
     }
 }

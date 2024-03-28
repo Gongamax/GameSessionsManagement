@@ -36,4 +36,3 @@ fun String.toGenre(): Genres? {
     val upper = this.uppercase()
     return Genres.entries.firstOrNull { it.text.uppercase() == upper }
 }
-
