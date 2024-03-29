@@ -43,14 +43,20 @@ class SessionTests {
         mem.sessionDB.reset()
     }
 
-    private fun createSession() {
-        sessions.forEach {
+    private fun createSession(createOne: Boolean = false): Any? =
+        if (createOne) {
             sessionRouter.routes(
-                Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))
+                Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(sessions[0]))
                     .header("Authorization", "Bearer token"),
-            )
+            ).header("Location")?.split("/")?.last()
+        } else {
+            sessions.forEach {
+                sessionRouter.routes(
+                    Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(it))
+                        .header("Authorization", "Bearer token"),
+                )
+            }
         }
-    }
 
     private fun createPlayer(email: String = "francisco@gmail.com") {
         val name = "Francisco"
@@ -154,7 +160,7 @@ class SessionTests {
         createSession()
         val gid = 1u
         val request =
-            Request(Method.GET, Uris.Sessions.GET_BY_ID.replace("{sid}", "1")).header("Authorization", "Bearer token")
+            Request(Method.GET, Uris.Sessions.BY_ID.replace("{sid}", "1")).header("Authorization", "Bearer token")
 
         // Act
         val response = sessionRouter.routes(request)
@@ -172,7 +178,7 @@ class SessionTests {
     fun `getSession return response with a session not found`() {
         // Arrange
         val request =
-            Request(Method.GET, Uris.Sessions.GET_BY_ID.replace("{sid}", "99")).header("Authorization", "Bearer token")
+            Request(Method.GET, Uris.Sessions.BY_ID.replace("{sid}", "99")).header("Authorization", "Bearer token")
         // Act
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
@@ -462,6 +468,41 @@ class SessionTests {
         assertEquals(sessions[2].capacity, content[0].capacity)
         assertEquals(sessions[3].capacity, content[1].capacity)
         assertEquals(sessions[4].capacity, content[2].capacity)
+    }
+
+    @Test
+    fun `deleteSession succeeds`() {
+        // Arrange
+        val sid = createSession(true) as String
+        val request =
+            Request(Method.DELETE, Uris.Sessions.BY_ID.replace("{sid}", sid))
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        // Assert
+        assertEquals(Status.NO_CONTENT, response.status)
+        assertEquals("Session deleted", content.message)
+    }
+
+    @Test
+    fun `deleteSession returns session not found`() {
+        // Arrange
+        val request =
+            Request(Method.DELETE, Uris.Sessions.BY_ID.replace("{sid}", "99"))
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("Session with given id: 99 not found", content.detail)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found",
+            content.type,
+        )
+        assertEquals("Session not found", content.title)
     }
 
     companion object {

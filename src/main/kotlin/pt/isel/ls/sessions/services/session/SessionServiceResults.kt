@@ -31,6 +31,12 @@ sealed class SessionGetError {
 
 typealias SessionGetResult = Either<SessionGetError, Session>
 
+sealed class SessionDeleteError {
+    data object SessionNotFound : SessionDeleteError()
+}
+
+typealias SessionDeleteResult = Either<SessionDeleteError, Unit>
+
 sealed class SessionAddPlayerError {
     data object SessionNotFound : SessionAddPlayerError()
 

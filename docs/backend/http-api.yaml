@@ -179,18 +179,12 @@ paths:
               examples:
                 found:
                   value:
-                    games: [
-                      {
-                        name: "game1",
+                    games: [ { name: "game1",
+                               developer: "developer0",
+                               genres: [ "Adventure", "Rpg", "Action" ] },
+                      { name: "game2",
                         developer: "developer0",
-                        genres: [ "Adventure", "Rpg", "Action" ]
-                      },
-                      {
-                        name: "game2",
-                        developer: "developer0",
-                        genres: [ "Adventure", "Rpg" ]
-                      }
-                    ]
+                        genres: [ "Adventure", "Rpg" ] } ]
                 notFound:
                   value:
                     games: [ ]
@@ -501,36 +495,20 @@ paths:
                     capacity: integer,
               example:
                 sessions:
-                  value: [
-                    {
-                      sid: 1,
-                      numPlayers: 2,
-                      sessionDate: "2024-03-250T18:43",
-                      gid: 2,
-                      players": [
-                        {
-                          name: "Player0",
-                          email: "player0@gmail.com"
-                        },
-                        {
-                          name: "Player1",
-                          email: "player1@gmail.com"
-                        }
-                      ]
-                    },
-                    {
-                      sid: 2,
+                  value: [ { sid: 1,
+                             numPlayers: 2,
+                             sessionDate: "2024-03-250T18:43",
+                             gid: 2,
+                             players": [ { name: "Player0",
+                                           email: "player0@gmail.com" },
+                               { name: "Player1",
+                                 email: "player1@gmail.com" } ] },
+                    { sid: 2,
                       numPlayers: 1,
                       sessionDate: "2024-03-250T18:43",
                       gid: 2,
-                      players": [
-                        {
-                          name: "Player0",
-                          email: "player0@gmail.com"
-                        }
-                      ]
-                    }
-                  ]
+                      players": [ { name: "Player0",
+                                    email: "player0@gmail.com" } ] } ]
         '400':
           description: Bad request for invalid parameters
           content:
@@ -729,16 +707,10 @@ paths:
                   numPlayers: 2
                   sessionDate: "2024-03-250T18:43"
                   gid: 2
-                  players": [
-                    {
-                      name: "Player0",
-                      email: "player0@gmail.com"
-                    },
-                    {
-                      name: "Player1",
-                      email: "player1@gmail.com"
-                    }
-                  ]
+                  players": [ { name: "Player0",
+                                email: "player0@gmail.com" },
+                    { name: "Player1",
+                      email: "player1@gmail.com" } ]
         '400':
           description: Get game fails because of invalid parameter
           content:
@@ -803,6 +775,45 @@ paths:
               changes:
                 capacity: 10
                 date: "2024-03-250T18:43"
+    delete:
+      operationId: DeleteSession
+      security:
+        - bearerAuth: [ ]
+      responses:
+        '204':
+          description: Session deleted with success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                value:
+                  message: "Session deleted"
+        '404':
+          description: Session not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              value:
+                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found
+                title: "Session not found"
+                status: 404
+                detail: "Session with given id not found"
+                instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
   /sessions/{sid}/player/{pid}:
     put:
       operationId: AddPlayerToSession

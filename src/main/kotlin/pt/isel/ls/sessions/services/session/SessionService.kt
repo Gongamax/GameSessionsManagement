@@ -89,4 +89,11 @@ class SessionService(
             val sessions = sessionRepository.getSessions(gid, date, state, pid, limit, skip)
             success(sessions)
         }
+
+    fun deleteSession(sid: UInt): SessionDeleteResult =
+        run {
+            sessionRepository.getSession(sid) ?: return@run failure(SessionDeleteError.SessionNotFound)
+            sessionRepository.deleteSession(sid)
+            success(Unit)
+        }
 }

@@ -66,6 +66,10 @@ class SessionMemoryDB(
         nextSessionId = AtomicInteger(1)
     }
 
+    override fun deleteSession(sid: UInt) {
+        sessions.remove(sid)
+    }
+
     private fun getSessionState(
         date: LocalDateTime,
         players: Set<Player>,

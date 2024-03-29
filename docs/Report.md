@@ -29,27 +29,27 @@ The following diagram holds the Entity-Relationship model for the information ma
 We highlight the following aspects:
 
 * The system manages three main entities: Player, Game, and Session.
-* Each Player has a unique number, a name, and a unique email.
-* Each Game is characterized by a unique number, a unique name, the developer, and a set of genres.
-* Each Session is characterized by a unique number, the number of players, the session date, the game, and the
-  associated players.
+    * Each Player has a unique number, a name, and a unique email.
+    * Each Game is characterized by a unique number, a unique name, the developer, and a set of genres.
+    * Each Session is characterized by a unique number, the number of players, the session date, the game, and the
+      associated players.
 
 The conceptual model has the following restrictions:
 
 * Each Player's email must be unique.
-* Each Game's name must be unique.
+    * Each Game's name must be unique.
 
 ### Physical Model ###
 
 The physical model of the database is available in:
 
 - create tables: [createTables.sql](../src/main/sql/createSchema.sql)
-- insert data: [insertData.sql](../src/main/sql/addData.sql)
+    - insert data: [insertData.sql](../src/main/sql/addData.sql)
 
 We highlight the following aspects of this model:
 
 * The database schema closely follows the conceptual model, with tables for Player, Game, and Session.
-* A Session_Player was created to represent the many-to-many relationship between Session and Player.
+    * A Session_Player was created to represent the many-to-many relationship between Session and Player.
 
 ## Software organization
 
@@ -58,7 +58,7 @@ We highlight the following aspects of this model:
 In our [Open-API specification](backend/http-api.yaml), we highlight the following aspects:
 
 * The API provides endpoints for managing players, games, and sessions.
-* All GET operations that return a sequence support paging.
+    * All GET operations that return a sequence support paging.
 
 **API endpoints** are organized as follows:
 
@@ -90,10 +90,10 @@ curl --location --request GET 'http://localhost:8080/api/player/1' --header 'Aut
 **Success Response:**
 
 - **Status Code:** 200 OK
-- **Content:** An object with the information of the player
-- **Content Type:** application/json
+    - **Content:** An object with the information of the player
+    - **Content Type:** application/json
 
-- **Schema:**
+    - **Schema:**
 
 ````
 {
@@ -106,7 +106,7 @@ curl --location --request GET 'http://localhost:8080/api/player/1' --header 'Aut
 **Error Responses:**
 
 - 404 Not Found
-- 401 Unauthorized
+    - 401 Unauthorized
 
 ### POST /api/player
 
@@ -115,8 +115,8 @@ curl --location --request GET 'http://localhost:8080/api/player/1' --header 'Aut
 **Request:**
 
 - **Content:** An object with the information of the player
-- **Content Type:** application/json
-- **Schema:**
+    - **Content Type:** application/json
+    - **Schema:**
 
 ````
 {
@@ -134,19 +134,19 @@ curl --location --request POST 'http://localhost:8080/api/player' --header 'Cont
 **Success Response:**
 
 - **Status Code:** 201 Created
-- **Content:** An object with the information of the created player
-- **Content Type:** application/json
-- **Schema:**
-  {
-  "pid": Integer,
-  "name": String,
-  "email": String
-  }
+    - **Content:** An object with the information of the created player
+    - **Content Type:** application/json
+    - **Schema:**
+      {
+      "pid": Integer,
+      "name": String,
+      "email": String
+      }
 
 **Error Responses:**
 
 - 400 Bad Request
-- 409 Conflict
+    - 409 Conflict
 
 ### GET /api/game
 
@@ -155,8 +155,8 @@ curl --location --request POST 'http://localhost:8080/api/player' --header 'Cont
 **Request:**
 
 * **Query String:**
-  * skip (_Integer_, _Optional_) - Number of elements to skip
-  * limit (_Integer_, _Optional_) - Maximum number of elements to return
+    * skip (_Integer_, _Optional_) - Number of elements to skip
+    * limit (_Integer_, _Optional_) - Maximum number of elements to return
 
 **Example:**
 
@@ -167,9 +167,9 @@ curl --location --request GET 'http://localhost:8080/api/game' --header 'Authori
 **Success Response:**
 
 - **Status Code:** 200 OK
-- **Content:** An array of objects, each with the information of a game
-- **Content Type:** application/json
-- **Schema:**
+    - **Content:** An array of objects, each with the information of a game
+    - **Content Type:** application/json
+    - **Schema:**
 
 ````
 [
@@ -206,9 +206,9 @@ curl --location --request GET 'http://localhost:8080/api/game/1' --header 'Autho
 **Success Response:**
 
 - **Status Code:** 200 OK
-- **Content:** An object with the information of the game
-- **Content Type:** application/json
-- **Schema:**
+    - **Content:** An object with the information of the game
+    - **Content Type:** application/json
+    - **Schema:**
 
 ````
 {
@@ -224,7 +224,7 @@ curl --location --request GET 'http://localhost:8080/api/game/1' --header 'Autho
 **Error Responses:**
 
 - 404 Not Found
-- 401 Unauthorized
+    - 401 Unauthorized
 
 ### POST /api/game
 
@@ -235,9 +235,9 @@ curl --location --request GET 'http://localhost:8080/api/game/1' --header 'Autho
 - **URI Params:**
     - gid (Integer) Game ID
 
-- **Content:** An object with the information of the game
-- **Content Type:** application/json
-- **Schema:**
+    - **Content:** An object with the information of the game
+    - **Content Type:** application/json
+    - **Schema:**
 
 ````
 {
@@ -262,8 +262,8 @@ curl --location --request POST 'http://localhost:8080/api/game/1' --header 'Cont
 **Error Responses:**
 
 - 409 Conflict
-- 401 Unauthorized
-- 404 Not Found
+    - 401 Unauthorized
+    - 404 Not Found
 
 ### GET /api/session
 
@@ -272,8 +272,8 @@ curl --location --request POST 'http://localhost:8080/api/game/1' --header 'Cont
 **Request:**
 
 * **Query String:**
-  * skip (_Integer_, _Optional_) - Number of elements to skip
-  * limit (_Integer_, _Optional_) - Maximum number of elements to return
+    * skip (_Integer_, _Optional_) - Number of elements to skip
+    * limit (_Integer_, _Optional_) - Maximum number of elements to return
 
 **Example:**
 
@@ -284,9 +284,9 @@ curl --location --request GET 'http://localhost:8080/api/session' --header 'Auth
 **Success Response:**
 
 - **Status Code:** 200 OK
-- **Content:** An array of objects, each with the information of a session
-- **Content Type:** application/json
-- **Schema:**
+    - **Content:** An array of objects, each with the information of a session
+    - **Content Type:** application/json
+    - **Schema:**
 
 ````
 [
@@ -306,7 +306,7 @@ curl --location --request GET 'http://localhost:8080/api/session' --header 'Auth
 **Error Responses:**
 
 - 400 Bad Request
-- 404 Not Found
+    - 404 Not Found
 
 ### POST /api/session
 
@@ -315,12 +315,12 @@ curl --location --request GET 'http://localhost:8080/api/session' --header 'Auth
 **Request:**
 
 - **URI Params:**
-  - sid (Integer) Session ID
+    - sid (Integer) Session ID
 
 **Content:** An object with the information of the session
 
 - **Content Type:** application/json
-- **Schema:**
+    - **Schema:**
 
 ````
   {
@@ -344,8 +344,8 @@ curl --location --request POST 'http://localhost:8080/api/session/1' --header 'C
 **Error Responses:**
 
 - 400 Bad Request
-- 401 Unauthorized
-- 404 Not Found
+    - 401 Unauthorized
+    - 404 Not Found
 
 ### GET /api/session/{sid}
 
@@ -366,8 +366,8 @@ curl --location --request GET 'http://localhost:8080/api/session/1' --header 'Au
 
 - **Status Code:** 200 OK
   **Content:** An object with the information of the session
-- **Content Type:** application/json
-- **Schema:**
+    - **Content Type:** application/json
+    - **Schema:**
 
 ````
   {
@@ -384,6 +384,38 @@ curl --location --request GET 'http://localhost:8080/api/session/1' --header 'Au
 **Error Responses:**
 
 - 404 Not Found
+
+### DELETE /api/session/{sid}
+
+**Description:** Deletes the specified session
+
+**Request:**
+
+- **URI Params:**
+    - sid (Integer) Session ID
+
+**Example:**
+
+```shell 
+curl --location --request DELETE 'http://localhost:8080/api/session/1' --header 'Authorization : Bearer {Access Token}'
+```
+
+**Success Response:**
+
+- **Status Code:** 204 No Content.
+  **Content:** An object with the information of the session
+    - **Content Type:** application/json
+    - **Schema:**
+
+````
+{
+  "message": "Session deleted.
+}
+````
+
+- **Error Responses:**
+    - 404 Not Found
+    - 401 Unauthorized
 
 ### PUT /api/session/{sid}/player/{pid}
 
@@ -408,8 +440,8 @@ curl --location --request PUT 'http://localhost:8080/api/session/1/player/1' --h
 **Error Responses:**
 
 - 409 Conflict
-- 401 Unauthorized
-- 404 Not Found
+    - 401 Unauthorized
+    - 404 Not Found
 
 ### Request Details
 
@@ -432,7 +464,7 @@ retrieving, updating, and deleting entities in the database.
 There are two data access implementations that implement the interface **AppDB**:
 
 - **AppMemoryDB:** stores the data in memory
-- **AppJdbcDB:** stores the data in a Postgres database
+    - **AppJdbcDB:** stores the data in a Postgres database
 
 The fact that the data is stored in memory allows for testing without the need for a database.
 The use of an interface allows for easy switching between the two implementations, being the Service Layer independent

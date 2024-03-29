@@ -29,4 +29,6 @@ interface SessionRepository {
     ): List<Session>
 
     fun reset()
+
+    fun deleteSession(sid: UInt)
 }

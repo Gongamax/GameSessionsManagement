@@ -1,11 +1,6 @@
 package pt.isel.ls.sessions.repository.jdbc.session
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toKotlinLocalDateTime
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.session.Session
@@ -116,6 +111,15 @@ class SessionJDBC(
         return dataSource.connection.execute("Failed to reset sessions") { con ->
             val query = "DELETE FROM Session"
             con.prepareStatement(query).executeUpdate()
+        }
+    }
+
+    override fun deleteSession(sid: UInt) {
+        return dataSource.connection.execute("Failed to delete session") { con ->
+            val query = "DELETE FROM Session WHERE id = ?"
+            con.prepareStatement(query).apply {
+                setInt(1, sid.toInt())
+            }.executeUpdate()
         }
     }
 

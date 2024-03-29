@@ -15,7 +15,7 @@ object Uris {
 
     object Sessions {
         const val ROOT = "session"
-        const val GET_BY_ID = "/{sid}"
+        const val BY_ID = "/{sid}"
         const val ADD_PLAYER = "/{sid}/player/{pid}"
     }
 }

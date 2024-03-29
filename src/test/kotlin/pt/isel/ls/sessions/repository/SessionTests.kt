@@ -91,6 +91,24 @@ class SessionTests {
         assertEquals(pid, session.associatedPlayers.first().pid)
     }
 
+    @Test
+    fun `delete session`() {
+        // Arrange
+        val db = AppMemoryDB(clock)
+        val capacity = 10
+        val gid = 1
+        val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
+
+        // Act
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
+        db.sessionDB.deleteSession(sid)
+
+        // Assert
+        val session = db.sessionDB.getSession(sid)
+        assertEquals(null, session)
+    }
+
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
         private const val DEFAULT_LIMIT = 10
