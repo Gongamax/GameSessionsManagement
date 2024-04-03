@@ -79,12 +79,21 @@ function a(href, content) {
   return aElement;
 }
 
+function btn(content, exec) {
+  const button = document.querySelector('button');
+  button.textContent = content;
+  button.onclick = exec;
+  return button;
+}
+
+
 export default {
   li,
   ul,
   div,
   h1,
-  p,
   nav,
-  a
+  a,
+  p,
+  btn,
 };

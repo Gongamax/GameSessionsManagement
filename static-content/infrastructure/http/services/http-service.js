@@ -45,10 +45,11 @@ export default function httpService() {
   /**
    * Makes a GET request to the specified path.
    * @param {string} path - The path of the API endpoint.
+   * @param body
    * @returns {Promise} - The response from the API request.
    */
-  async function get(path) {
-    return makeAPIRequest(path, 'GET', undefined);
+  async function get(path, body = undefined) {
+    return makeAPIRequest(path, 'GET', body);
   }
 
   /**
