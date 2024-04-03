@@ -164,7 +164,6 @@ class GameTests {
             ).header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
-        println(response.bodyString())
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
         // Assert
         assertTrue { response.status.successful }
