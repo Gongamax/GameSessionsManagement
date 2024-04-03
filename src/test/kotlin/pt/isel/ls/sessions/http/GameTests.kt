@@ -393,9 +393,9 @@ class GameTests {
         private val mem = AppMemoryDB(clock)
         private val service = GameService(mem.gameDB)
         private val router = GameRouter(service)
-        private val game = GameDTO(1u, "cod", "developer", listOf("Action", "Shooter"))
-        private val gameInvalidGenre = GameDTO(1u, "cod", "developer", listOf("multiplayer", "sport", "Action"))
-        private val gameNoGenres = GameDTO(1u, "cod", "developer", listOf())
+        private val game = GameInputModel("cod", "developer", listOf("Action", "Shooter"))
+        private val gameInvalidGenre = GameInputModel("cod", "developer", listOf("multiplayer", "sport", "Action"))
+        private val gameNoGenres = GameInputModel("cod", "developer", listOf())
         private val games =
             listOf(
                 GameDTO(1u, "cod", "developer", listOf("Action", "Shooter")),
