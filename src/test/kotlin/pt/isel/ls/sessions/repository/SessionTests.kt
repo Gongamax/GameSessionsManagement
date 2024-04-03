@@ -109,6 +109,28 @@ class SessionTests {
         assertEquals(null, session)
     }
 
+    @Test
+    fun `update session`() {
+        // Arrange
+        val db = AppMemoryDB(clock)
+        val capacity = 10
+        val gid = 1
+        val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
+        val newCapacity = 20
+        val newDate = LocalDateTime(2025, 1, 2, 0, 0, 0, 0)
+
+        // Act
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
+        db.sessionDB.updateSession(sid, newCapacity, newDate)
+
+        // Assert
+        val session = db.sessionDB.getSession(sid)
+        assertNotNull(session)
+        assertEquals(newCapacity, session.capacity)
+        assertEquals(newDate, session.date)
+    }
+
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
         private const val DEFAULT_LIMIT = 10

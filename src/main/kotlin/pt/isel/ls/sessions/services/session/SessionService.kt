@@ -96,4 +96,18 @@ class SessionService(
             sessionRepository.deleteSession(sid)
             success(Unit)
         }
+
+    fun updateSession(sid: UInt,capacity: Int,date : LocalDateTime): SessionUpdateResult =
+        run {
+            sessionRepository.getSession(sid) ?: return@run failure(SessionUpdateError.SessionNotFound)
+            val now = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
+            if(capacity <= 0){
+                return@run failure(SessionUpdateError.InvalidCapacity)
+            }
+            if (date < now) {
+                return@run failure(SessionUpdateError.InvalidDate)
+            }
+            success(sessionRepository.updateSession(sid,capacity,date))
+        }
+
 }

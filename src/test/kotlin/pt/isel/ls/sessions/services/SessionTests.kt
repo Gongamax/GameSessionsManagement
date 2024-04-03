@@ -186,6 +186,40 @@ class SessionTests {
         assertEquals(null, session)
     }
 
+    @Test
+    fun `update session`() {
+        // Arrange
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
+        val capacity = 10
+        val gid = 1u
+        val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
+        val newCapacity = 20
+        val newDate = LocalDateTime(2025, 1, 2, 0, 0, 0, 0)
+
+        // Act
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid =
+            when (val res = service.sessionService.createSession(capacity, gid, date)) {
+                is Success -> res.value
+                is Failure -> null
+            }
+        assertNotNull(sid, "sid is null")
+
+        service.sessionService.updateSession(sid, newCapacity, newDate)
+        val session =
+            when (val res = service.sessionService.getSession(sid)) {
+                is Success -> res.value
+                is Failure -> null
+            }
+
+        // Assert
+        assertNotNull(session)
+        assertEquals(newCapacity, session.capacity)
+        assertEquals(newDate, session.date)
+    }
+
+
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
         private const val DEFAULT_LIMIT = 10

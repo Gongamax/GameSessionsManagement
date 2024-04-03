@@ -70,6 +70,11 @@ class SessionMemoryDB(
         sessions.remove(sid)
     }
 
+    override fun updateSession(sid: UInt, capacity: Int, date: LocalDateTime) {
+        val session = sessions[sid] ?: throw IllegalArgumentException("Session not found")
+        sessions[sid] = session.copy(capacity = capacity, date = date)
+    }
+
     private fun getSessionState(
         date: LocalDateTime,
         players: Set<Player>,
@@ -82,4 +87,6 @@ class SessionMemoryDB(
             else -> SessionState.CLOSED
         }
     }
+
+
 }

@@ -774,7 +774,84 @@ paths:
             example:
               changes:
                 capacity: 10
-                date: "2024-03-250T18:43"
+                date: "2025-03-250T18:43"
+      responses:
+        '204':
+          description: Session updated with success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                value:
+                  message: "Session updated 1"
+        '400':
+          description: Bad request for invalid request body
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+
+                examples:
+                  session-not-found:
+                    value:
+                      typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found
+                      title: "Session not found"
+                      status: 404
+                      detail: "Session with given id not found"
+                      instance: http://localhost:1904/api/sessions/{sid}
+                  invalid-date:
+                    value:
+                      typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-date
+                      title: "Invalid date"
+                      status: 400
+                      detail: "Date is invalid"
+                      instance: http://localhost:1904/api/sessions/{sid}
+                  invalid-capacity:
+                    value:
+                      typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-capacity
+                      title: "Invalid capacity"
+                      status: 400
+                      detail: "Capacity is invalid"
+                      instance: http://localhost:1904/api/sessions/{sid}
+        '404':
+          description: Session not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                session-not-found:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-not-found
+                    title: "Session not found"
+                    status: 404
+                    detail: "Session with given id not found"
+                    instance: http://localhost:1904/api/sessions/{sid}
     delete:
       operationId: DeleteSession
       security:

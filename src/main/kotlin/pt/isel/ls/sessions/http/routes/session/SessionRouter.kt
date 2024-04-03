@@ -14,14 +14,12 @@ import pt.isel.ls.sessions.domain.session.toSessionState
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
+import pt.isel.ls.sessions.http.model.session.SessionUpdateDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
 import pt.isel.ls.sessions.http.util.*
-import pt.isel.ls.sessions.services.session.SessionAddPlayerError
-import pt.isel.ls.sessions.services.session.SessionCreationError
-import pt.isel.ls.sessions.services.session.SessionService
-import pt.isel.ls.sessions.services.session.SessionsGetError
+import pt.isel.ls.sessions.services.session.*
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
 import java.time.DateTimeException
@@ -36,6 +34,7 @@ class SessionRouter(
             Uris.DEFAULT bind Method.POST to ::createSession,
             Uris.Sessions.ADD_PLAYER bind Method.PUT to ::addPlayerToSession,
             Uris.Sessions.BY_ID bind Method.DELETE to ::deleteSession,
+            Uris.Sessions.BY_ID bind Method.PUT to ::updateSession
         )
 
     private fun getSessions(request: Request): Response =
@@ -118,6 +117,22 @@ class SessionRouter(
                 is Failure -> Problem.sessionNotFound(request.uri, sid)
 
                 is Success -> Response(Status.NO_CONTENT).jsonResponse(MessageResponse("Session deleted"))
+            }
+        }
+
+    private fun updateSession(request: Request) : Response =
+        execStart(request){
+            request.bearerTokenOrThrow()
+            val sid = request.getPathSegments(SESSION_ID).first().toUInt()
+            val sessionDTO = Json.decodeFromString<SessionUpdateDTO>(request.bodyString())
+            val date = sessionDTO.date.toString().toLocalDateTime()
+            return when(val res = services.updateSession(sid,sessionDTO.capacity,date)){
+                is Failure -> when(res.value){
+                    SessionUpdateError.SessionNotFound -> Problem.sessionNotFound(request.uri, sid)
+                    SessionUpdateError.InvalidDate -> Problem.invalidDate(request.uri)
+                    SessionUpdateError.InvalidCapacity -> Problem.invalidCapacity(request.uri)
+                }
+                is Success -> Response(Status.NO_CONTENT).jsonResponse(MessageResponse("Session updated $sid"))
             }
         }
 

@@ -48,3 +48,12 @@ sealed class SessionAddPlayerError {
 }
 
 typealias SessionAddPlayerResult = Either<SessionAddPlayerError, Unit>
+
+
+sealed class SessionUpdateError {
+    data object SessionNotFound : SessionUpdateError()
+    data object InvalidDate : SessionUpdateError()
+    data object InvalidCapacity : SessionUpdateError()
+}
+
+typealias SessionUpdateResult = Either<SessionUpdateError, Unit>

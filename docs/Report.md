@@ -62,15 +62,15 @@ In our [Open-API specification](backend/http-api.yaml), we highlight the followi
 
 **API endpoints** are organized as follows:
 
-| Endpoints                       | HTTP Methods                                     |
-|---------------------------------|--------------------------------------------------|
-| /api/player                     | [POST](#post-apiplayer)                          |
-| /api/player/{pid}               | [GET](#get-apiplayerpid)                         |
-| /api/game                       | [GET](#get-apigame), [POST](#post-apigame)       |
-| /api/game/{gid}                 | [GET](#get-apigamegid)                           |
-| /api/session                    | [GET](#get-apisession), [POST](#post-apisession) |
-| /api/session/{sid}              | [GET](#get-apisessionsid)                        |
-| /api/session/{sid}/player/{pid} | [PUT](#put-apisessionsidplayerpid)               | 
+| Endpoints                       | HTTP Methods                                                                                                   |
+|---------------------------------|----------------------------------------------------------------------------------------------------------------|
+| /api/player                     | [POST](#post-apiplayer)                                                                                        |
+| /api/player/{pid}               | [GET](#get-apiplayerpid)                                                                                       |
+| /api/game                       | [GET](#get-apigame), [POST](#post-apigame)                                                                     |
+| /api/game/{gid}                 | [GET](#get-apigamegid)                                                                                         |
+| /api/session                    | [GET](#get-apisession), [POST](#post-apisession)                                                               |
+| /api/session/{sid}              | [GET](#get-apisessionsid)                        , [DELETE](#delete-apisessionsid) , [PUT](#put-apisessionsid) |
+| /api/session/{sid}/player/{pid} | [PUT](#put-apisessionsidplayerpid)                                                                             | 
 
 ### GET api/player/{pid}
 
@@ -324,10 +324,10 @@ curl --location --request GET 'http://localhost:8080/api/session' --header 'Auth
 
 ````
   {
-  "numPlayers": Integer,
-  "sessionDate": String,
-  "game": Integer,
-  "players": [Integer]
+    "numPlayers": Integer,
+    "sessionDate": String,
+    "game": Integer,
+    "players": [Integer]
   }
 ````
 
@@ -416,6 +416,42 @@ curl --location --request DELETE 'http://localhost:8080/api/session/1' --header 
 - **Error Responses:**
     - 404 Not Found
     - 401 Unauthorized
+
+### PUT /api/session/{sid}
+
+**Description:** Updates the specified session
+
+**Request:**
+
+- **URI Params:**
+    - sid (Integer) Session ID
+  
+**Content:** An object with the information of the session
+- **Content Type:** application/json
+  - **Schema:**
+
+````
+{
+  "capacity": Integer,
+  "date": String,
+}
+````
+
+**Example:**
+
+```shell
+curl --location --request PUT 'http://localhost:8080/api/session/1 --header 'Authorization: Bearer {Access Token}'
+```
+
+**Success Response:**
+
+- **Status Code:** 204 No Content
+- **Error Responses:**
+    - 404 Not Found
+    - 401 Unauthorized
+    
+  
+
 
 ### PUT /api/session/{sid}/player/{pid}
 

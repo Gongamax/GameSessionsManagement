@@ -123,6 +123,20 @@ class SessionJDBC(
         }
     }
 
+    override fun updateSession(sid: UInt, capacity: Int, date: LocalDateTime){
+        return dataSource.connection.execute("Failed to update session") { con ->
+            val query = "UPDATE Session SET capacity = ?, date = ? WHERE id = ?"
+            val res = con.prepareStatement(query).apply {
+                setInt(1, capacity)
+                setTimestamp(2, Timestamp.valueOf(date.toJavaLocalDateTime()))
+                setInt(3, sid.toInt())
+            }.executeUpdate()
+            return@execute
+        }
+
+    }
+
+
     private fun UInt.getAssociatedPlayers(): AssociatedPlayers =
         dataSource.connection.execute("Players not found") { con ->
             val query = "SELECT * FROM Player WHERE id IN (SELECT player_id FROM Session_Player WHERE session_id = ?)"

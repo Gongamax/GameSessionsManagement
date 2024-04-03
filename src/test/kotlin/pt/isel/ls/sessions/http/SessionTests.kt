@@ -2,6 +2,8 @@ package pt.isel.ls.sessions.http
 
 import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.Clock
+import kotlinx.datetime.toLocalDate
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.http4k.core.Method
@@ -12,6 +14,7 @@ import pt.isel.ls.sessions.domain.game.toGenre
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
+import pt.isel.ls.sessions.http.model.session.SessionUpdateDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.routes.session.SessionRouter
@@ -504,6 +507,113 @@ class SessionTests {
         )
         assertEquals("Session not found", content.title)
     }
+
+    @Test
+    fun `updateSession return response with a session`() {
+        // Arrange
+        createSession()
+        val capacity = 5
+        val date = "2025-03-14T10:58:00.123456789".toLocalDateTime()
+        val sid = 1
+        val request =
+            Request(Method.PUT, Uris.Sessions.BY_ID.replace("{sid}", "$sid"))
+                .body(Json.encodeToString(SessionUpdateDTO(capacity, date)))
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        // Assert
+        assertEquals(Status.NO_CONTENT, response.status)
+        assertEquals("Session updated $sid", content.message)
+    }
+
+    @Test
+    fun `updateSession return response with a session Session not found`() {
+        // Arrange
+        val capacity = 5
+        val date = "2025-03-14T10:58:00.123456789".toLocalDateTime()
+        val sid = 99
+        val request =
+            Request(Method.PUT, Uris.Sessions.BY_ID.replace("{sid}", "$sid"))
+                .body(Json.encodeToString(SessionUpdateDTO(capacity, date)))
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("Session with given id: 99 not found", content.detail)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Session not found", content.title)
+    }
+
+
+    @Test
+    fun `updateSession return response with a session Invalid date`() {
+        // Arrange
+        createSession()
+        // Arrange
+        val capacity = 5
+        val date = "2020-03-14T10:58:00.123456789".toLocalDateTime()
+        val sid = 1
+        val request =
+            Request(Method.PUT, Uris.Sessions.BY_ID.replace("{sid}", "$sid"))
+                .body(Json.encodeToString(SessionUpdateDTO(capacity, date)))
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("Date is invalid", content.detail)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Invalid date", content.title)
+    }
+
+    @Test
+    fun `updateSession return response with a session Invalid capacity`() {
+        // Arrange
+        createSession()
+        // Arrange
+        val capacity = 0
+        val date = "2025-03-14T10:58:00.123456789".toLocalDateTime()
+        val sid = 1
+        val request =
+            Request(Method.PUT, Uris.Sessions.BY_ID.replace("{sid}", "$sid"))
+                .body(Json.encodeToString(SessionUpdateDTO(capacity, date)))
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("Capacity is invalid", content.detail)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Invalid capacity", content.title)
+    }
+
+    @Test
+    fun `updateSession return response with a session Invalid Token`() {
+        // Arrange
+        createSession()
+        val capacity = 5
+        val date = "2025-03-14T10:58:00.123456789".toLocalDateTime()
+        val sid = 1
+        val request =
+            Request(Method.PUT, Uris.Sessions.BY_ID.replace("{sid}", "$sid"))
+                .body(Json.encodeToString(SessionUpdateDTO(capacity, date)))
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.UNAUTHORIZED, response.status)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Unauthorized, token not found", content.detail)
+        assertEquals("Token not found", content.title)
+    }
+
+
+
 
     companion object {
         private val clock: Clock = Clock.System

@@ -31,4 +31,6 @@ interface SessionRepository {
     fun reset()
 
     fun deleteSession(sid: UInt)
+
+    fun updateSession(sid: UInt, capacity: Int, date:LocalDateTime)
 }
