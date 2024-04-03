@@ -1,7 +1,7 @@
-import Router from './router';
-import PlayerView from '../../../ui/view/pages/PlayerView';
-import PlayerHandler from '../handlers/player-handler';
-import PlayerViewModel from '../../../ui/viewmodel/PlayerViewModel';
+import Router from './router.js';
+import PlayerView from '../../../ui/view/pages/PlayerView.js';
+import PlayerHandler from '../handlers/player-handler.js';
+import PlayerViewModel from '../../../ui/viewmodel/PlayerViewModel.js';
 
 const router = Router;
 const playerHandler = PlayerHandler();

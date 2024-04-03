@@ -56,9 +56,35 @@ function h1(content) {
   return h1Element;
 }
 
+function p(content) {
+  const pElement = document.createElement('p');
+  const textNode = document.createTextNode(content);
+  pElement.appendChild(textNode);
+  return pElement;
+}
+
+function nav(...items) {
+  const navElement = document.createElement('nav');
+  items.forEach(item => {
+    navElement.appendChild(item);
+  });
+  return navElement;
+}
+
+function a(href, content) {
+  const aElement = document.createElement('a');
+  aElement.setAttribute('href', href);
+  const textNode = document.createTextNode(content);
+  aElement.appendChild(textNode);
+  return aElement;
+}
+
 export default {
   li,
   ul,
   div,
-  h1
+  h1,
+  p,
+  nav,
+  a
 };

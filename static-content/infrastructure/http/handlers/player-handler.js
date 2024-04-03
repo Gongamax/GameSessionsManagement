@@ -1,6 +1,6 @@
-import uris from '../uris';
-import HttpHandler from './http-handler';
-import dom from '../../../ui/lib/dom-utils';
+import uris from '../uris.js';
+import HttpHandler from './http-handler.js';
+import { Player } from '../../../domain/types/player.js';
 
 const httpHandler = HttpHandler();
 
