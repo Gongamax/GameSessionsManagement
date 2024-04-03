@@ -18,12 +18,7 @@ import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class GameTests {
     @AfterTest
@@ -169,12 +164,13 @@ class GameTests {
             ).header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
+        println(response.bodyString())
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
         // Assert
         assertTrue { response.status.successful }
         assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
         assertTrue { content.size == 3 }
-        assertFalse { content.contains(games[1]) }
+        assertFalse { content.contains(gamesResult[1]) }
     }
 
     @Test
@@ -285,10 +281,10 @@ class GameTests {
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
         assertEquals(2, content.size)
-        assertEquals(games[0], content[0])
-        assertEquals(games[2], content[1])
-        assertFalse { content.contains(games[1]) }
-        assertFalse(content.contains(games[3]))
+        assertEquals(gamesResult[0], content[0])
+        assertEquals(gamesResult[2], content[1])
+        assertFalse { content.contains(gamesResult[1]) }
+        assertFalse(content.contains(gamesResult[3]))
     }
 
     @Test
@@ -308,10 +304,10 @@ class GameTests {
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
         assertEquals(2, content.size)
-        assertEquals(games[2], content[0])
-        assertEquals(games[3], content[1])
-        assertFalse { content.contains(games[0]) }
-        assertFalse { content.contains(games[1]) }
+        assertEquals(gamesResult[2], content[0])
+        assertEquals(gamesResult[3], content[1])
+        assertFalse { content.contains(gamesResult[0]) }
+        assertFalse { content.contains(gamesResult[1]) }
     }
 
     @Test
@@ -331,9 +327,9 @@ class GameTests {
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
         assertEquals(3, content.size)
-        assertContains(content, games[0])
-        assertContains(content, games[2])
-        assertContains(content, games[3])
+        assertContains(content, gamesResult[0])
+        assertContains(content, gamesResult[2])
+        assertContains(content, gamesResult[3])
     }
 
     @Test
@@ -396,12 +392,14 @@ class GameTests {
         private val game = GameInputModel("cod", "developer", listOf("Action", "Shooter"))
         private val gameInvalidGenre = GameInputModel("cod", "developer", listOf("multiplayer", "sport", "Action"))
         private val gameNoGenres = GameInputModel("cod", "developer", listOf())
-        private val games =
+        private val gamesResult =
             listOf(
                 GameDTO(1u, "cod", "developer", listOf("Action", "Shooter")),
                 GameDTO(2u, "cs-go", "developer1", listOf("Action", "Shooter")),
                 GameDTO(3u, "over-watch", "developer", listOf("Action", "Shooter")),
                 GameDTO(4u, "FIFA", "developer", listOf("Action", "Sports")),
             )
+
+        private val games = gamesResult.map { GameInputModel(it.name, it.developer, it.genres) }
     }
 }
