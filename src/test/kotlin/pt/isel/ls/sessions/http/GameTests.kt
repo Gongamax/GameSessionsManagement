@@ -18,7 +18,12 @@ import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class GameTests {
     @AfterTest
@@ -88,7 +93,10 @@ class GameTests {
         assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("Invalid game data", content.title)
         assertEquals("Invalid game data", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-game-data", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-game-data",
+            content.type,
+        )
     }
 
     @Test
@@ -104,7 +112,10 @@ class GameTests {
         assertEquals(Status.NOT_FOUND.code, content.status)
         assertEquals("Genre not found", content.title)
         assertEquals("Genre or genres not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found",
+            content.type,
+        )
     }
 
     @Test
@@ -140,7 +151,10 @@ class GameTests {
         assertEquals("application/problem+json", response.header(CONTENT_TYPE))
         assertEquals("Game not found", content.title)
         assertEquals("Game with given id not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-not-found",
+            content.type,
+        )
     }
 
     @Test
@@ -200,7 +214,10 @@ class GameTests {
         assertEquals("application/problem+json", response.header(CONTENT_TYPE))
         assertEquals("Developer not found", content.title)
         assertEquals("Developer not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found",
+            content.type,
+        )
     }
 
     @Test
@@ -221,7 +238,10 @@ class GameTests {
         assertEquals("application/problem+json", response.header(CONTENT_TYPE))
         assertEquals("Genre not found", content.title)
         assertEquals("Genre or genres not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/genre-not-found",
+            content.type,
+        )
     }
 
     @Test
@@ -242,7 +262,10 @@ class GameTests {
         assertEquals("application/problem+json", response.header(CONTENT_TYPE))
         assertEquals("Developer not found", content.title)
         assertEquals("Developer not found", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/developer-not-found",
+            content.type,
+        )
     }
 
     @Test
@@ -332,7 +355,10 @@ class GameTests {
         assertEquals("application/problem+json", response.header(CONTENT_TYPE))
         assertEquals("Invalid skip or limit", content.title)
         assertEquals("Invalid skip or limit", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit",
+            content.type,
+        )
         assertEquals("?skip=$skip", content.instance)
     }
 
@@ -355,7 +381,10 @@ class GameTests {
         assertEquals("application/problem+json", response.header(CONTENT_TYPE))
         assertEquals("Invalid skip or limit", content.title)
         assertEquals("Invalid skip or limit", content.detail)
-        assertEquals("https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit", content.type)
+        assertEquals(
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit",
+            content.type,
+        )
         assertEquals("?limit=$limit", content.instance)
     }
 

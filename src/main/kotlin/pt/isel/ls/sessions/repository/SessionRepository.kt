@@ -37,5 +37,9 @@ interface SessionRepository {
         pid: UInt,
     )
 
-    fun updateSession(sid: UInt, capacity: Int, date:LocalDateTime)
+    fun updateSession(
+        sid: UInt,
+        capacity: Int,
+        date: LocalDateTime,
+    )
 }

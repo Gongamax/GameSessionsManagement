@@ -2,7 +2,6 @@ package pt.isel.ls.sessions.http
 
 import junit.framework.TestCase.assertEquals
 import kotlinx.datetime.Clock
-import kotlinx.datetime.toLocalDate
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -547,7 +546,6 @@ class SessionTests {
         assertEquals("Session not found", content.title)
     }
 
-
     @Test
     fun `updateSession return response with a session Invalid date`() {
         // Arrange
@@ -611,9 +609,6 @@ class SessionTests {
         assertEquals("Unauthorized, token not found", content.detail)
         assertEquals("Token not found", content.title)
     }
-
-
-
 
     @Test
     fun `removePlayerFromSession succeeds`() {

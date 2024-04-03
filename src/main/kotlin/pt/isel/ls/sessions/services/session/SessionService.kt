@@ -97,27 +97,32 @@ class SessionService(
             success(Unit)
         }
 
-    fun updateSession(sid: UInt,capacity: Int,date : LocalDateTime): SessionUpdateResult =
+    fun updateSession(
+        sid: UInt,
+        capacity: Int,
+        date: LocalDateTime,
+    ): SessionUpdateResult =
         run {
             sessionRepository.getSession(sid) ?: return@run failure(SessionUpdateError.SessionNotFound)
             val now = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
-            if(capacity <= 0){
+            if (capacity <= 0) {
                 return@run failure(SessionUpdateError.InvalidCapacity)
             }
             if (date < now) {
                 return@run failure(SessionUpdateError.InvalidDate)
             }
-            success(sessionRepository.updateSession(sid,capacity,date))
+            success(sessionRepository.updateSession(sid, capacity, date))
         }
-
 
     fun removePlayerFromSession(
         sid: UInt,
         pid: UInt,
     ): SessionRemovePlayerResult =
         run {
-            val session = sessionRepository.getSession(sid) ?: return@run failure(SessionRemovePlayerError.SessionNotFound)
-            val playerToRemove = playerRepository.getPlayerById(pid) ?: return@run failure(SessionRemovePlayerError.PlayerNotFound)
+            val session =
+                sessionRepository.getSession(sid) ?: return@run failure(SessionRemovePlayerError.SessionNotFound)
+            val playerToRemove =
+                playerRepository.getPlayerById(pid) ?: return@run failure(SessionRemovePlayerError.PlayerNotFound)
             if (!session.associatedPlayers.contains(playerToRemove)) {
                 return@run failure(SessionRemovePlayerError.PlayerNotInSession)
             }

@@ -59,10 +59,11 @@ sealed class SessionRemovePlayerError {
 
 typealias SessionRemovePlayerResult = Either<SessionRemovePlayerError, Unit>
 
-
 sealed class SessionUpdateError {
     data object SessionNotFound : SessionUpdateError()
+
     data object InvalidDate : SessionUpdateError()
+
     data object InvalidCapacity : SessionUpdateError()
 }
 

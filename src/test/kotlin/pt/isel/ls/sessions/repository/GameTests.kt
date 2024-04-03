@@ -51,7 +51,7 @@ class GameTests {
     @Test
     fun testGetDeveloperByName() {
         // Arrange
-        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
+        gameMemoryDB.createGame(NAME, DEVELOPER, genres)
         // Act
         val developer = gameMemoryDB.getDeveloperByName(DEVELOPER)
         // Assert
@@ -61,7 +61,7 @@ class GameTests {
     @Test
     fun testGetGamesFails() {
         // Arrange
-        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
+        gameMemoryDB.createGame(NAME, DEVELOPER, genres)
         // Act
         val games = gameMemoryDB.getGames(genres, "another developer", 10, 0)
         // Assert
@@ -71,7 +71,7 @@ class GameTests {
     @Test
     fun `get Games with limit and skip`() {
         // Arrange
-        val id = gameMemoryDB.createGame(NAME, DEVELOPER, genres)
+        gameMemoryDB.createGame(NAME, DEVELOPER, genres)
         // Act
         val games = gameMemoryDB.getGames(genres, DEVELOPER, 1, 0)
         // Assert

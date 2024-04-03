@@ -84,11 +84,11 @@ class GameTests {
     @Test
     fun testGetGames() {
         // Arrange
-        val gid =
-            when (val value = gameService.createGame(NAME, DEVELOPER, genres)) {
-                is Either.Left -> fail("Game creation failed for $value")
-                is Either.Right -> value.value
-            }
+
+        when (val value = gameService.createGame(NAME, DEVELOPER, genres)) {
+            is Either.Left -> fail("Game creation failed for $value")
+            is Either.Right -> value.value
+        }
         // Act
         val result =
             when (val value = gameService.getGames(genres, DEVELOPER, 10, 0)) {
@@ -104,7 +104,7 @@ class GameTests {
     @Test
     fun `getGamesFails with GenreNotFound`() {
         // Arrange
-        val game = gameService.createGame(NAME, DEVELOPER, genres)
+        gameService.createGame(NAME, DEVELOPER, genres)
         // Act
         val result = gameService.getGames(listOf("rpg", "Action", "Unknown"), DEVELOPER, 10, 0)
         println(result)
@@ -115,7 +115,7 @@ class GameTests {
     @Test
     fun `getGamesFails with DeveloperNotFound`() {
         // Arrange
-        val game = gameService.createGame(NAME, DEVELOPER, genres)
+        gameService.createGame(NAME, DEVELOPER, genres)
         // Act
         val result = gameService.getGames(genres, "Unknown", 10, 0)
         // Assert

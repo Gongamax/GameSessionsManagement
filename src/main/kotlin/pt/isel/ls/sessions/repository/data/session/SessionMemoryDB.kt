@@ -70,7 +70,11 @@ class SessionMemoryDB(
         sessions.remove(sid)
     }
 
-    override fun updateSession(sid: UInt, capacity: Int, date: LocalDateTime) {
+    override fun updateSession(
+        sid: UInt,
+        capacity: Int,
+        date: LocalDateTime,
+    ) {
         val session = sessions[sid] ?: throw IllegalArgumentException("Session not found")
         sessions[sid] = session.copy(capacity = capacity, date = date)
     }
@@ -96,6 +100,4 @@ class SessionMemoryDB(
             else -> SessionState.CLOSED
         }
     }
-
-
 }

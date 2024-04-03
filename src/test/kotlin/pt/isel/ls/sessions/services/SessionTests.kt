@@ -220,7 +220,6 @@ class SessionTests {
         assertEquals(newDate, session.date)
     }
 
-
     @Test
     fun `remove player from session`() {
         // Arrange
