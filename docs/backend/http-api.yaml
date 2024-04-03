@@ -856,6 +856,12 @@ paths:
       operationId: DeleteSession
       security:
         - bearerAuth: [ ]
+      parameters:
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: integer
       responses:
         '204':
           description: Session deleted with success
