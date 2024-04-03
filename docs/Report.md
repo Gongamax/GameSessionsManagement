@@ -70,7 +70,7 @@ In our [Open-API specification](backend/http-api.yaml), we highlight the followi
 | /api/game/{gid}                 | [GET](#get-apigamegid)                                                                                         |
 | /api/session                    | [GET](#get-apisession), [POST](#post-apisession)                                                               |
 | /api/session/{sid}              | [GET](#get-apisessionsid)                        , [DELETE](#delete-apisessionsid) , [PUT](#put-apisessionsid) |
-| /api/session/{sid}/player/{pid} | [PUT](#put-apisessionsidplayerpid)                                                                             | 
+| /api/session/{sid}/player/{pid} | [PUT](#put-apisessionsidplayerpid), [DELETE](#delete-apisessionsidplayerpid)                                   | 
 
 ### GET api/player/{pid}
 
@@ -425,10 +425,11 @@ curl --location --request DELETE 'http://localhost:8080/api/session/1' --header 
 
 - **URI Params:**
     - sid (Integer) Session ID
-  
+
 **Content:** An object with the information of the session
+
 - **Content Type:** application/json
-  - **Schema:**
+    - **Schema:**
 
 ````
 {
@@ -449,9 +450,6 @@ curl --location --request PUT 'http://localhost:8080/api/session/1 --header 'Aut
 - **Error Responses:**
     - 404 Not Found
     - 401 Unauthorized
-    
-  
-
 
 ### PUT /api/session/{sid}/player/{pid}
 
@@ -478,6 +476,32 @@ curl --location --request PUT 'http://localhost:8080/api/session/1/player/1' --h
 - 409 Conflict
     - 401 Unauthorized
     - 404 Not Found
+
+### DELETE /api/session/{sid}/player/{pid}
+
+**Description:** Removes a player from the specified session.
+
+**Request:**
+
+- **URI Params:**
+    - sid (Integer) Session ID
+    - pid (Integer) Player ID
+
+- **Example:**
+
+```shell
+  curl --location --request DELETE 'http://localhost:8080/api/session/1/player/1' --header 'Authorization: Bearer {Access Token}'
+```
+
+**Success Response:**
+
+- **Status Code:** 204 No Content
+-
+- **Error Responses:**
+
+    - 404 Not Found
+    - 401 Unauthorized
+    - 409 Conflict
 
 ### Request Details
 

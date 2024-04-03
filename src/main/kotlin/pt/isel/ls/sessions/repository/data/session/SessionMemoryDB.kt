@@ -75,6 +75,15 @@ class SessionMemoryDB(
         sessions[sid] = session.copy(capacity = capacity, date = date)
     }
 
+    override fun removePlayerFromSession(
+        sid: UInt,
+        pid: UInt,
+    ) {
+        val session = sessions[sid] ?: throw IllegalArgumentException("Session not found")
+        val newPlayers = session.associatedPlayers.filter { it.pid != pid }
+        sessions[sid] = session.copy(associatedPlayers = newPlayers.toSet())
+    }
+
     private fun getSessionState(
         date: LocalDateTime,
         players: Set<Player>,

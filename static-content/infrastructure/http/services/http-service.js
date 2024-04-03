@@ -2,7 +2,7 @@
  * A service for making HTTP requests to the API.
  * It includes methods for GET, POST, PUT, and DELETE requests.
  */
-export default function httpHandler() {
+export default function httpService() {
   return {
     get: get,
     post: post,

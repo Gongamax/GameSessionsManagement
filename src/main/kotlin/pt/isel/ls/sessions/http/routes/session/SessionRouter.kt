@@ -34,7 +34,8 @@ class SessionRouter(
             Uris.DEFAULT bind Method.POST to ::createSession,
             Uris.Sessions.ADD_PLAYER bind Method.PUT to ::addPlayerToSession,
             Uris.Sessions.BY_ID bind Method.DELETE to ::deleteSession,
-            Uris.Sessions.BY_ID bind Method.PUT to ::updateSession
+            Uris.Sessions.BY_ID bind Method.PUT to ::updateSession,
+            Uris.Sessions.REMOVE_PLAYER bind Method.DELETE to ::removePlayerFromSession,
         )
 
     private fun getSessions(request: Request): Response =
@@ -120,19 +121,36 @@ class SessionRouter(
             }
         }
 
-    private fun updateSession(request: Request) : Response =
-        execStart(request){
+    private fun updateSession(request: Request): Response =
+        execStart(request) {
             request.bearerTokenOrThrow()
             val sid = request.getPathSegments(SESSION_ID).first().toUInt()
             val sessionDTO = Json.decodeFromString<SessionUpdateDTO>(request.bodyString())
             val date = sessionDTO.date.toString().toLocalDateTime()
-            return when(val res = services.updateSession(sid,sessionDTO.capacity,date)){
-                is Failure -> when(res.value){
-                    SessionUpdateError.SessionNotFound -> Problem.sessionNotFound(request.uri, sid)
-                    SessionUpdateError.InvalidDate -> Problem.invalidDate(request.uri)
-                    SessionUpdateError.InvalidCapacity -> Problem.invalidCapacity(request.uri)
-                }
+            return when (val res = services.updateSession(sid, sessionDTO.capacity, date)) {
+                is Failure ->
+                    when (res.value) {
+                        SessionUpdateError.SessionNotFound -> Problem.sessionNotFound(request.uri, sid)
+                        SessionUpdateError.InvalidDate -> Problem.invalidDate(request.uri)
+                        SessionUpdateError.InvalidCapacity -> Problem.invalidCapacity(request.uri)
+                    }
                 is Success -> Response(Status.NO_CONTENT).jsonResponse(MessageResponse("Session updated $sid"))
+            }
+        }
+
+    private fun removePlayerFromSession(request: Request): Response =
+        execStart(request) {
+            request.bearerTokenOrThrow()
+            val (sid, pid) = request.getPathSegments(SESSION_ID, PLAYER_ID).map { it.toUInt() }
+            return when (val res = services.removePlayerFromSession(sid, pid)) {
+                is Failure ->
+                    when (res.value) {
+                        SessionRemovePlayerError.SessionNotFound -> Problem.sessionNotFound(request.uri, sid)
+                        SessionRemovePlayerError.PlayerNotFound -> Problem.playerNotFound(request.uri, pid)
+                        SessionRemovePlayerError.PlayerNotInSession -> Problem.playerNotInSession(request.uri)
+                    }
+
+                is Success -> Response(Status.NO_CONTENT).jsonResponse(MessageResponse("Player removed from session"))
             }
         }
 

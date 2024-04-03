@@ -1,10 +1,10 @@
 import Router from './router.js';
 import PlayerView from '../../../ui/view/pages/PlayerView.js';
-import PlayerHandler from '../handlers/player-handler.js';
+import PlayerService from '../services/player-service.js';
 import PlayerViewModel from '../../../ui/viewmodel/PlayerViewModel.js';
 
 const router = Router;
-const playerHandler = PlayerHandler();
+const playerHandler = PlayerService();
 const playerViewModel = PlayerViewModel(playerHandler);
 
 const notFoundRouteHandler = () => {

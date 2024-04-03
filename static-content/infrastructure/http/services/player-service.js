@@ -1,10 +1,10 @@
 import uris from '../uris.js';
-import HttpHandler from './http-handler.js';
+import HttpService from './http-service.js';
 import { Player } from '../../../domain/types/player.js';
 
-const httpHandler = HttpHandler();
+const httpHandler = HttpService();
 
-export default function PlayerHandler() {
+export default function PlayerService() {
   return {
     getPlayer: getPlayer,
     createPlayer: createPlayer,

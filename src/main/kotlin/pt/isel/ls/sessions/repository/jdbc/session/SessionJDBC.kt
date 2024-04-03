@@ -1,6 +1,11 @@
 package pt.isel.ls.sessions.repository.jdbc.session
 
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.session.Session
@@ -123,19 +128,35 @@ class SessionJDBC(
         }
     }
 
-    override fun updateSession(sid: UInt, capacity: Int, date: LocalDateTime){
+    override fun updateSession(
+        sid: UInt,
+        capacity: Int,
+        date: LocalDateTime,
+    )  {
         return dataSource.connection.execute("Failed to update session") { con ->
             val query = "UPDATE Session SET capacity = ?, date = ? WHERE id = ?"
-            val res = con.prepareStatement(query).apply {
-                setInt(1, capacity)
-                setTimestamp(2, Timestamp.valueOf(date.toJavaLocalDateTime()))
-                setInt(3, sid.toInt())
-            }.executeUpdate()
+            val res =
+                con.prepareStatement(query).apply {
+                    setInt(1, capacity)
+                    setTimestamp(2, Timestamp.valueOf(date.toJavaLocalDateTime()))
+                    setInt(3, sid.toInt())
+                }.executeUpdate()
             return@execute
         }
-
     }
 
+    override fun removePlayerFromSession(
+        sid: UInt,
+        pid: UInt,
+    ) {
+        return dataSource.connection.execute("Failed to remove player from session") { con ->
+            val query = "DELETE FROM Session_Player WHERE session_id = ? AND player_id = ?"
+            con.prepareStatement(query).apply {
+                setInt(1, sid.toInt())
+                setInt(2, pid.toInt())
+            }.executeUpdate()
+        }
+    }
 
     private fun UInt.getAssociatedPlayers(): AssociatedPlayers =
         dataSource.connection.execute("Players not found") { con ->

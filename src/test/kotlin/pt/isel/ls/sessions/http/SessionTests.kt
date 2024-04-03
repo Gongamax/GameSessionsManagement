@@ -615,6 +615,48 @@ class SessionTests {
 
 
 
+    @Test
+    fun `removePlayerFromSession succeeds`() {
+        // Arrange
+        createSession()
+        createPlayer()
+        val request =
+            Request(
+                Method.DELETE,
+                Uris.Sessions.REMOVE_PLAYER.replace("{sid}", "1").replace("{pid}", "1"),
+            ).header("Authorization", "Bearer token")
+        sessionRouter.routes(
+            Request(
+                Method.PUT,
+                Uris.Sessions.ADD_PLAYER.replace("{sid}", "1").replace("{pid}", "1"),
+            ).header("Authorization", "Bearer token"),
+        )
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        // Assert
+        assertEquals(Status.NO_CONTENT, response.status)
+        assertEquals("Player removed from session", content.message)
+    }
+
+    @Test
+    fun `removePlayerFromSession returns session not found`() {
+        // Arrange
+        createPlayer()
+        val request =
+            Request(
+                Method.DELETE,
+                Uris.Sessions.REMOVE_PLAYER.replace("{sid}", "99").replace("{pid}", "1"),
+            ).header("Authorization", "Bearer token")
+        // Act
+        val response = sessionRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.NOT_FOUND, response.status)
+        assertEquals("Session with given id: 99 not found", content.detail)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+    }
+
     companion object {
         private val clock: Clock = Clock.System
         private val mem = AppMemoryDB(clock)

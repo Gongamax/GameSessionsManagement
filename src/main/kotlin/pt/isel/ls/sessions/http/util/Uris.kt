@@ -17,5 +17,6 @@ object Uris {
         const val ROOT = "session"
         const val BY_ID = "/{sid}"
         const val ADD_PLAYER = "/{sid}/player/{pid}"
+        const val REMOVE_PLAYER = "/{sid}/player/{pid}"
     }
 }

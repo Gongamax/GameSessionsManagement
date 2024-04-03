@@ -8,6 +8,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import pt.isel.ls.sessions.http.model.game.GameDTO
+import pt.isel.ls.sessions.http.model.game.GameInputModel
 import pt.isel.ls.sessions.http.model.game.GamesInputModel
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.game.GameRouter
@@ -17,12 +18,7 @@ import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
-import kotlin.test.AfterTest
-import kotlin.test.Test
-import kotlin.test.assertContains
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class GameTests {
     @AfterTest
@@ -42,7 +38,7 @@ class GameTests {
     @Test
     fun `game created with success`() {
         //  Arrange
-        val game = GameDTO(1u, "cod", "developer", listOf("Action", "Shooter"))
+        val game = GameInputModel("cod", "developer", listOf("Action", "Shooter"))
         val request =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(game)).header("Authorization", "Bearer token")
 
@@ -60,7 +56,7 @@ class GameTests {
     @Test
     fun `game creation fails because name already exists`() {
         // Arrange
-        val game = GameDTO(1u, "cod", "developer", listOf("Action", "Shooter"))
+        val game = GameInputModel("cod", "developer", listOf("Action", "Shooter"))
         val request =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(game)).header("Authorization", "Bearer token")
         // Act

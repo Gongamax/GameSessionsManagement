@@ -131,6 +131,50 @@ class SessionTests {
         assertEquals(newDate, session.date)
     }
 
+    @Test
+    fun `remove a player from a session`() {
+        // Arrange
+        val db = AppMemoryDB(clock)
+        val capacity = 10
+        val gid = 1
+        val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
+        val pid = 1u
+
+        // Act
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
+        db.playerDB.createPlayer("player1", "player1@gmail.com")
+        db.sessionDB.addPlayerToSession(sid, db.playerDB.getPlayerById(pid)!!)
+        db.sessionDB.removePlayerFromSession(sid, pid)
+
+        // Assert
+        val session = db.sessionDB.getSession(sid)
+        assertNotNull(session)
+        assertEquals(0, session.associatedPlayers.size)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun `try to remove a player from a session that does not exist`() {
+        // Arrange
+        val db = AppMemoryDB(clock)
+        val capacity = 10
+        val gid = 1
+        val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
+        val pid = 1u
+
+        // Act
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid = db.sessionDB.createSession(capacity, gid.toUInt(), date)
+        db.playerDB.createPlayer("player1", "player1@gmail.com")
+        db.sessionDB.addPlayerToSession(sid, db.playerDB.getPlayerById(pid)!!)
+        db.sessionDB.removePlayerFromSession(sid + 1u, pid)
+
+        // Assert
+        val session = db.sessionDB.getSession(sid)
+        assertNotNull(session)
+        assertEquals(1, session.associatedPlayers.size)
+    }
+
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)
         private const val DEFAULT_LIMIT = 10

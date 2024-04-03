@@ -4,6 +4,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import pt.isel.ls.sessions.domain.game.Genres
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
+import pt.isel.ls.sessions.services.session.SessionRemovePlayerError
 import pt.isel.ls.utils.Failure
 import pt.isel.ls.utils.Success
 import kotlin.test.Test
@@ -158,7 +159,7 @@ class SessionTests {
     }
 
     @Test
-    fun `delete session`()  {
+    fun `delete session`() {
         // Arrange
         val db = AppMemoryDB(clock)
         val service = AppService(db, clock)
@@ -219,6 +220,67 @@ class SessionTests {
         assertEquals(newDate, session.date)
     }
 
+
+    @Test
+    fun `remove player from session`() {
+        // Arrange
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
+        val capacity = 10
+        val gid = 1u
+        val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
+
+        // Act
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid =
+            when (val res = service.sessionService.createSession(capacity, gid, date)) {
+                is Success -> res.value
+                is Failure -> null
+            }
+        assertNotNull(sid, "sid is null")
+        db.playerDB.createPlayer("player1", "player1@gmail.com")
+        val pid = db.playerDB.getPlayers().first().pid
+
+        service.sessionService.addPlayerToSession(sid, pid)
+        service.sessionService.removePlayerFromSession(sid, pid)
+        val session =
+            when (val res = service.sessionService.getSession(sid)) {
+                is Success -> res.value
+                is Failure -> null
+            }
+
+        // Assert
+        assertNotNull(session)
+        assertEquals(0, session.associatedPlayers.size)
+    }
+
+    @Test
+    fun `try to remove a player that is not in session and when a session does not exist`() {
+        // Arrange
+        val db = AppMemoryDB(clock)
+        val service = AppService(db, clock)
+        val capacity = 10
+        val gid = 1u
+        val date = LocalDateTime(2035, 1, 1, 0, 0, 0, 0)
+
+        // Act
+        db.gameDB.createGame("game1", "game1", GENRES)
+        val sid =
+            when (val res = service.sessionService.createSession(capacity, gid, date)) {
+                is Success -> res.value
+                is Failure -> null
+            }
+        assertNotNull(sid, "sid is null")
+        db.playerDB.createPlayer("player1", "player1@gmail.com")
+        val pid = db.playerDB.getPlayers().first().pid
+
+        val result = service.sessionService.removePlayerFromSession(sid, pid)
+        val result2 = service.sessionService.removePlayerFromSession(UInt.MAX_VALUE, pid)
+
+        // Assert
+        assertEquals(Failure(SessionRemovePlayerError.PlayerNotInSession), result)
+        assertEquals(Failure(SessionRemovePlayerError.SessionNotFound), result2)
+    }
 
     companion object {
         private val GENRES = listOf(Genres.RPG, Genres.ADVENTURE)

@@ -10,6 +10,7 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.sessions.http.model.game.GameDTO
+import pt.isel.ls.sessions.http.model.game.GameInputModel
 import pt.isel.ls.sessions.http.model.game.GamesInputModel
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
@@ -69,7 +70,7 @@ class GameRouter(private val services: GameService) : Router {
 
     private fun createGame(request: Request): Response =
         execStart(request) {
-            val game = Json.decodeFromString<GameDTO>(request.bodyString())
+            val game = Json.decodeFromString<GameInputModel>(request.bodyString())
             request.bearerTokenOrThrow()
             if (game.name.isBlank() || game.developer.isBlank() || game.genres.isEmpty()) {
                 return@execStart Problem.invalidGameData(request.uri)

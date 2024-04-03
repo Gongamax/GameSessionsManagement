@@ -11,6 +11,13 @@ data class GameDTO(
 )
 
 @Serializable
+data class GameInputModel(
+    val name: String,
+    val developer: String,
+    val genres: List<String>,
+)
+
+@Serializable
 data class GamesInputModel(
     val developer: String,
     val genres: List<String>,

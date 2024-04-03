@@ -36,6 +36,7 @@ class Problem(
         private val emailAlreadyExists = Uri.of(BASE_URL + "email-already-exists")
         private val internalServerError = Uri.of(BASE_URL + "internal-server-error")
         private val tokenNotFound = Uri.of(BASE_URL + "token-not-found")
+        private val playerNotInSession = Uri.of(BASE_URL + "player-not-in-session")
 
         //endregion
 
@@ -246,6 +247,17 @@ class Problem(
             typeUri = genresOrDeveloperMissing,
             title = "Genres or developer is empty",
             status = Status.BAD_REQUEST,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun playerNotInSession(
+            uri: Uri,
+            detail: String = "Player not in session",
+        ) = Problem(
+            typeUri = playerNotInSession,
+            title = "Player not in session",
+            status = Status.NOT_FOUND,
             detail = detail,
             instance = uri,
         ).toResponse()

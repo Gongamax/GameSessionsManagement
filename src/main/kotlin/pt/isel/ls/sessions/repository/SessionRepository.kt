@@ -32,5 +32,10 @@ interface SessionRepository {
 
     fun deleteSession(sid: UInt)
 
+    fun removePlayerFromSession(
+        sid: UInt,
+        pid: UInt,
+    )
+
     fun updateSession(sid: UInt, capacity: Int, date:LocalDateTime)
 }

@@ -987,6 +987,89 @@ paths:
       operationId: DeletePlayerFromSession
       security:
         - bearerAuth: [ ]
+      parameters:
+        - name: sid
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: pid
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Player removed with success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              value:
+                message: "Player removed from session"
+        '404':
+          description: Player not removed because session not found or player not found
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                session-not-found:
+                  value:
+                    typeUri: ""
+                    title: "Session not found"
+                    status: 404
+                    detail: "Session with given id not found"
+                    instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
+                player-not-found:
+                  value:
+                    typeUri: ""
+                    title: "Player not found"
+                    status: 404
+                    detail: "Player with given id not found"
+                    instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
+        '409':
+          description: Player not removed because player not in session
+          content:
+            application/json+problem:
+              schema:
+                type: object
+                properties:
+                  typeUri:
+                    type: Uri
+                  title:
+                    type: string
+                  status:
+                    type: integer
+                  detail:
+                    type: string
+                  instance:
+                    type: Uri?
+              examples:
+                player-not-in-session:
+                  value:
+                    typeUri: ""
+                    title: "Player not in session"
+                    status: 409
+                    detail: "Player is not in session"
+                    instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
+
+
+
 components:
   securitySchemes:
     bearerAuth:

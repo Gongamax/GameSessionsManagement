@@ -49,6 +49,16 @@ sealed class SessionAddPlayerError {
 
 typealias SessionAddPlayerResult = Either<SessionAddPlayerError, Unit>
 
+sealed class SessionRemovePlayerError {
+    data object SessionNotFound : SessionRemovePlayerError()
+
+    data object PlayerNotFound : SessionRemovePlayerError()
+
+    data object PlayerNotInSession : SessionRemovePlayerError()
+}
+
+typealias SessionRemovePlayerResult = Either<SessionRemovePlayerError, Unit>
+
 
 sealed class SessionUpdateError {
     data object SessionNotFound : SessionUpdateError()

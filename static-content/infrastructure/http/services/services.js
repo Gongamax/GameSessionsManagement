@@ -1,4 +1,4 @@
-import playerHandler from './player-handler.js';
+import playerService from './player-service.js';
 import dom from '../../../ui/lib/dom-utils.js';
 
 const { h1, p } = dom;
@@ -14,9 +14,9 @@ function getHome(mainContent) {
   mainContent.replaceChildren(title, welcomeMessage, description);
 }
 
-export const handlers = {
+export const services = {
   getHome,
-  playerHandler,
+  playerService,
 };
 
-export default handlers;
+export default services;
