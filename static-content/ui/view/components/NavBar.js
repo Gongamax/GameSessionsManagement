@@ -16,3 +16,5 @@ function NavBar(content) {
     )
   );
 }
+
+export default NavBar;

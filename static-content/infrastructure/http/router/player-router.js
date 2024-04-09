@@ -11,6 +11,8 @@ const notFoundRouteHandler = () => {
   throw 'Route handler for unknown routes not defined';
 }
 
+
+
 router.addRouteHandler('/:id', (mainContent) => PlayerView(mainContent, playerViewModel))
 router.addDefaultNotFoundRouteHandler(notFoundRouteHandler)
 

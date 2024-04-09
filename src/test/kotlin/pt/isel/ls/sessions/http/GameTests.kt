@@ -18,7 +18,12 @@ import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
 import pt.isel.ls.sessions.repository.data.AppMemoryDB
 import pt.isel.ls.sessions.services.game.GameService
-import kotlin.test.*
+import kotlin.test.AfterTest
+import kotlin.test.Test
+import kotlin.test.assertContains
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class GameTests {
     @AfterTest
