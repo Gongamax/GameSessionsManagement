@@ -1,10 +1,10 @@
 import dom from '../../lib/dom-utils.js';
 
-const { h1, ul, li, div } = dom;
+const { h1, ul, li, div,a } = dom;
 
 export default async function SessionView(mainContent, sessionViewModel) {
-  const params = new URLSearchParams(window.location.search); //Provavelmente há outra maneira mais ideal
-  const sessionId = parseInt(params.get('sid'));
+  const params =  window.location.hash.split('/');
+  const sessionId = parseInt(params[params.length - 1]);
   if (isNaN(sessionId)) {
     return;
   }
@@ -24,5 +24,6 @@ export default async function SessionView(mainContent, sessionViewModel) {
     ),
   );
 
-   mainContent.replaceChildren(content);
+  const home = a('#home', 'Go to Home');
+   mainContent.replaceChildren(content,home);
 }

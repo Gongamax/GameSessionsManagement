@@ -1,6 +1,6 @@
 import dom from '../../lib/dom-utils.js';
 
-const { h1, ul, li, div } = dom;
+const { h1, ul, li, div,a } = dom;
 
 export default async function PlayerView(mainContent, playerViewModel) {
   const params = window.location.hash.split('/');
@@ -23,5 +23,6 @@ export default async function PlayerView(mainContent, playerViewModel) {
     ),
   );
 
-  mainContent.replaceChildren(content);
+  const home = a('#home', 'Go to Home');
+  mainContent.replaceChildren(content,home);
 }

@@ -13,11 +13,6 @@ const notFoundRouteHandler = () => {
 };
 
 
-/*
-router.addRouteHandler('/:id', (mainContent) => PlayerView(mainContent, playerViewModel));
-router.addDefaultNotFoundRouteHandler(notFoundRouteHandler);
-*/
-
 function  handlePlayerRoute(mainContent) {
   PlayerView(mainContent, playerViewModel);
 }
