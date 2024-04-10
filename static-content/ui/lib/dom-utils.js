@@ -27,10 +27,7 @@ export function createElement(name, attrs, ...children) {
 }
 
 function li(content) {
-  const liElement = document.createElement('li');
-  const textNode = document.createTextNode(content);
-  liElement.appendChild(textNode);
-  return liElement;
+  return createElement('li', null, content);
 }
 
 function ul(...items) {
@@ -42,11 +39,7 @@ function ul(...items) {
 }
 
 function div(...items) {
-  const divElement = document.createElement('div');
-  items.forEach(item => {
-    divElement.appendChild(item);
-  });
-  return divElement;
+  return createElement('div', null, ...items);
 }
 
 function h1(content) {
@@ -72,11 +65,7 @@ function nav(...items) {
 }
 
 function a(href, content) {
-  const aElement = document.createElement('a');
-  aElement.setAttribute('href', href);
-  const textNode = document.createTextNode(content);
-  aElement.appendChild(textNode);
-  return aElement;
+  return createElement('a', { href }, content);
 }
 
 function btn(content, exec) {
@@ -84,6 +73,10 @@ function btn(content, exec) {
   button.textContent = content;
   button.onclick = exec;
   return button;
+}
+
+function br() {
+  return document.createElement('br');
 }
 
 function input(type, name, value) {
@@ -115,4 +108,5 @@ export default {
   btn,
   checkBoxes,
   input,
+  br
 };

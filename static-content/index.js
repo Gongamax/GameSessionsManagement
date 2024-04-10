@@ -3,21 +3,19 @@ import playerRouter from './infrastructure/http/router/player-router.js';
 import services from './infrastructure/http/services/services.js';
 import sessionRouter from './infrastructure/http/router/session-router.js';
 
-const home = "home";
-
+const home = 'home';
 
 window.addEventListener('load', loadHandler);
 window.addEventListener('hashchange', hashChangeHandler);
 
-
-
 function loadHandler() {
 
   router.addRouteHandler(home, services.getHome);
-  router.addRouteHandler("player/:id", playerRouter);
-  router.addRouteHandler("session/:id",sessionRouter);
+  router.addRouteHandler('player/:id', playerRouter);
+  router.addRouteHandler('session/:id', sessionRouter.handleSessionRoute);
+  router.addRouteHandler('sessions', sessionRouter.handleSessionsRoute);
 
-  router.addDefaultNotFoundRouteHandler(() => window.location.hash = home)
+  router.addDefaultNotFoundRouteHandler(() => window.location.hash = home);
 
   hashChangeHandler();
 }

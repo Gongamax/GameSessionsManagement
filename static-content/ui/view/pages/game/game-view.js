@@ -1,4 +1,4 @@
-import dom from "../../lib/dom-utils";
+import dom from "../../../lib/dom-utils.js";
 
 const { h1, ul, li, div } = dom;
 

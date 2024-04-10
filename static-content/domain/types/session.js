@@ -1,6 +1,6 @@
 export function Session(
-  sid, numberOfPlayers, date,gid, associatedPlayers,capacity
-){
+  sid, numberOfPlayers, date, gid, associatedPlayers, capacity,
+) {
   this.sid = sid;
   this.numberOfPlayers = numberOfPlayers;
   this.date = date;

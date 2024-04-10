@@ -3,6 +3,7 @@ export default function SessionViewModel(sessionHandler) {
   return {
     getSession: getSession,
     createSession: createSession,
+    getSessions: getSessions,
   };
 
   function getSession(sessionId) {
@@ -13,4 +14,7 @@ export default function SessionViewModel(sessionHandler) {
     return sessionHandler.createSession(session);
   }
 
+  function getSessions() {
+    return sessionHandler.getSessions();
+  }
 }

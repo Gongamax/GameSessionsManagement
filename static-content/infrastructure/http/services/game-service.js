@@ -1,7 +1,7 @@
-import uris from "../uris";
-import httpService from "./http-service";
+import uris from "../uris.js";
+import HttpService from './http-service.js';
 
-const httpSer = httpService();
+const httpService = HttpService();
 
 export default function GameService() {
     return {
@@ -19,7 +19,7 @@ export default function GameService() {
     // }
 
     function getGames(developer, genres, skip, limit) {
-        return httpSer.get(
+        return httpService.get(
             uris.getGames + '?skip=' + skip + '&limit=' + limit,
             JSON.stringify({
                 developer: developer,
@@ -35,7 +35,7 @@ export default function GameService() {
     }
 
     function getGame(gameId) {
-        return httpSer.get(uris.getGame + gameId).then(game => {
+        return httpService.get(uris.getGame + gameId).then(game => {
             return new Game(game.gid, game.name, game.developer, game.genres)
         }).catch(error => {
             return error.detail

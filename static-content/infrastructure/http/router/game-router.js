@@ -1,6 +1,6 @@
 import Router from './router.js';
-import GameService from "../services/game-service";
-import GameViewModel from "../../../ui/viewmodel/GameViewModel";
+import GameService from "../services/game-service.js";
+import GameViewModel from "../../../ui/viewmodel/GameViewModel.js";
 
 
 const router = Router;
