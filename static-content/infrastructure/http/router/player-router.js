@@ -13,7 +13,7 @@ const notFoundRouteHandler = () => {
 };
 
 
-function  handlePlayerRoute(mainContent) {
+function handlePlayerRoute(mainContent) {
   PlayerView(mainContent, playerViewModel);
 }
 

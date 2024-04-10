@@ -1,5 +1,6 @@
 import playerService from './player-service.js';
 import sessionService from './session-service.js';
+import gameService from './game-service.js';
 import dom from '../../../ui/lib/dom-utils.js';
 
 const { h1, p, a } = dom;
@@ -13,15 +14,17 @@ function getHome(mainContent) {
 
   const player = a('#player/1' , 'Go to Player', mainContent);
   const session = a('#session/1' , 'Go to Session', mainContent);
+  const game = a('#game/1' , 'Go to Game', mainContent);
 
   // Append all elements to the main content
-  mainContent.replaceChildren(title, welcomeMessage, description,player,session);
+  mainContent.replaceChildren(title, welcomeMessage, description, player, session, game);
 }
 
 export const services = {
   getHome,
   sessionService,
   playerService,
+  gameService
 };
 
 export default services;

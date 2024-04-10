@@ -86,6 +86,23 @@ function btn(content, exec) {
   return button;
 }
 
+function input(type, name, value) {
+  const input = document.createElement('input');
+  input.setAttribute('type', type);
+  input.setAttribute('name', name);
+  input.setAttribute('value', value);
+  return input;
+}
+
+function checkBoxes(...items) {
+  return div(
+    items.map(item => {
+      return input('checkbox', item, item);
+    })
+  );
+}
+
+
 
 export default {
   li,
@@ -96,4 +113,6 @@ export default {
   a,
   p,
   btn,
+  checkBoxes,
+  input,
 };
