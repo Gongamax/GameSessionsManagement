@@ -3,8 +3,8 @@ import dom from '../../lib/dom-utils.js';
 const { h1, ul, li, div } = dom;
 
 export default async function PlayerView(mainContent, playerViewModel) {
-  const params = new URLSearchParams(window.location.search); //Provavelmente há outra maneira mais ideal
-  const playerId = parseInt(params.get('pid'));
+  const params = window.location.hash.split('/');
+  const playerId = parseInt(params[params.length - 1]);
   if (isNaN(playerId)) {
     return;
   }

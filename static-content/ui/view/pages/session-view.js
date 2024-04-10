@@ -24,5 +24,5 @@ export default async function SessionView(mainContent, sessionViewModel) {
     ),
   );
 
-  mainContent.replaceChildren(content);
+   mainContent.replaceChildren(content);
 }

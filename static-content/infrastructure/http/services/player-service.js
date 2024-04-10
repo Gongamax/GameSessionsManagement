@@ -12,7 +12,7 @@ export default function PlayerService() {
 
   function getPlayer(playerId) {
     return httpHandler.get(uris.getPlayer + playerId).then(player => {
-      return new Player(player.pid, player.name, player.email);
+      return new Player(playerId, player.name, player.email);
     }).catch(error => {
       return error.detail;
     });

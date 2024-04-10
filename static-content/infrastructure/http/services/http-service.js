@@ -19,8 +19,12 @@ export default function httpService() {
    * @throws Will throw an error if the response is not ok.
    */
   async function makeAPIRequest(path, method, body) {
+    // *** HAMMER TIME !!!!! **** //
+
+    const tokenClient = crypto.randomUUID();
     const headers = {
       'Content-Type': 'application/json',
+      'Authorization': `Bearer ${tokenClient}`,
     };
 
     const config = {

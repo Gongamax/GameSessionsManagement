@@ -12,11 +12,25 @@ function addDefaultNotFoundRouteHandler(notFoundRH) {
 }
 
 function getRouteHandler(path) {
-  const route = routes.find(r => r.path === path);
+  const pathSegments = path.split('/');
+  const route = routes.find(r => {
+    const routeSegments = r.path.split('/');
+    if (routeSegments.length !== pathSegments.length) {
+      return false;
+    }
+    for (let i = 0; i < routeSegments.length; i++) {
+      if (routeSegments[i].startsWith(':')) {
+        continue;
+      }
+      if (routeSegments[i] !== pathSegments[i]) {
+        return false;
+      }
+    }
+    return true;
+  });
+
   return route ? route.handler : notFoundRouteHandler;
 }
-
-
 
 
 const router = {

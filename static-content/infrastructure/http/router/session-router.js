@@ -1,7 +1,7 @@
 import Router from "./router";
 import SessionService from '../services/session-service';
 import SessionViewModel from '../../../ui/viewmodel/SessionViewModel';
-import SessionView from '../../../ui/view/pages/SessionView';
+import SessionView from '../../../ui/view/pages/session-view';
 
 
 const router  = Router;
