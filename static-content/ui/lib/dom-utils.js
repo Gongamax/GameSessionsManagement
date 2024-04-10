@@ -87,16 +87,6 @@ function input(type, name, value) {
   return input;
 }
 
-function checkBoxes(...items) {
-  return div(
-    items.map(item => {
-      return input('checkbox', item, item);
-    })
-  );
-}
-
-
-
 export default {
   li,
   ul,
@@ -106,7 +96,6 @@ export default {
   a,
   p,
   btn,
-  checkBoxes,
   input,
   br
 };
