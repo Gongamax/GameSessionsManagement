@@ -292,12 +292,18 @@ curl --location --request GET 'http://localhost:8080/api/session' --header 'Auth
 [
   {
     "sid": Integer,
-    "numPlayers": Integer,
-    "sessionDate": String,
-    "game": Integer,
-    "players": [
-      Integer
-    ]
+    "numOfPlayers": Integer,
+    "date": String,
+    "gid": Integer,
+    "associatedPlayers": [
+      {
+        "pid": Integer,
+        "name": String,
+        "email": String
+      },
+      ...
+    ],
+    "capacity": Integer
   },
   ...
 ]
@@ -370,14 +376,20 @@ curl --location --request GET 'http://localhost:8080/api/session/1' --header 'Au
     - **Schema:**
 
 ````
-  {
+{
   "sid": Integer,
-  "numPlayers": Integer,
-  "sessionDate": String,
-  "game": Integer,
-  "players": [
-    Integer
-  ]
+  "numOfPlayers": Integer,
+  "date": String,
+  "gid": Integer,
+  "associatedPlayers": [
+    {
+      "pid": Integer,
+      "name": String,
+      "email": String
+    },
+    ...
+  ],
+  "capacity": Integer
 }
 ````
 

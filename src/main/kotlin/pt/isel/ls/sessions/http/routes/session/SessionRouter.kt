@@ -193,7 +193,7 @@ class SessionRouter(
                 associatedPlayers.size,
                 date,
                 gid,
-                associatedPlayers.map { p -> PlayerDTO(p.name, p.email.value) },
+                associatedPlayers.map { p -> PlayerDTO(p.pid, p.name, p.email.value) },
                 capacity,
             )
     }

@@ -9,6 +9,7 @@ import org.http4k.core.Status
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 import org.slf4j.LoggerFactory
+import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
@@ -32,7 +33,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
 
     private fun createPlayer(request: Request): Response =
         execStart(request) {
-            val player = Json.decodeFromString<PlayerDTO>(request.bodyString())
+            val player = Json.decodeFromString<PlayerCreateDTO>(request.bodyString())
             return when (val res = services.createPlayer(player.name, player.email)) {
                 is Failure ->
                     when (res.value) {
@@ -52,7 +53,14 @@ class PlayerRouter(private val services: PlayerService) : Router {
             val numberPlayer = request.getPathSegments(PLAYER_ID).first().toUInt()
             return when (val player = services.getDetailsPlayer(numberPlayer)) {
                 is Failure -> Problem.playerNotFound(request.uri, numberPlayer)
-                is Success -> Response(Status.OK).jsonResponse(PlayerDTO(player.value.name, player.value.email.value))
+                is Success ->
+                    Response(Status.OK).jsonResponse(
+                        PlayerDTO(
+                            player.value.pid,
+                            player.value.name,
+                            player.value.email.value,
+                        ),
+                    )
             }
         }
 
