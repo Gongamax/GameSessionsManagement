@@ -7,6 +7,7 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import org.junit.Test
+import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
@@ -49,7 +50,7 @@ class PlayerTests {
     fun `create return response with a player already exists`() {
         // Arrange
         val name = "Bob"
-        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, EMAIL)))
+        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerCreateDTO(name, EMAIL)))
         // Act
         val response = playerRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
@@ -141,8 +142,8 @@ class PlayerTests {
         private val playerRouter = PlayerRouter(playerService)
         const val NAME = "Alice"
         const val EMAIL = "Alice@gmail.com"
-        private val player = PlayerDTO(NAME, EMAIL)
-        private val player2 = PlayerDTO("Bob", "Bob@gmail.com")
-        private val playerInvalidEmail = PlayerDTO(NAME, "Alice@gmail")
+        private val player = PlayerCreateDTO(NAME, EMAIL)
+        private val player2 = PlayerCreateDTO("Bob", "Bob@gmail.com")
+        private val playerInvalidEmail = PlayerCreateDTO(NAME, "Alice@gmail")
     }
 }

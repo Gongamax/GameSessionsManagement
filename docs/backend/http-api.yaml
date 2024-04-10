@@ -97,6 +97,8 @@ paths:
               schema:
                 type: object
                 properties:
+                  pid:
+                    type: integer
                   name:
                     type: string
                   email:
@@ -488,6 +490,8 @@ paths:
                     items:
                       type: object
                     properties:
+                      pid:
+                        type: integer
                       name:
                         type: string
                       email:
@@ -696,6 +700,8 @@ paths:
                     items:
                       type: object
                       properties:
+                        pid:
+                          type: integer
                         name:
                           type: string
                         email:

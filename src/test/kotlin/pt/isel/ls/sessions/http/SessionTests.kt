@@ -10,7 +10,7 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import org.junit.Test
 import pt.isel.ls.sessions.domain.game.toGenre
-import pt.isel.ls.sessions.http.model.player.PlayerDTO
+import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.session.SessionUpdateDTO
@@ -63,7 +63,7 @@ class SessionTests {
     private fun createPlayer(email: String = "francisco@gmail.com") {
         val name = "Francisco"
         val createPlayer =
-            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerDTO(name, email)))
+            Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerCreateDTO(name, email)))
                 .header("Authorization", "Bearer token")
         PlayerRouter(PlayerService(playerDB)).routes(createPlayer)
     }
