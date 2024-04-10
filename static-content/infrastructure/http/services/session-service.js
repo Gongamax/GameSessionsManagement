@@ -35,20 +35,21 @@ export default function SessionService() {
     });
   }
 
-  function getSessions() {
-    return httpService.get(uris.getSessions + '?gid=1').then(sessions => {
-      return sessions.map(session =>
-        new Session(
-          session.sid,
-          session.numberOfPlayers,
-          session.date,
-          session.gid,
-          session.associatedPlayers,
-          session.capacity,
-        ),
-      );
-    }).catch(error => {
-      return error.detail;
-    });
+  function getSessions(gid = 1, limit = 10, skip = 0) {
+    return httpService.get(uris.getSessions + `?gid=${gid}&limit=${limit}&skip=${skip}`)
+      .then(sessions => {
+        return sessions.map(session =>
+          new Session(
+            session.sid,
+            session.numberOfPlayers,
+            session.date,
+            session.gid,
+            session.associatedPlayers,
+            session.capacity,
+          ),
+        );
+      }).catch(error => {
+        return error.detail;
+      });
   }
 }

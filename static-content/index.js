@@ -25,11 +25,16 @@ function loadHandler() {
  * Renders the main content with the new content
  */
 function hashChangeHandler() {
-
   const mainContent = document.getElementById('mainContent');
-  const path = window.location.hash.replace('#', '');
+  let path = window.location.hash.replace('#', '');
 
+  let page = 1;
+  const pageIndex = path.indexOf('page=');
+  if (pageIndex !== -1) {
+    page = parseInt(path.substring(pageIndex + 5));
+    path = path.substring(0, pageIndex - 1);
+  }
 
   const handler = router.getRouteHandler(path);
-  handler(mainContent);
+  handler(mainContent, page);
 }

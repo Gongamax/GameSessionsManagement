@@ -68,10 +68,10 @@ function a(href, content) {
   return createElement('a', { href }, content);
 }
 
-function btn(content, exec) {
-  const button = document.querySelector('button');
-  button.textContent = content;
+function btn(content, exec, isDisabled = false) {
+  const button = createElement('button', null, document.createTextNode(content));
   button.onclick = exec;
+  button.disabled = isDisabled;
   return button;
 }
 
