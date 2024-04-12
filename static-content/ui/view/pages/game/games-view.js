@@ -1,35 +1,60 @@
-import dom from "../../../lib/dom-utils.js";
+import dom from '../../../lib/dom-utils.js';
 
-const { h1, ul, li, div, a } = dom;
+const { h1, ul, li, div, a, br, h_number } = dom;
 
-export default async function GamesView(mainContent, gamesViewModel){
-    const params = new URLSearchParams(window.location.search); //Provavelmente há outra maneira mais ideal
-    const developer = params.get('developer');
-    const genres = params.get('genres');
-    const skip = parseInt(params.get('skip'));
-    const limit = parseInt(params.get('limit'));
-    if (isNaN(skip) || isNaN(limit)) {
-        return;
-    }
+export default async function GamesView(mainContent, gamesViewModel) {
+  const params = new URLSearchParams(window.location.hash.split('?')[1]);
+  const skip = parseInt(params.get('skip'));
+  const limit = parseInt(params.get('limit'));
+  const developer = params.get('developer');
+  const genres = params.get('genres');
+  if (genres === undefined || developer === undefined) {
+    return;
+  }
+  if (isNaN(skip) || isNaN(limit)) {
+    return;
+  }
 
-    const games = await gamesViewModel.getGames(developer, genres, skip, limit);
-    console.log(games);
+  // ALERT:  Error handling required !!!!!!!!!!!!!!!!!!!
+  const games = await gamesViewModel.getGames(developer, genres, skip, limit);
+  if(games === undefined){
+    alert("Error")
+    window.location.hash = '#home';
+    return;
+  }
 
-    const content = div(
-        h1('Games'),
-        ul(
-            games.map(game => {
-                return li(
-                    div(
-                        h1(a('game/' + game.gid, game.name)),
-                        ul(
-                            li('Developer : ' + game.developer),
-                            li('Genres : ' + game.genres),
-                        ),
-                    ),
-                );
-            }),
-        ),
+  console.log(games);
+
+  let content;
+  if (games.length === 0) {
+    content = div(
+      h1('Games'),
+      ul(
+        li('No games found matching the provided parameters'),
+      ));
+    const home = a('#home', 'Go to Home');
+    mainContent.replaceChildren(content, home);
+  } else {
+    content = div(
+      h1('Games'),
+      ul(
+        ...games.map(game => {
+          return li(
+            div(
+              li(a(`#game/${game.gid}`, `Game: ${game.name}`)),
+              ul(
+                li('Id : ' + game.gid),
+                li('Developer : ' + game.developer),
+                li('Genres : ' + game.genres),
+                br(),
+              ),
+            ),
+          );
+        }),
+      ),
     );
-    mainContent.replaceChildren(content);
+  }
+
+  const home = a('#home', 'Go to Home');
+  mainContent.replaceChildren(content, home);
 }

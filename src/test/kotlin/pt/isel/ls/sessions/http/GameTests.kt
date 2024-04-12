@@ -9,7 +9,6 @@ import org.http4k.core.Request
 import org.http4k.core.Status
 import pt.isel.ls.sessions.http.model.game.GameDTO
 import pt.isel.ls.sessions.http.model.game.GameInputModel
-import pt.isel.ls.sessions.http.model.game.GamesInputModel
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.game.GameRouter
 import pt.isel.ls.sessions.http.util.APPLICATION_JSON
@@ -162,10 +161,9 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).body(
-                Json.encodeToString(
-                    GamesInputModel("developer", listOf("Action")),
-                ),
+            Request(Method.GET, Uris.DEFAULT).query("developer", "developer").query(
+                "genres",
+                "Action",
             ).header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
@@ -185,8 +183,10 @@ class GameTests {
             Request(
                 Method.GET,
                 Uris.DEFAULT,
-            ).body(Json.encodeToString(GamesInputModel("developer", listOf("Rpg"))))
-                .header("Authorization", "Bearer token")
+            ).query("developer", "developer").query(
+                "genres",
+                "Rpg",
+            ).header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
@@ -205,7 +205,10 @@ class GameTests {
             Request(
                 Method.GET,
                 Uris.DEFAULT,
-            ).body(Json.encodeToString(GamesInputModel("developer3", listOf("Action", "Shooter"))))
+            ).query("developer", "developer3").query(
+                "genres",
+                "Action",
+            )
         // Act
         val response = router.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
@@ -225,10 +228,9 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).body(
-                Json.encodeToString(
-                    GamesInputModel("developer", listOf("Friendly", "Co-op")),
-                ),
+            Request(Method.GET, Uris.DEFAULT).query("developer", "developer3").query(
+                "genres",
+                "Friendly,Co-op",
             )
         // Act
         val response = router.routes(request)
@@ -249,10 +251,9 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).body(
-                Json.encodeToString(
-                    GamesInputModel("d", listOf("sports", "multiplayer")),
-                ),
+            Request(Method.GET, Uris.DEFAULT).query("developer", "d").query(
+                "genres",
+                "sports,multiplayer",
             )
         // Act
         val response = router.routes(request)
@@ -273,10 +274,9 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("limit", "2").body(
-                Json.encodeToString(
-                    GamesInputModel("developer", listOf("Action")),
-                ),
+            Request(Method.GET, Uris.DEFAULT).query("limit", "2").query("developer", "developer").query(
+                "genres",
+                "Action",
             )
         // Act
         val response = router.routes(request)
@@ -296,10 +296,9 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("skip", "1").body(
-                Json.encodeToString(
-                    GamesInputModel("developer", listOf("Action")),
-                ),
+            Request(Method.GET, Uris.DEFAULT).query("skip", "1").query("developer", "developer").query(
+                "genres",
+                "Action",
             )
         // Act
         val response = router.routes(request)
@@ -319,11 +318,11 @@ class GameTests {
         // Arrange
         createGame()
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("limit", "3").query("skip", "0").body(
-                Json.encodeToString(
-                    GamesInputModel("developer", listOf("Action")),
-                ),
-            )
+            Request(Method.GET, Uris.DEFAULT).query("limit", "3").query("skip", "0").query("developer", "developer")
+                .query(
+                    "genres",
+                    "Action",
+                )
         // Act
         val response = router.routes(request)
         val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
@@ -342,10 +341,9 @@ class GameTests {
         createGame()
         val skip = -1
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("skip", "$skip").body(
-                Json.encodeToString(
-                    GamesInputModel("developer", listOf("Action")),
-                ),
+            Request(Method.GET, Uris.DEFAULT).query("skip", "$skip").query("developer", "developer").query(
+                "genres",
+                "Action",
             )
         // Act
         val response = router.routes(request)
@@ -359,7 +357,7 @@ class GameTests {
             "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit",
             content.type,
         )
-        assertEquals("?skip=$skip", content.instance)
+        assertEquals("?skip=$skip&developer=developer&genres=Action", content.instance)
     }
 
     @Test
@@ -368,10 +366,9 @@ class GameTests {
         createGame()
         val limit = -1
         val request =
-            Request(Method.GET, Uris.DEFAULT).query("limit", "$limit").body(
-                Json.encodeToString(
-                    GamesInputModel("developer", listOf("Action")),
-                ),
+            Request(Method.GET, Uris.DEFAULT).query("limit", "$limit").query("developer", "developer").query(
+                "genres",
+                "Action",
             )
         // Act
         val response = router.routes(request)
@@ -385,7 +382,7 @@ class GameTests {
             "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-skip-or-limit",
             content.type,
         )
-        assertEquals("?limit=$limit", content.instance)
+        assertEquals("?limit=$limit&developer=developer&genres=Action", content.instance)
     }
 
     companion object {

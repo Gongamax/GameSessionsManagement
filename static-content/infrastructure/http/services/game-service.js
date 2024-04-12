@@ -1,5 +1,6 @@
 import uris from "../uris.js";
 import HttpService from './http-service.js';
+import { Game } from '../../../domain/types/game.js';
 
 const httpService = HttpService();
 
@@ -20,11 +21,7 @@ export default function GameService() {
 
     function getGames(developer, genres, skip, limit) {
         return httpService.get(
-            uris.getGames + '?skip=' + skip + '&limit=' + limit,
-            JSON.stringify({
-                developer: developer,
-                genres: genres
-            })
+            uris.getGames + '?skip=' + skip + '&limit=' + limit + '&developer=' + developer + '&genres=' + genres,
         ).then(games => {
             return games.map(game => {
                 return new Game(game.gid, game.name, game.developer, game.genres)

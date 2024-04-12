@@ -18,17 +18,15 @@ export default async function SessionsView(mainContent, sessionViewModel) {
     ul(
       ...sessions.map(session => {
         return li(
-          a(`#session/${session.sid}`,
             div(
-              `Session ID: ${session.sid}`,
-              br(),
-              `Date: ${session.date}`,
-              br(),
-              `Game ID: ${session.gid}`,
-              br(),
-              `Capacity: ${session.capacity}`,
+              li(a(`#session/${session.sid}`, `Session ID: ${session.sid}`)),
+              ul(
+                li('Date: ' + session.date),
+                li('Game ID: ' + session.gid),
+                li('Capacity: ' + session.capacity),
+                br()
+              )
             ),
-          ),
         );
       }),
     ),

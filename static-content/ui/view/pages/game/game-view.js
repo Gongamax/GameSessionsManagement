@@ -1,27 +1,28 @@
 import dom from "../../../lib/dom-utils.js";
 
-const { h1, ul, li, div } = dom;
+const { h1, ul, li, div ,a} = dom;
 
 export default async function GameView(mainContent, gameViewModel){
-    const params = new URLSearchParams(window.location.search); //Provavelmente há outra maneira mais ideal
-    const gameId = parseInt(params.get('gid'));
+    const params = window.location.hash.split('/');
+    const gameId = parseInt(params[params.length - 1]);
     if (isNaN(gameId)) {
         return;
     }
 
-    const { name, developer, genres } = await gameViewModel.getGame(gameId);
-    console.log(name, developer, genres);
+    const { gid , name, developer,genres } = await gameViewModel.getGame(gameId);
+    console.log(gid,name, developer, genres);
 
     const content = div(
         h1('Game'),
         div(
             ul(
-                li('Id : ' + gameId),
+                li('Id : ' + gid),
                 li('Name : ' + name),
                 li('Developer : ' + developer),
                 li('Genres : ' + genres),
             ),
         ),
     );
-    mainContent.replaceChildren(content);
+    const home = a('#home', 'Go to Home');
+    mainContent.replaceChildren(content, home);
 }

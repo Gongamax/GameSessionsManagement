@@ -26,6 +26,10 @@ export function createElement(name, attrs, ...children) {
   return element;
 }
 
+function form(attributes,...children){
+  return createElement('form',attributes,...children);
+}
+
 function li(content) {
   return createElement('li', null, content);
 }
@@ -47,6 +51,14 @@ function h1(content) {
   const textNode = document.createTextNode(content);
   h1Element.appendChild(textNode);
   return h1Element;
+}
+
+function h_number(content,number ) {
+  const hElement = document.createElement(`h${number}`);
+  const textNode = document.createTextNode(content);
+  hElement.appendChild(textNode);
+  return hElement;
+
 }
 
 function p(content) {
@@ -80,11 +92,30 @@ function br() {
 }
 
 function input(type, name, value) {
-  const input = document.createElement('input');
+  const input = document.createElement('input',);
   input.setAttribute('type', type);
   input.setAttribute('name', name);
   input.setAttribute('value', value);
   return input;
+}
+
+function label(content) {
+  const label = document.createElement('label');
+  label.textContent = content;
+  return label;
+}
+
+function inputWithLabel(type, name, value, labelText) {
+  const input = document.createElement('input');
+  input.setAttribute('type', type);
+  input.setAttribute('name', name);
+  input.setAttribute('value', value);
+
+  const label = document.createElement('label');
+  label.textContent = labelText;
+  label.appendChild(input);
+
+  return label;
 }
 
 export default {
@@ -92,10 +123,14 @@ export default {
   ul,
   div,
   h1,
+  h_number,
   nav,
   a,
   p,
   btn,
   input,
-  br
+  br,
+  form,
+  label,
+  inputWithLabel
 };

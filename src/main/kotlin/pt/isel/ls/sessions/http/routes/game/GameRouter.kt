@@ -11,7 +11,6 @@ import org.http4k.routing.routes
 import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.sessions.http.model.game.GameDTO
 import pt.isel.ls.sessions.http.model.game.GameInputModel
-import pt.isel.ls.sessions.http.model.game.GamesInputModel
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
@@ -46,18 +45,23 @@ class GameRouter(private val services: GameService) : Router {
 
     private fun getGames(request: Request): Response =
         execStart(request) {
-            val game = Json.decodeFromString<GamesInputModel>(request.bodyString())
-            if (game.genres.isEmpty() || game.developer.isBlank()) {
-                return@execStart Problem.genresOrDeveloperMissing(request.uri)
-            }
+            // val game = Json.decodeFromString<GamesInputModel>(request.bodyString())
+            // if (game.genres.isEmpty() || game.developer.isBlank()) {
+            //    return@execStart Problem.genresOrDeveloperMissing(request.uri)
+            // }
 
             val limit = request.query(LIMIT)?.toInt() ?: DEFAULT_LIMIT
             val skip = request.query(SKIP)?.toInt() ?: DEFAULT_SKIP
+            val developer = request.query("developer")
+            val genres = request.query("genres")?.split(",")
+            if (genres.isNullOrEmpty() || developer == null) {
+                return@execStart Problem.genresOrDeveloperMissing(request.uri)
+            }
             if (limit < 0 || skip < 0) {
                 return@execStart Problem.invalidSkipOrLimit(request.uri)
             }
 
-            return when (val games = services.getGames(game.genres, game.developer, limit, skip)) {
+            return when (val games = services.getGames(genres, developer, limit, skip)) {
                 is Failure ->
                     when (games.value) {
                         GamesGetError.GenreNotFound -> Problem.genreNotFound(request.uri)

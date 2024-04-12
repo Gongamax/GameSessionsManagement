@@ -10,9 +10,10 @@ function addRouteHandler(path, handler) {
 function addDefaultNotFoundRouteHandler(notFoundRH) {
   notFoundRouteHandler = notFoundRH;
 }
-
 function getRouteHandler(path) {
-  const pathSegments = path.split('/');
+  const [pathWithoutQuery] = path.split('?');
+
+  const pathSegments = pathWithoutQuery.split('/');
   const route = routes.find(r => {
     const routeSegments = r.path.split('/');
     if (routeSegments.length !== pathSegments.length) {

@@ -16,7 +16,7 @@ const notFoundRouteHandler = () => {
 // router.addDefaultNotFoundRouteHandler(notFoundRouteHandler);
 
 function handlePlayerRoute(mainContent) {
-  PlayerView(mainContent, playerViewModel);
+  PlayerView(mainContent, playerViewModel)
 }
 
 export default handlePlayerRoute;

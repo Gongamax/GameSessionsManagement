@@ -24,10 +24,14 @@ function getHome(mainContent) {
 
   const space3 = br();
 
-  const games = a('#games', 'Go to list of Games', mainContent);
+  const games = a('#game', 'Go to list of Games', mainContent);
+
+  const space4 = br();
+
+  const game = a('#game/1', 'Go to Game', mainContent);
 
   // Append all elements to the main content
-  mainContent.replaceChildren(title, welcomeMessage, description, player, space, session, space2, sessions, space3, games);
+  mainContent.replaceChildren(title, welcomeMessage, description, player, space, session, space2, sessions, space3, games, space4, game);
 }
 
 export const services = {
