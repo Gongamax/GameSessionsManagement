@@ -17,8 +17,8 @@ function handleSessionRoute(mainContent) {
   SessionView(mainContent, sessionViewModel);
 }
 
-function handleSessionsRoute(mainContent) {
-  SessionsView(mainContent, sessionViewModel);
+function handleSessionsRoute(mainContent, page) {
+  SessionsView(mainContent, sessionViewModel, page);
 }
 
 export default {

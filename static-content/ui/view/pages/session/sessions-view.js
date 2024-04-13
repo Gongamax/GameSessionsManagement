@@ -1,13 +1,14 @@
 import dom from '../../../lib/dom-utils.js';
+import Pagination from '../../components/Pagination.js';
 
-const { h1, ul, li, div, a, br, btn } = dom;
+const { h1, ul, li, div, a, br } = dom;
 
-let page = 1;
-const limit = 10;
+const limit = 5;
 
-export default async function SessionsView(mainContent, sessionViewModel) {
+export default async function SessionsView(mainContent, sessionViewModel, page = 1) {
   const skip = (page - 1) * limit;
-  const sessions = await sessionViewModel.getSessions(1, skip, limit + 1);
+  const gameId = new URLSearchParams(window.location.search).get('gid') ?? 1;
+  const sessions = await sessionViewModel.getSessions(Number(gameId), skip, limit + 1);
   const hasNextPage = sessions.length > limit;
   if (hasNextPage) {
     sessions.pop();
@@ -18,31 +19,27 @@ export default async function SessionsView(mainContent, sessionViewModel) {
     ul(
       ...sessions.map(session => {
         return li(
-            div(
-              li(a(`#session/${session.sid}`, `Session ID: ${session.sid}`)),
-              ul(
-                li('Date: ' + session.date),
-                li('Game ID: ' + session.gid),
-                li('Capacity: ' + session.capacity),
-                br()
-              )
+          div(
+            li(a(`#session/${session.sid}`, `Session ID: ${session.sid}`)),
+            ul(
+              li('Date: ' + session.date),
+              li('Game ID: ' + session.gid),
+              li('Capacity: ' + session.capacity),
+              br(),
             ),
+          ),
         );
       }),
     ),
   );
 
-  const prevButton = btn('Previous Page', () => {
-    page = Math.max(1, page - 1);
+  const paginationButtons = Pagination(page, hasNextPage, newPage => {
+    page = newPage;
     window.location.hash = `#sessions?page=${page}`;
-  }, skip === 0);
-  const nextButton = btn('Next Page', () => {
-    page += 1;
-    window.location.hash = `#sessions?page=${page}`;
-  }, !hasNextPage);
+  });
 
   const space = br();
 
   const home = a('#home', 'Go to Home');
-  mainContent.replaceChildren(content, prevButton, nextButton, space, home);
+  mainContent.replaceChildren(content, space, ...paginationButtons, space, home);
 }

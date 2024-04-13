@@ -19,8 +19,8 @@ function handleGameRoute(mainContent) {
     GameView(mainContent, gameViewModel)
 }
 
-function handleGamesRoute(mainContent) {
-    GamesView(mainContent, gameViewModel)
+function handleGamesRoute(mainContent, page) {
+    GamesView(mainContent, gameViewModel, page)
 }
 function handleSearchGamesRoute(mainContent) {
     SearchGamesView(mainContent, gameViewModel)

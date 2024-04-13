@@ -1,29 +1,33 @@
 import dom from '../../../lib/dom-utils.js';
+import Pagination from '../../components/Pagination.js';
 
-const { h1, ul, li, div, a, br, h_number } = dom;
+const { h1, ul, li, div, a, br } = dom;
 
-export default async function GamesView(mainContent, gamesViewModel) {
+export default async function GamesView(mainContent, gamesViewModel, page) {
   const params = new URLSearchParams(window.location.hash.split('?')[1]);
-  const skip = parseInt(params.get('skip'));
-  const limit = parseInt(params.get('limit'));
   const developer = params.get('developer');
+  const limit = 5;
+  const skip = (page - 1) * limit;
   const genres = params.get('genres');
-  if (genres === undefined || developer === undefined) {
-    return;
-  }
-  if (isNaN(skip) || isNaN(limit)) {
+
+  if (!genres || !developer) {
+    mainContent.replaceChildren(div('Invalid parameters provided'));
     return;
   }
 
-  // ALERT:  Error handling required !!!!!!!!!!!!!!!!!!!
-  const games = await gamesViewModel.getGames(developer, genres, skip, limit);
-  if(games === undefined){
-    alert("Error")
-    window.location.hash = '#home';
-    return;
-  }
+  const games = await gamesViewModel.getGames(developer, genres, skip, limit + 1);
 
   console.log(games);
+
+  if (games === undefined) {
+    mainContent.replaceChildren(div('An error occurred while fetching games'));
+    return;
+  }
+
+  const hasNextPage = games.length > limit;
+  if (hasNextPage) {
+    games.pop();
+  }
 
   let content;
   if (games.length === 0) {
@@ -32,8 +36,6 @@ export default async function GamesView(mainContent, gamesViewModel) {
       ul(
         li('No games found matching the provided parameters'),
       ));
-    const home = a('#home', 'Go to Home');
-    mainContent.replaceChildren(content, home);
   } else {
     content = div(
       h1('Games'),
@@ -56,5 +58,10 @@ export default async function GamesView(mainContent, gamesViewModel) {
   }
 
   const home = a('#home', 'Go to Home');
-  mainContent.replaceChildren(content, home);
+  const paginationButtons = Pagination(page, hasNextPage, newPage => {
+    page = newPage;
+    window.location.hash = `#games?developer=${developer}&genres=${genres}&page=${page}`;
+  });
+
+  mainContent.replaceChildren(content, ...paginationButtons, br(), home);
 }

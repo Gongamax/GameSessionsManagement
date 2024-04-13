@@ -1,7 +1,7 @@
 import dom from '../../../lib/dom-utils.js';
 import { genres } from '../../../../domain/types/game.js';
 
-const { h1, ul, li, div, btn, input, label, br,a,inputWithLabel} = dom;
+const { h1, ul, li, div, btn, input, label, br, a, inputWithLabel } = dom;
 
 export default async function GamesSearchView(mainContent) {
   const content = div(
@@ -17,30 +17,18 @@ export default async function GamesSearchView(mainContent) {
       ),
       div(
         label('Developer '),
-        input('text', 'developer', '')
-      ),
-      br(),
-      div(
-        label('Skip (optional) '),
-        input('text', 'skip', '')
-      ),
-      br(),
-      div(
-        label('Limit (optional) '),
-        input('text', 'limit', '')
+        input('text', 'developer', ''),
       ),
       br(),
       br(),
       btn('Search', () => {
         const genres = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(checkbox => checkbox.value);
         const developer = document.querySelector('input[name=developer]').value;
-        const skip = document.querySelector('input[name=skip]').value ? document.querySelector('input[name=skip]').value : 0;
-        const limit = document.querySelector('input[name=limit]').value ? document.querySelector('input[name=limit]').value : 10;
-        if(genres.length === 0 || developer === '' || isNaN(skip) || isNaN(limit)){
+        if (genres.length === 0 || developer === '') {
           alert('Invalid input');
           return;
         }
-        window.location.hash = `#games?skip=${skip}&limit=${limit}&developer=${developer}&genres=${genres.join(',')}`;
+        window.location.hash = `#games?developer=${developer}&genres=${genres.join(',')}`;
 
       }),
     ),
