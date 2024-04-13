@@ -1,11 +1,6 @@
 package pt.isel.ls.sessions.repository.jdbc.session
 
-import kotlinx.datetime.Clock
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toJavaLocalDateTime
-import kotlinx.datetime.toKotlinLocalDateTime
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.session.Session
@@ -89,22 +84,24 @@ class SessionJDBC(
                 """.trimIndent()
             val stm =
                 con.prepareStatement(query).apply {
-                    setInt(1, gid.toInt())
-                    setInt(2, limit)
-                    setInt(3, skip)
-                    var index = 2
+                    var index = 1
+                    setInt(index++, gid.toInt())
                     if (date != null) {
                         setTimestamp(index++, Timestamp.valueOf(date.toJavaLocalDateTime()))
                     }
                     if (pid != null) {
-                        setInt(index, pid.toInt())
+                        setInt(index++, pid.toInt())
                     }
+                    setInt(index++, limit)
+                    setInt(index, skip)
                 }
             val rs = stm.executeQuery()
             val sessions = mutableListOf<Session>()
             while (rs.next()) {
                 val session = rs.toSession()
+                println("session: $session")
                 val sessionState = getSessionState(session.date, session.associatedPlayers, session.capacity)
+                println("state: $state, sessionState: $sessionState")
                 if (state == null || sessionState == state) {
                     sessions.add(session)
                 }

@@ -14,7 +14,7 @@ export default function SessionViewModel(sessionHandler) {
     return sessionHandler.createSession(session);
   }
 
-  function getSessions(gid, skip, limit) {
-    return sessionHandler.getSessions(gid, limit, skip);
+  function getSessions(gid, date, state, playerId, skip, limit) {
+    return sessionHandler.getSessions(gid, date, state, playerId, limit, skip);
   }
 }

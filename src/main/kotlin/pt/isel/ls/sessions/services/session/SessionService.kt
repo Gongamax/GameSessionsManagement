@@ -76,10 +76,6 @@ class SessionService(
             if (gameRepository.getGameById(gid) == null) {
                 return@run failure(SessionsGetError.GameNotFound)
             }
-            val now = clock.now().toLocalDateTime(TimeZone.currentSystemDefault())
-            if (date != null && date < now) {
-                return@run failure(SessionsGetError.InvalidDate)
-            }
             if (state != null && state !in SessionState.entries) {
                 return@run failure(SessionsGetError.InvalidState)
             }

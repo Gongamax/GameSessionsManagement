@@ -20,7 +20,7 @@ function getHome(mainContent) {
 
   const space2 = br();
 
-  const sessions = a('#sessions', 'Go to list of Sessions', mainContent);
+  const sessions = a('#session', 'Go to list of Sessions', mainContent);
 
   const space3 = br();
 

@@ -7,8 +7,12 @@ const limit = 5;
 
 export default async function SessionsView(mainContent, sessionViewModel, page = 1) {
   const skip = (page - 1) * limit;
-  const gameId = new URLSearchParams(window.location.search).get('gid') ?? 1;
-  const sessions = await sessionViewModel.getSessions(Number(gameId), skip, limit + 1);
+  const params = new URLSearchParams(window.location.hash.split('?')[1]);
+  const gameId = params.get('gid');
+  const date = params.get('date');
+  const state = params.get('state');
+  const playerId = params.get('pid');
+  const sessions = await sessionViewModel.getSessions(Number(gameId), date, state, playerId, skip, limit + 1);
   const hasNextPage = sessions.length > limit;
   if (hasNextPage) {
     sessions.pop();
@@ -39,7 +43,8 @@ export default async function SessionsView(mainContent, sessionViewModel, page =
   });
 
   const space = br();
+  const space2 = br();
 
   const home = a('#home', 'Go to Home');
-  mainContent.replaceChildren(content, space, ...paginationButtons, space, home);
+  mainContent.replaceChildren(content, space, ...paginationButtons, space, space2, home);
 }
