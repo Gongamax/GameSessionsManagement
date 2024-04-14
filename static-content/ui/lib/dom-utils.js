@@ -26,10 +26,6 @@ export function createElement(name, attrs, ...children) {
   return element;
 }
 
-function form(attributes,...children){
-  return createElement('form',attributes,...children);
-}
-
 function li(content) {
   return createElement('li', null, content);
 }
@@ -97,6 +93,10 @@ function input(type, name, value) {
   input.setAttribute('name', name);
   input.setAttribute('value', value);
   return input;
+}
+
+function form(...items) {
+  return createElement('form', null, ...items);
 }
 
 function label(content) {

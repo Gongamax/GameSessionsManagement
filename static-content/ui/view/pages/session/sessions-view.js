@@ -39,12 +39,11 @@ export default async function SessionsView(mainContent, sessionViewModel, page =
 
   const paginationButtons = Pagination(page, hasNextPage, newPage => {
     page = newPage;
-    window.location.hash = `#sessions?page=${page}`;
+    window.location.hash = `#sessions?gid=${gameId}&date=${date}&state=${state}&pid=${playerId}&page=${page}`;
   });
 
   const space = br();
-  const space2 = br();
 
   const home = a('#home', 'Go to Home');
-  mainContent.replaceChildren(content, space, ...paginationButtons, space, space2, home);
+  mainContent.replaceChildren(content, space, ...paginationButtons, space, space, home);
 }

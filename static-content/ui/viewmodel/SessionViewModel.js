@@ -1,4 +1,4 @@
-export default function SessionViewModel(sessionHandler) {
+export default function SessionViewModel(sessionService) {
 
   return {
     getSession: getSession,
@@ -7,14 +7,14 @@ export default function SessionViewModel(sessionHandler) {
   };
 
   function getSession(sessionId) {
-    return sessionHandler.getSession(sessionId);
+    return sessionService.getSession(sessionId);
   }
 
   function createSession(session) {
-    return sessionHandler.createSession(session);
+    return sessionService.createSession(session);
   }
 
   function getSessions(gid, date, state, playerId, skip, limit) {
-    return sessionHandler.getSessions(gid, date, state, playerId, limit, skip);
+    return sessionService.getSessions(gid, date, state, playerId, limit, skip);
   }
 }

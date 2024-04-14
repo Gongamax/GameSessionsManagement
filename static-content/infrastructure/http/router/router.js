@@ -31,7 +31,7 @@ function getRouteHandler(path) {
     return true;
   });
 
-  return route ? (...args) => route.handler(...args) : notFoundRouteHandler;
+  return route ? route.handler : notFoundRouteHandler;
 }
 
 const router = {
