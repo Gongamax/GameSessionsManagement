@@ -143,23 +143,19 @@ paths:
           required: false
           schema:
             type: integer
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                genres:
-                  type: array
-                  items:
-                    type: string
-                developer:
-                  type: string
-            example:
-              body:
-                value:
-                  genres: [ "Adventure", "Rpg" ]
-                  developer: "Developer0"
+        - name: developer
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: genres
+          in: query
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+
       responses:
         '200':
           description: Games filtered by genres and developer succeeds
@@ -444,17 +440,17 @@ paths:
             type: integer
         - name: date
           in: query
-          required: true
+          required: false
           schema:
             type: integer
         - name: state
           in: query
-          required: true
+          required: false
           schema:
             type: integer
         - name: pid
           in: query
-          required: true
+          required: false
           schema:
             type: integer
         - name: limit

@@ -157,6 +157,8 @@ curl --location --request POST 'http://localhost:8080/api/player' --header 'Cont
 * **Query String:**
     * skip (_Integer_, _Optional_) - Number of elements to skip
     * limit (_Integer_, _Optional_) - Maximum number of elements to return
+    * genres (_String_,Required) - Filter by genre
+    * developer (_String_,Required) - Filter by developer
 
 **Example:**
 
@@ -274,6 +276,10 @@ curl --location --request POST 'http://localhost:8080/api/game/1' --header 'Cont
 * **Query String:**
     * skip (_Integer_, _Optional_) - Number of elements to skip
     * limit (_Integer_, _Optional_) - Maximum number of elements to return
+    * gid (_Integer_, _Required_) - Filter by game ID
+    * date (_String_, _Optional_) - Filter by date
+    * state (_String_, _Optional_) - Filter by state
+    * pid (_Integer_, _Optional_) - Filter by player ID
 
 **Example:**
 
@@ -541,6 +547,42 @@ There are two data access implementations that implement the interface **AppDB**
 The fact that the data is stored in memory allows for testing without the need for a database.
 The use of an interface allows for easy switching between the two implementations, being the Service Layer independent
 of the data access layer.
+
+### Single Page Application
+
+At this stage of the project, our Web User Interface supports all GET resources that our API allows, which can be
+summarized in the following relationship scheme:
+
+| ![Web UI relation scheme](frontend/Sessions.png) |
+|:------------------------------------------------:|
+|             *Web UI Relation Scheme*             
+
+### DOM (Document Object Model)
+
+The views were implemented via the [Domify API](../static-content/ui/lib/dom-utils.js), which is a small JavaScript API that was developed to simplify the
+creation of HTML elements using the [DOM API](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model).
+
+### Onion Model
+
+The project follows the Onion Model Architecture, where the core of the application is the domain model, and the
+application's dependencies are organized in layers around it. For more information you can check
+here [Onion Model](https://medium.com/expedia-group-tech/onion-architecture-deed8a554423). The layers are:
+
+
+<div align="center">
+
+![Onion Model](frontend/Onion-Model.png)
+
+Onion Model
+</div>
+
+### Model-View-ViewModel (MVVM)
+
+The project follows the MVVM architecture pattern, where the model represents the data and business logic of the
+application, the view represents the UI components, and the view model acts as an intermediary between the model and the
+to view. The view model retrieves data from the model and updates the view when the data changes. The view model also
+handles user input and updates the model accordingly. For more information you can check here
+[MVVM](https://medium.com/@onurcem.isik/introduction-to-mvvm-architecture-5c5558c3679)
 
 ### Error Handling/Processing
 
