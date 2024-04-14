@@ -1,7 +1,7 @@
 import dom from './dom-utils.js';
 import Pagination from '../view/components/Pagination.js';
 
-const { li, ul, div, h1, a, br } = dom;
+const { li, ul, div, h1, a, br, h2 } = dom;
 
 export default {
   renderPlayerView,
@@ -34,7 +34,7 @@ function renderPlayerView(player) {
   );
 }
 
-function renderGameView(game) {
+function renderGameView(game, sessions) {
   return div(
     h1('Game'),
     div(
@@ -43,6 +43,22 @@ function renderGameView(game) {
         li('Name: ' + game.name),
         li('Developer: ' + game.developer),
         li('Genres: ' + game.genres),
+      ),
+      br(),
+      h2('Sessions of the game: ' + game.name),
+      ul(
+        ...sessions.map(session => {
+          return li(
+            div(
+              li(a(`#session/${session.sid}`, `Session ID: ${session.sid}`)),
+              ul(
+                li('Date: ' + session.date),
+                li('Capacity: ' + session.capacity),
+                br(),
+              ),
+            ),
+          );
+        }),
       ),
     ),
     a('#home', 'Go to Home'),
@@ -98,7 +114,8 @@ function renderSessionsView(sessions, page, hasNextPage, params) {
     }),
     br(),
     br(),
-    a('#home', 'Go to Home'),
+    //go back to search sessions
+    a('#session', 'Go to Sessions Search'),
   );
 }
 
@@ -129,7 +146,7 @@ function renderGamesView(games, page, hasNextPage, params) {
       }),
       br(),
       br(),
-      a('#home', 'Go to Home'),
+      a('#game', 'Go to Games Search'),
     );
   }
 

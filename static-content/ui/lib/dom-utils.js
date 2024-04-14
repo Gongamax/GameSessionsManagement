@@ -49,12 +49,16 @@ function h1(content) {
   return h1Element;
 }
 
-function h_number(content,number ) {
+
+function h2(content) {
+  return createElement('h2', null, content);
+}
+
+function h_number(content, number) {
   const hElement = document.createElement(`h${number}`);
   const textNode = document.createTextNode(content);
   hElement.appendChild(textNode);
   return hElement;
-
 }
 
 function p(content) {
@@ -88,7 +92,7 @@ function br() {
 }
 
 function input(type, name, value) {
-  const input = document.createElement('input',);
+  const input = document.createElement('input');
   input.setAttribute('type', type);
   input.setAttribute('name', name);
   input.setAttribute('value', value);
@@ -123,6 +127,7 @@ export default {
   ul,
   div,
   h1,
+  h2,
   h_number,
   nav,
   a,
@@ -132,5 +137,5 @@ export default {
   br,
   form,
   label,
-  inputWithLabel
+  inputWithLabel,
 };

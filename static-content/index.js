@@ -1,12 +1,14 @@
 import router from './infrastructure/http/router/router.js';
 import sessionsRouter from './infrastructure/http/router/sessions-router.js';
 
+const home = 'home';
+
 window.addEventListener('load', loadHandler);
 window.addEventListener('hashchange', hashChangeHandler);
 
 function loadHandler() {
 
-  router.addRouteHandler('home', sessionsRouter.handleHomeRoute);
+  router.addRouteHandler(home, sessionsRouter.handleHomeRoute);
   router.addRouteHandler('player/:id', sessionsRouter.playerRouter);
   router.addRouteHandler('session', sessionsRouter.sessionRouter.handleSearchSessionsRoute);
   router.addRouteHandler('session/:id', sessionsRouter.sessionRouter.handleSessionRoute);

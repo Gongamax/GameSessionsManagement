@@ -1,6 +1,6 @@
 import renders from '../../../lib/renders.js';
 
-export default async function GameView(mainContent, gameViewModel) {
+export default async function GameView(mainContent, gameViewModel, sessionViewModel) {
   const params = window.location.hash.split('/');
   const gameId = params[params.length - 1];
   if (gameId !== String(parseInt(gameId))) {
@@ -17,7 +17,14 @@ export default async function GameView(mainContent, gameViewModel) {
     return;
   }
 
-  const content = renders.renderGameView({ gid, name, developer, genres });
+  const sessionsOfGame = await sessionViewModel.getSessions(gid, undefined, undefined, undefined, 0, 5);
+  if (!sessionsOfGame) {
+    const content = renders.renderGetHome('An error occurred while fetching the sessions of the game. Please try again later.');
+    mainContent.replaceChildren(content);
+    return;
+  }
+
+  const content = renders.renderGameView({ gid, name, developer, genres }, sessionsOfGame);
 
   mainContent.replaceChildren(content);
 }

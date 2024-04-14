@@ -1,5 +1,5 @@
 import services from '../infrastructure/http/services/services.js';
-import sessionRouter from '../infrastructure/http/router/session-router.js';
+import sessionsRouter from '../infrastructure/http/router/sessions-router.js';
 import gameRouter from '../infrastructure/http/router/game-router.js';
 import renders from '../ui/lib/renders.js';
 
@@ -7,22 +7,20 @@ describe('Views Test', function() {
 
   it('should show home view', () => {
     let mainContent = document.createElement('div');
-    services.getHome(mainContent);
+    sessionsRouter.handleHomeRoute(mainContent);
     mainContent.innerHTML.should.be.equal(
       '<h1>Welcome to Sessions App!</h1>' +
       '<p>We are happy to have you here!</p>' +
       '<p>This is a simple app to manage sessions. You can add, edit, and delete sessions.</p>' +
       '<a href="#player/1">Go to Player</a><br>' +
-      '<a href="#session/1">Go to Session</a><br>' +
       '<a href="#session">Go to list of Sessions</a><br>' +
-      '<a href="#game">Go to list of Games</a><br>' +
-      '<a href="#game/1">Go to Game</a>',
+      '<a href="#game">Go to list of Games</a><br>',
     );
   });
 
   it('should show sessions search view', () => {
     let mainContent = document.createElement('div');
-    sessionRouter.handleSearchSessionsRoute(mainContent);
+    sessionsRouter.sessionRouter.handleSearchSessionsRoute(mainContent);
     mainContent.innerHTML.should.be.equal(
       '<div><h1>Search Sessions</h1>' +
       '<div>' +
@@ -46,7 +44,7 @@ describe('Views Test', function() {
 
   it('should show games search view', () => {
     let mainContent = document.createElement('div');
-    gameRouter.handleSearchGamesRoute(mainContent);
+    sessionsRouter.gameRouter.handleSearchGamesRoute(mainContent);
     mainContent.innerHTML.should.be.equal('<div>' +
       '<h1>Games Search</h1>' +
       '<div><ul>' +
@@ -166,7 +164,7 @@ describe('Views Test', function() {
       '<li>Capacity: 20</li><br></ul></div></li></ul>' +
       '<br><button disabled="">Previous Page</button>' +
       '<button disabled="">Next Page</button>' +
-      '<br><br><a href="#home">Go to Home</a>',
+      '<br><br><a href="#session">Go to Sessions Search</a>',
     );
   });
 
@@ -207,7 +205,7 @@ describe('Views Test', function() {
         '<li>Genres: Action,Shooter</li><br></ul></div></li></ul>' +
         '<button disabled="">Previous Page</button>' +
         '<button disabled="">Next Page</button>' +
-        '<br><br><a href="#home">Go to Home</a>',
+        '<br><br><a href="#game">Go to Games Search</a>',
       );
     });
   });
