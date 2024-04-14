@@ -9,8 +9,12 @@
 5. [Request Details](#request-details)
 6. [Connection Management](#connection-management)
 7. [Data Access](#data-access)
-8. [Error Handling/Processing](#error-handlingprocessing)
-9. [Critical Evaluation](#critical-evaluation)
+8. [Single Page Application](#single-page-application)
+9. [DOM (Document Object Model)](#dom-document-object-model)
+10. [Onion Model](#onion-model)
+11. [Model-View-ViewModel (MVVM)](#model-view-viewmodel-mvvm)
+12. [Error Handling/Processing](#error-handlingprocessing)
+13. [Critical Evaluation](#critical-evaluation)
 
 ## Introduction
 
@@ -559,8 +563,11 @@ summarized in the following relationship scheme:
 
 ### DOM (Document Object Model)
 
-The views were implemented via the [Domify API](../static-content/ui/lib/dom-utils.js), which is a small JavaScript API that was developed to simplify the
-creation of HTML elements using the [DOM API](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model).
+Visualizations were built using [DOM](https://developer.mozilla.org/pt-BR/docs/Web/API/Document_Object_Model/Introduction). The provided JavaScript code
+is a [library of functions for creating HTML elements](../static-content/ui/lib/dom-utils.js).
+The createElement function is the main function that creates an HTML element with a given name, attributes, and
+children. The other functions are wrappers around createElement for specific HTML elements like li, ul, div, h1, etc.
+They simplify the creation of these elements by providing a more convenient interface.
 
 ### Onion Model
 
