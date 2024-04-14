@@ -2,6 +2,7 @@ import router from "../infrastructure/http/router/router.js";
 import services from "../infrastructure/http/services/services.js";
 import sessionRouter from "../infrastructure/http/router/session-router.js";
 import gameRouter from "../infrastructure/http/router/game-router.js";
+import renders from "../ui/lib/renders.js";
 
 describe('Views Test', function () {
 
@@ -70,6 +71,19 @@ describe('Views Test', function () {
             '</div><br>' +
             '<br><button>Search</button>' +
             '</div></div>' +
+            '<a href="#home">Go to Home</a>'
+        );
+    });
+
+    it('should show player info view', () => {
+        const mainContent = renders.renderPlayerView({id: 1, name: 'John Doe', email: 'john.doe@example.com'});
+        mainContent.innerHTML.should.be.equal(
+            '<h1>Player</h1>' +
+            '<div><ul>' +
+            '<li>Id : 1</li>' +
+            '<li>Name : John Doe</li>' +
+            '<li>Email : john.doe@example.com</li>' +
+            '</ul></div>' +
             '<a href="#home">Go to Home</a>'
         );
     });

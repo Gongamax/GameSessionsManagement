@@ -1,7 +1,4 @@
-import dom from '../../../lib/dom-utils.js';
-import Pagination from '../../components/Pagination.js';
-
-const { h1, ul, li, div, a, br } = dom;
+import renders from "../../../lib/renders.js";
 
 const limit = 5;
 
@@ -18,32 +15,6 @@ export default async function SessionsView(mainContent, sessionViewModel, page =
     sessions.pop();
   }
 
-  const content = div(
-    h1('Sessions'),
-    ul(
-      ...sessions.map(session => {
-        return li(
-          div(
-            li(a(`#session/${session.sid}`, `Session ID: ${session.sid}`)),
-            ul(
-              li('Date: ' + session.date),
-              li('Game ID: ' + session.gid),
-              li('Capacity: ' + session.capacity),
-              br(),
-            ),
-          ),
-        );
-      }),
-    ),
-  );
-
-  const paginationButtons = Pagination(page, hasNextPage, newPage => {
-    page = newPage;
-    window.location.hash = `#sessions?gid=${gameId}&date=${date}&state=${state}&pid=${playerId}&page=${page}`;
-  });
-
-  const space = br();
-
-  const home = a('#home', 'Go to Home');
-  mainContent.replaceChildren(content, space, ...paginationButtons, space, space, home);
+  const content = renders.renderSessionsView(sessions, page, hasNextPage, {gid: gameId, date, state, pid: playerId});
+  mainContent.replaceChildren(content);
 }

@@ -1,6 +1,4 @@
-import dom from '../../../lib/dom-utils.js';
-
-const { h1, ul, li, div,a } = dom;
+import renders from "../../../lib/renders.js";
 
 export default async function PlayerView(mainContent, playerViewModel) {
   const params = window.location.hash.split('/');
@@ -12,17 +10,7 @@ export default async function PlayerView(mainContent, playerViewModel) {
   const { name, email } = await playerViewModel.getPlayer(playerId);
   console.log(name, email);
 
-  const content = div(
-    h1('Player'),
-    div(
-      ul(
-        li('Id : ' + playerId),
-        li('Name : ' + name),
-        li('Email : ' + email),
-      ),
-    ),
-  );
+  const content = renders.renderPlayerView({id: playerId, name, email})
 
-  const home = a('#home', 'Go to Home');
-  mainContent.replaceChildren(content,home);
+  mainContent.replaceChildren(content);
 }

@@ -1,7 +1,7 @@
 import dom from '../../../lib/dom-utils.js';
-import Pagination from '../../components/Pagination.js';
+import renders from "../../../lib/renders.js";
 
-const { h1, ul, li, div, a, br } = dom;
+const { div } = dom;
 
 export default async function GamesView(mainContent, gamesViewModel, page) {
   const params = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -29,39 +29,7 @@ export default async function GamesView(mainContent, gamesViewModel, page) {
     games.pop();
   }
 
-  let content;
-  if (games.length === 0) {
-    content = div(
-      h1('Games'),
-      ul(
-        li('No games found matching the provided parameters'),
-      ));
-  } else {
-    content = div(
-      h1('Games'),
-      ul(
-        ...games.map(game => {
-          return li(
-            div(
-              li(a(`#game/${game.gid}`, `Game: ${game.name}`)),
-              ul(
-                li('Id : ' + game.gid),
-                li('Developer : ' + game.developer),
-                li('Genres : ' + game.genres),
-                br(),
-              ),
-            ),
-          );
-        }),
-      ),
-    );
-  }
+  const content = renders.renderGamesView(games, page, hasNextPage, { developer, genres });
 
-  const home = a('#home', 'Go to Home');
-  const paginationButtons = Pagination(page, hasNextPage, newPage => {
-    page = newPage;
-    window.location.hash = `#games?developer=${developer}&genres=${genres}&page=${page}`;
-  });
-
-  mainContent.replaceChildren(content, ...paginationButtons, br(), home);
+  mainContent.replaceChildren(content);
 }

@@ -1,6 +1,4 @@
-import dom from "../../../lib/dom-utils.js";
-
-const { h1, ul, li, div ,a} = dom;
+import renders from "../../../lib/renders.js";
 
 export default async function GameView(mainContent, gameViewModel){
     const params = window.location.hash.split('/');
@@ -12,17 +10,7 @@ export default async function GameView(mainContent, gameViewModel){
     const { gid , name, developer,genres } = await gameViewModel.getGame(gameId);
     console.log(gid,name, developer, genres);
 
-    const content = div(
-        h1('Game'),
-        div(
-            ul(
-                li('Id : ' + gid),
-                li('Name : ' + name),
-                li('Developer : ' + developer),
-                li('Genres : ' + genres),
-            ),
-        ),
-    );
-    const home = a('#home', 'Go to Home');
-    mainContent.replaceChildren(content, home);
+    const content = renders.renderGameView({gid, name, developer, genres})
+
+    mainContent.replaceChildren(content);
 }
