@@ -1,24 +1,19 @@
 import router from './infrastructure/http/router/router.js';
-import handlePlayerRoute from './infrastructure/http/router/player-router.js';
-import services from './infrastructure/http/services/services.js';
-import sessionRouter from './infrastructure/http/router/session-router.js';
-import gameRouter from './infrastructure/http/router/game-router.js';
-
-const home = 'home';
+import sessionsRouter from './infrastructure/http/router/sessions-router.js';
 
 window.addEventListener('load', loadHandler);
 window.addEventListener('hashchange', hashChangeHandler);
 
 function loadHandler() {
 
-  router.addRouteHandler(home, services.getHome);
-  router.addRouteHandler('player/:id', handlePlayerRoute);
-  router.addRouteHandler('session', sessionRouter.handleSearchSessionsRoute);
-  router.addRouteHandler('session/:id', sessionRouter.handleSessionRoute);
-  router.addRouteHandler('sessions', sessionRouter.handleSessionsRoute);
-  router.addRouteHandler('game', gameRouter.handleSearchGamesRoute);
-  router.addRouteHandler('game/:id', gameRouter.handleGameRoute);
-  router.addRouteHandler('games', gameRouter.handleGamesRoute);
+  router.addRouteHandler('home', sessionsRouter.handleHomeRoute);
+  router.addRouteHandler('player/:id', sessionsRouter.playerRouter);
+  router.addRouteHandler('session', sessionsRouter.sessionRouter.handleSearchSessionsRoute);
+  router.addRouteHandler('session/:id', sessionsRouter.sessionRouter.handleSessionRoute);
+  router.addRouteHandler('sessions', sessionsRouter.sessionRouter.handleSessionsRoute);
+  router.addRouteHandler('game', sessionsRouter.gameRouter.handleSearchGamesRoute);
+  router.addRouteHandler('game/:id', sessionsRouter.gameRouter.handleGameRoute);
+  router.addRouteHandler('games', sessionsRouter.gameRouter.handleGamesRoute);
 
   router.addDefaultNotFoundRouteHandler(() => window.location.hash = home);
 

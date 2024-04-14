@@ -31,7 +31,7 @@ export default async function GamesSearchView(mainContent) {
 
       }),
     ),
-    br()
+    br(),
   );
 
   const home = a('#home', 'Go to Home');

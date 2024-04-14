@@ -9,11 +9,11 @@
 5. [Request Details](#request-details)
 6. [Connection Management](#connection-management)
 7. [Data Access](#data-access)
-8. [Single Page Application](#single-page-application)
-9. [DOM (Document Object Model)](#dom-document-object-model)
-10. [Onion Model](#onion-model)
-11. [Model-View-ViewModel (MVVM)](#model-view-viewmodel-mvvm)
-12. [Error Handling/Processing](#error-handlingprocessing)
+8. [Error Handling/Processing](#error-handlingprocessing)
+9. [Single Page Application](#single-page-application)
+10. [DOM (Document Object Model)](#dom-document-object-model)
+11. [Onion Model](#onion-model)
+12. [Model-View-ViewModel (MVVM)](#model-view-viewmodel-mvvm)
 13. [Critical Evaluation](#critical-evaluation)
 
 ## Introduction
@@ -552,6 +552,14 @@ The fact that the data is stored in memory allows for testing without the need f
 The use of an interface allows for easy switching between the two implementations, being the Service Layer independent
 of the data access layer.
 
+### Error Handling/Processing
+
+A centralized error handling function is responsible for managing exceptions and returning corresponding HTTP responses.
+The execStart function is specifically used to intercept and manage exceptions across all router functions. When
+errors occur at the service layer, they are conveyed to the router as a Failure, which is a variant of the Either type.
+All errors adhere to the Problem Details for HTTP APIs as outlined
+in [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807), ensuring a standardized approach to error reporting.
+
 ### Single Page Application
 
 At this stage of the project, our Web User Interface supports all GET resources that our API allows, which can be
@@ -563,7 +571,9 @@ summarized in the following relationship scheme:
 
 ### DOM (Document Object Model)
 
-Visualizations were built using [DOM](https://developer.mozilla.org/pt-BR/docs/Web/API/Document_Object_Model/Introduction). The provided JavaScript code
+Visualizations were built
+using [DOM](https://developer.mozilla.org/pt-BR/docs/Web/API/Document_Object_Model/Introduction). The provided
+JavaScript code
 is a [library of functions for creating HTML elements](../static-content/ui/lib/dom-utils.js).
 The createElement function is the main function that creates an HTML element with a given name, attributes, and
 children. The other functions are wrappers around createElement for specific HTML elements like li, ul, div, h1, etc.
@@ -590,14 +600,6 @@ application, the view represents the UI components, and the view model acts as a
 to view. The view model retrieves data from the model and updates the view when the data changes. The view model also
 handles user input and updates the model accordingly. For more information you can check here
 [MVVM](https://medium.com/@onurcem.isik/introduction-to-mvvm-architecture-5c5558c3679)
-
-### Error Handling/Processing
-
-A centralized error handling function is responsible for managing exceptions and returning corresponding HTTP responses.
-The execStart function is specifically used to intercept and manage exceptions across all router functions. When
-errors occur at the service layer, they are conveyed to the router as a Failure, which is a variant of the Either type.
-All errors adhere to the Problem Details for HTTP APIs as outlined
-in [RFC 7807](https://datatracker.ietf.org/doc/html/rfc7807), ensuring a standardized approach to error reporting.
 
 ## Critical Evaluation
 

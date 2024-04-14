@@ -4,7 +4,7 @@ export default async function GameView(mainContent, gameViewModel) {
   const params = window.location.hash.split('/');
   const gameId = params[params.length - 1];
   if (gameId !== String(parseInt(gameId))) {
-    const content = renders.renderGetHome(`Invalid game id, is not a number ${gameId}`);
+    const content = renders.renderGetHome(`Invalid game ID (${gameId}). Please try again.`);
     mainContent.replaceChildren(content);
     return;
   }
