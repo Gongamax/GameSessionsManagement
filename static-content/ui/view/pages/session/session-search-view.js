@@ -7,22 +7,22 @@ export default async function SessionSearchView(mainContent) {
         h1('Search Sessions'),
         div(
             div(
-                label('Game Id  '),
+                label('Game Id '),
                 input('text', 'gameId', ''),
             ),
             br(),
             div(
-                label('Date     '),
+                label('Date '),
                 input('datetime-local', 'date', ''),
             ),
             br(),
             div(
-                label('State    '),
+                label('State '),
                 input('text', 'state', ''),
             ),
             br(),
             div(
-                label('Player Id    '),
+                label('Player Id '),
                 input('text', 'playerId', ''),
             ),
             br(),
