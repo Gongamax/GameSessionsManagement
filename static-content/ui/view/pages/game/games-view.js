@@ -20,7 +20,8 @@ export default async function GamesView(mainContent, gamesViewModel, page) {
   console.log(games);
 
   if (games === undefined) {
-    mainContent.replaceChildren(div('An error occurred while fetching games'));
+    const content = renders.renderGetHome('An error occurred while fetching games. Please try again later.')
+    mainContent.replaceChildren(content);
     return;
   }
 

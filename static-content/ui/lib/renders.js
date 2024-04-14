@@ -21,7 +21,16 @@ export default{
     renderSessionView,
     renderGamesView,
     renderSessionsView,
+    renderGetHome
 }
+
+function renderGetHome(mainContent){
+    return div(
+      h1(mainContent),
+      a('#home', 'Go to Home')
+    )
+}
+
 
 function renderPlayerView(player){
     return div(
@@ -107,11 +116,7 @@ function renderSessionsView(sessions, page, hasNextPage, params) {
 
 function renderGamesView(games, page, hasNextPage, params) {
     if (games.length === 0) {
-        return  div(
-            h1('Games'),
-            ul(
-                li('No games found matching the provided parameters'),
-            ));
+        return  renderGetHome('No games found matching the provided parameters. Please try again.')
     } else {
         return  div(
             h1('Games'),

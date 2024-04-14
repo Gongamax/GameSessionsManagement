@@ -31,7 +31,7 @@ export default async function SessionSearchView(mainContent) {
                     const date = document.querySelector('input[name = date]').value;
                     const state = document.querySelector('input[name = state]').value;
                     const playerId = document.querySelector('input[name = playerId]').value;
-                    if (!gameId) {
+                    if (!gameId || isNaN(gameId)) {
                         alert('Please fill the Game Id field');
                         return;
                     }else if (state && state !== 'open' && state !== 'close') {

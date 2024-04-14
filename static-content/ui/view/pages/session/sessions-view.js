@@ -10,6 +10,13 @@ export default async function SessionsView(mainContent, sessionViewModel, page =
   const state = params.get('state');
   const playerId = params.get('pid');
   const sessions = await sessionViewModel.getSessions(Number(gameId), date, state, playerId, skip, limit + 1);
+
+  if(sessions === undefined) {
+    const content = renders.renderGetHome('An error occurred while fetching sessions. Please try again later.');
+    mainContent.replaceChildren(content);
+    return;
+  }
+
   const hasNextPage = sessions.length > limit;
   if (hasNextPage) {
     sessions.pop();

@@ -20,18 +20,18 @@ export default async function GamesSearchView(mainContent) {
         input('text', 'developer', ''),
       ),
       br(),
-      br(),
       btn('Search', () => {
         const genres = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(checkbox => checkbox.value);
         const developer = document.querySelector('input[name=developer]').value;
         if (genres.length === 0 || developer === '') {
-          alert('Invalid input');
+          alert('Please fill the Developer and at least one Genre field');
           return;
         }
         window.location.hash = `#games?developer=${developer}&genres=${genres.join(',')}`;
 
       }),
     ),
+    br()
   );
 
   const home = a('#home', 'Go to Home');
