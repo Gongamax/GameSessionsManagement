@@ -1,19 +1,7 @@
 import dom from './dom-utils.js';
 import Pagination from "../view/components/Pagination.js";
 
-const { li,
-    ul,
-    div,
-    h1,
-    a,
-    p,
-    btn,
-    input,
-    br,
-    form,
-    label,
-    inputWithLabel
-} = dom;
+const { li, ul, div, h1, a, br } = dom;
 
 export default{
     renderPlayerView,
@@ -37,9 +25,9 @@ function renderPlayerView(player){
         h1('Player'),
         div(
             ul(
-                li('Id : ' + player.id),
-                li('Name : ' + player.name),
-                li('Email : ' + player.email),
+                li('Id: ' + player.id),
+                li('Name: ' + player.name),
+                li('Email: ' + player.email),
             ),
         ),
         a('#home', 'Go to Home')
@@ -51,10 +39,10 @@ function renderGameView(game){
         h1('Game'),
         div(
             ul(
-                li('Id : ' + game.gid),
-                li('Name : ' + game.name),
-                li('Developer : ' + game.developer),
-                li('Genres : ' + game.genres),
+                li('Id: ' + game.gid),
+                li('Name: ' + game.name),
+                li('Developer: ' + game.developer),
+                li('Genres: ' + game.genres),
             ),
         ),
         a('#home', 'Go to Home')
@@ -64,7 +52,7 @@ function renderGameView(game){
 function renderSessionView(session){
     const playersDiv = session.associatedPlayers.map((player, index) => {
         const playerLink = a(`#player/${player.pid}`, player.name);
-        const separator = document.createTextNode(', ');
+        const separator = document.createTextNode(',');
         return index < session.associatedPlayers.length - 1 ? div(playerLink, separator) : div(playerLink);
     });
 
@@ -73,7 +61,7 @@ function renderSessionView(session){
         h1('Session'),
         div(
             ul(
-                li('Id : ' + session.sid),
+                li('Id: ' + session.sid),
                 li('Number of Players: ' + session.numberOfPlayers),
                 li('Date: ' + session.date),
                 li('Game: ' + session.gid),
@@ -116,7 +104,7 @@ function renderSessionsView(sessions, page, hasNextPage, params) {
 
 function renderGamesView(games, page, hasNextPage, params) {
     if (games.length === 0) {
-        return  renderGetHome('No games found matching the provided parameters. Please try again.')
+        return renderGetHome('No games found matching the provided parameters. Please try again.')
     } else {
         return  div(
             h1('Games'),
@@ -126,9 +114,9 @@ function renderGamesView(games, page, hasNextPage, params) {
                         div(
                             li(a(`#game/${game.gid}`, `Game: ${game.name}`)),
                             ul(
-                                li('Id : ' + game.gid),
-                                li('Developer : ' + game.developer),
-                                li('Genres : ' + game.genres),
+                                li('Id: ' + game.gid),
+                                li('Developer: ' + game.developer),
+                                li('Genres: ' + game.genres),
                                 br(),
                             ),
                         ),

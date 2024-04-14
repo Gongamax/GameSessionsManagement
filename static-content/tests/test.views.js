@@ -1,16 +1,9 @@
-import router from "../infrastructure/http/router/router.js";
 import services from "../infrastructure/http/services/services.js";
 import sessionRouter from "../infrastructure/http/router/session-router.js";
 import gameRouter from "../infrastructure/http/router/game-router.js";
 import renders from "../ui/lib/renders.js";
 
 describe('Views Test', function () {
-
-    before(function () {
-        router.addRouteHandler('home', services.getHome);
-        router.addRouteHandler('session', sessionRouter.handleSearchSessionsRoute);
-        router.addRouteHandler('game', gameRouter.handleSearchGamesRoute);
-    });
 
     it('should show home view', () => {
        let mainContent = document.createElement('div');
@@ -80,11 +73,137 @@ describe('Views Test', function () {
         mainContent.innerHTML.should.be.equal(
             '<h1>Player</h1>' +
             '<div><ul>' +
-            '<li>Id : 1</li>' +
-            '<li>Name : John Doe</li>' +
-            '<li>Email : john.doe@example.com</li>' +
+            '<li>Id: 1</li>' +
+            '<li>Name: John Doe</li>' +
+            '<li>Email: john.doe@example.com</li>' +
             '</ul></div>' +
             '<a href="#home">Go to Home</a>'
         );
+    });
+
+    it('should show game info view', () => {
+        const mainContent = renders.renderGameView({gid: 1, name: 'Game 1', developer: 'Developer 1', genres: ['Rpg', 'Adventure']});
+        mainContent.innerHTML.should.be.equal(
+            '<h1>Game</h1>' +
+            '<div><ul>' +
+            '<li>Id: 1</li>' +
+            '<li>Name: Game 1</li>' +
+            '<li>Developer: Developer 1</li>' +
+            '<li>Genres: Rpg,Adventure</li>' +
+            '</ul></div>' +
+            '<a href="#home">Go to Home</a>'
+        );
+    });
+
+    it('should show session info view', () => {
+        const mainContent = renders.renderSessionView({
+            sid: 1,
+            date: '2021-01-01T10:00:00', state: 'Active', gid: 1, pid: 1,
+            numberOfPlayers: 2, capacity: 4,
+            associatedPlayers: [{pid: 1, name: 'John Doe'}, {pid: 2, name: 'Jane Doe'}]
+        });
+        mainContent.innerHTML.should.be.equal(
+            '<h1>Session</h1>' +
+            '<div><ul>' +
+            '<li>Id: 1</li>' +
+            '<li>Number of Players: 2</li>' +
+            '<li>Date: 2021-01-01T10:00:00</li>' +
+            '<li>Game: 1</li>' +
+            '<li><div>Associated Players: <div><a href="#player/1">John Doe</a>,</div>' +
+            '<div><a href="#player/2">Jane Doe</a></div></div></li>' +
+            '<li>Capacity: 4</li>' +
+            '</ul></div>' +
+            '<a href="#home">Go to Home</a>'
+        );
+    });
+
+    it('should show sessions view', () => {
+        const mainContent = renders.renderSessionsView([
+            {
+                "sid": 1,
+                "numberOfPlayers": 2,
+                "date": "2022-01-01T10:00",
+                "gid": 1,
+                "associatedPlayers": [
+                    {
+                        "pid": 1,
+                        "name": "John Doe",
+                        "email": "john.doe@example.com"
+                    },
+                    {
+                        "pid": 2,
+                        "name": "Jane Doe",
+                        "email": "jane.doe@example.com"
+                    }
+                ],
+                "capacity": 5
+            },
+            {
+                "sid": 3,
+                "numberOfPlayers": 0,
+                "date": "2025-03-14T10:58",
+                "gid": 1,
+                "associatedPlayers": [],
+                "capacity": 20
+            }
+        ], 1, false, {gid: 1});
+        mainContent.innerHTML.should.be.equal(
+            '<h1>Sessions</h1>' +
+            '<ul><li><div><li>' +
+            '<a href="#session/1">Session ID: 1</a></li>' +
+            '<ul><li>Date: 2022-01-01T10:00</li>' +
+            '<li>Game ID: 1</li>' +
+            '<li>Capacity: 5</li><br></ul></div></li>' +
+            '<li><div><li>' +
+            '<a href="#session/3">Session ID: 3</a></li>' +
+            '<ul><li>Date: 2025-03-14T10:58</li>' +
+            '<li>Game ID: 1</li>' +
+            '<li>Capacity: 20</li><br></ul></div></li></ul>' +
+            '<br><button disabled="">Previous Page</button>' +
+            '<button disabled="">Next Page</button>' +
+            '<br><br><a href="#home">Go to Home</a>'
+        );
+    });
+
+    it('should show games view', () => {
+        context('when there are no games', () => {
+            const mainContent = renders.renderGamesView([], 1, false, {genre: 'Rpg'});
+            mainContent.innerHTML.should.be.equal(
+                '<h1>No games found matching the provided parameters. Please try again.</h1>' +
+                '<a href="#home">Go to Home</a>'
+            );
+        });
+        context('when there are games', () => {
+            const mainContent = renders.renderGamesView([
+                {
+                    "gid": 1,
+                    "name": "Game 1",
+                    "developer": "Developer 1",
+                    "genres": ["Rpg", "Adventure"]
+                },
+                {
+                    "gid": 2,
+                    "name": "Game 2",
+                    "developer": "Developer 2",
+                    "genres": ["Action", "Shooter"]
+                }
+            ], 1, false, {genre: 'Rpg'});
+            mainContent.innerHTML.should.be.equal(
+                '<h1>Games</h1>' +
+                '<ul><li><div><li>' +
+                '<a href="#game/1">Game: Game 1</a></li>' +
+                '<ul><li>Id: 1</li>' +
+                '<li>Developer: Developer 1</li>' +
+                '<li>Genres: Rpg,Adventure</li><br></ul></div></li>' +
+                '<li><div><li>' +
+                '<a href="#game/2">Game: Game 2</a></li>' +
+                '<ul><li>Id: 2</li>' +
+                '<li>Developer: Developer 2</li>' +
+                '<li>Genres: Action,Shooter</li><br></ul></div></li></ul>' +
+                '<button disabled="">Previous Page</button>' +
+                '<button disabled="">Next Page</button>' +
+                '<br><br><a href="#home">Go to Home</a>'
+            );
+        });
     });
 });
