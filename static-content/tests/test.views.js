@@ -68,9 +68,9 @@ describe('Views Test', function () {
             '</ul>' +
             '<div><label>Developer </label>' +
             '<input type="text" name="developer" value="">' +
-            '</div><br>' +
+            '</div>' +
             '<br><button>Search</button>' +
-            '</div></div>' +
+            '</div><br></div>' +
             '<a href="#home">Go to Home</a>'
         );
     });
