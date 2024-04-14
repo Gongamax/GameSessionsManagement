@@ -79,9 +79,8 @@ describe('Router', function() {
 
   context('when is not found', function() {
     it('should find home', function() {
-      router.getRouteHandler('home').should.equal(sessionsRouter.handleHomeRoute);
-      router.getRouteHandler('home').name.should.equal('handleHomeRoute');
-      router.getRouteHandler('home').should.be.a('function');
+      router.getRouteHandler('xpto').name.should.equal('');
+      router.getRouteHandler('xpto').should.be.a('function');
     });
   });
 });
