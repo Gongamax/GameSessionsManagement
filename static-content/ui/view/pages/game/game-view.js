@@ -17,14 +17,7 @@ export default async function GameView(mainContent, gameViewModel, sessionViewMo
     return;
   }
 
-  const sessionsOfGame = await sessionViewModel.getSessions(gid, undefined, undefined, undefined, 0, 5);
-  if (!sessionsOfGame) {
-    const content = renders.renderGetHome('An error occurred while fetching the sessions of the game. Please try again later.');
-    mainContent.replaceChildren(content);
-    return;
-  }
-
-  const content = renders.renderGameView({ gid, name, developer, genres }, sessionsOfGame);
+  const content = renders.renderGameView({ gid, name, developer, genres });
 
   mainContent.replaceChildren(content);
 }

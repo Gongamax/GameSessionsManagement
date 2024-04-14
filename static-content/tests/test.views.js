@@ -81,11 +81,11 @@ describe('Views Test', function() {
 
   it('should show game info view', () => {
     const mainContent = renders.renderGameView({
-      gid: 1,
-      name: 'Game 1',
-      developer: 'Developer 1',
-      genres: ['Rpg', 'Adventure'],
-    });
+        gid: 1,
+        name: 'Game 1',
+        developer: 'Developer 1',
+        genres: ['Rpg', 'Adventure'],
+      });
     mainContent.innerHTML.should.be.equal(
       '<h1>Game</h1>' +
       '<div><ul>' +
@@ -93,7 +93,9 @@ describe('Views Test', function() {
       '<li>Name: Game 1</li>' +
       '<li>Developer: Developer 1</li>' +
       '<li>Genres: Rpg,Adventure</li>' +
-      '</ul></div>' +
+      '</ul><br>' +
+      '<a href="#sessions?gid=1">Sessions of the game: Game 1</a>' +
+      '</div><br>' +
       '<a href="#home">Go to Home</a>',
     );
   });

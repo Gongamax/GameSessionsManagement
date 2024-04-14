@@ -34,7 +34,7 @@ function renderPlayerView(player) {
   );
 }
 
-function renderGameView(game, sessions) {
+function renderGameView(game) {
   return div(
     h1('Game'),
     div(
@@ -45,22 +45,9 @@ function renderGameView(game, sessions) {
         li('Genres: ' + game.genres),
       ),
       br(),
-      h2('Sessions of the game: ' + game.name),
-      ul(
-        ...sessions.map(session => {
-          return li(
-            div(
-              li(a(`#session/${session.sid}`, `Session ID: ${session.sid}`)),
-              ul(
-                li('Date: ' + session.date),
-                li('Capacity: ' + session.capacity),
-                br(),
-              ),
-            ),
-          );
-        }),
-      ),
+      a('#sessions?gid=' + game.gid, 'Sessions of the game: ' + game.name),
     ),
+    br(),
     a('#home', 'Go to Home'),
   );
 }
