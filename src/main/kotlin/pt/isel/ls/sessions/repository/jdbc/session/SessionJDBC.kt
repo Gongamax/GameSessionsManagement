@@ -1,6 +1,11 @@
 package pt.isel.ls.sessions.repository.jdbc.session
 
-import kotlinx.datetime.*
+import kotlinx.datetime.Clock
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
+import kotlinx.datetime.toLocalDateTime
 import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.session.Session

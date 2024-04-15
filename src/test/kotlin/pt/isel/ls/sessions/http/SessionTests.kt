@@ -249,7 +249,7 @@ class SessionTests {
     fun `getSessions return response with a session Invalid date`() {
         // Arrange
         createSession()
-        val request = Request(Method.GET, Uris.DEFAULT).query("gid", "1").query("date", "2020-03-14T10:58:00.123456789")
+        val request = Request(Method.GET, Uris.DEFAULT).query("gid", "1").query("date", "2020-14-03T10:58:00.123456789")
         // Act
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
