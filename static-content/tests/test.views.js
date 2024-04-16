@@ -74,7 +74,14 @@ describe('Views Test', function() {
       '<li>Id: 1</li>' +
       '<li>Name: John Doe</li>' +
       '<li>Email: john.doe@example.com</li>' +
-      '</ul></div>' +
+      '</ul>' +
+      '<div><label>Insert the Game Id to search for sessions: </label>' +
+      '<input type="text" name="gameId" value="">' +
+      '</div>' +
+      '<br>'+
+      '<button>Search</button>' +
+      '</div>' +
+      '<br>'+
       '<a href="#home">Go to Home</a>',
     );
   });

@@ -1,7 +1,7 @@
 import dom from './dom-utils.js';
 import Pagination from '../view/components/Pagination.js';
 
-const { li, ul, div, h1, a, br, h2 } = dom;
+const { li, ul, div, h1, a, br, btn, input, label } = dom;
 
 export default {
   renderPlayerView,
@@ -21,6 +21,7 @@ function renderGetHome(mainContent) {
 
 
 function renderPlayerView(player) {
+
   return div(
     h1('Player'),
     div(
@@ -29,7 +30,22 @@ function renderPlayerView(player) {
         li('Name: ' + player.name),
         li('Email: ' + player.email),
       ),
+      div(
+        label('Insert the Game Id to search for sessions: '),
+        input('text', 'gameId', ''),
+      ),
+      br(),
+      btn('Search', () => {
+        const gameId = document.querySelector('input[name = gameId]').value;
+        if (!gameId || isNaN(gameId)) {
+          alert('Please fill the Game Id field');
+          return;
+        }
+        window.location.hash = `#sessions?gid=${gameId}&date=&state=&pid=${player.id}`;
+      }),
+
     ),
+    br(),
     a('#home', 'Go to Home'),
   );
 }
