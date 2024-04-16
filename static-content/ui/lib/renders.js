@@ -74,7 +74,7 @@ function renderSessionView(session) {
     const separator = document.createTextNode(',');
     return index < session.associatedPlayers.length - 1 ? div(playerLink, separator) : div(playerLink);
   });
-
+  const gameLink = a(`#game/${session.gid}`, 'Game: ' + session.gid);
   const playersLabel = div('Associated Players: ', ...playersDiv);
   return div(
     h1('Session'),
@@ -83,7 +83,7 @@ function renderSessionView(session) {
         li('Id: ' + session.sid),
         li('Number of Players: ' + session.numberOfPlayers),
         li('Date: ' + session.date),
-        li('Game: ' + session.gid),
+        li(gameLink),
         li(playersLabel),
         li('Capacity: ' + session.capacity),
       ),

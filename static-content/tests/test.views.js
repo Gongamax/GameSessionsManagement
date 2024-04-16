@@ -78,21 +78,21 @@ describe('Views Test', function() {
       '<div><label>Insert the Game Id to search for sessions: </label>' +
       '<input type="text" name="gameId" value="">' +
       '</div>' +
-      '<br>'+
+      '<br>' +
       '<button>Search</button>' +
       '</div>' +
-      '<br>'+
+      '<br>' +
       '<a href="#home">Go to Home</a>',
     );
   });
 
   it('should show game info view', () => {
     const mainContent = renders.renderGameView({
-        gid: 1,
-        name: 'Game 1',
-        developer: 'Developer 1',
-        genres: ['Rpg', 'Adventure'],
-      });
+      gid: 1,
+      name: 'Game 1',
+      developer: 'Developer 1',
+      genres: ['Rpg', 'Adventure'],
+    });
     mainContent.innerHTML.should.be.equal(
       '<h1>Game</h1>' +
       '<div><ul>' +
@@ -120,7 +120,7 @@ describe('Views Test', function() {
       '<li>Id: 1</li>' +
       '<li>Number of Players: 2</li>' +
       '<li>Date: 2021-01-01T10:00:00</li>' +
-      '<li>Game: 1</li>' +
+      '<li><a href="#game/1">Game: 1</a></li>' +
       '<li><div>Associated Players: <div><a href="#player/1">John Doe</a>,</div>' +
       '<div><a href="#player/2">Jane Doe</a></div></div></li>' +
       '<li>Capacity: 4</li>' +
