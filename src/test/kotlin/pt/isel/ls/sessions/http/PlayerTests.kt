@@ -9,7 +9,6 @@ import org.http4k.core.Status
 import org.junit.Test
 import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
-import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.model.utils.TokenDTO
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.util.ProblemDTO

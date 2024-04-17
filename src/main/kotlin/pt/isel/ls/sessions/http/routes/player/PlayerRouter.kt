@@ -11,7 +11,6 @@ import org.http4k.routing.routes
 import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
-import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.model.utils.TokenDTO
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
