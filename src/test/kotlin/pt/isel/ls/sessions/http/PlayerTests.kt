@@ -10,6 +10,7 @@ import org.junit.Test
 import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
+import pt.isel.ls.sessions.http.model.utils.TokenDTO
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.util.ProblemDTO
 import pt.isel.ls.sessions.http.util.Uris
@@ -38,12 +39,12 @@ class PlayerTests {
         // Act
         val response = playerRouter.routes(request)
         val pid = response.header("Location")?.split("/")?.last()
-        val content = Json.decodeFromString<MessageResponse>(response.bodyString())
+        val content = Json.decodeFromString<TokenDTO>(response.bodyString())
         // Assert
         assertEquals("application/json", response.header("Content-Type"))
         assertEquals("/player/$pid", response.header("Location"))
         assertEquals(Status.CREATED, response.status)
-        assertEquals("Player created: $pid", content.message)
+        assertEquals(TokenDTO(content.pid, content.token), content)
     }
 
     @Test
