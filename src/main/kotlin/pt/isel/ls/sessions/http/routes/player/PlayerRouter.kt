@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory
 import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
+import pt.isel.ls.sessions.http.model.utils.TokenDTO
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
 import pt.isel.ls.sessions.http.util.Problem
@@ -43,7 +44,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
 
                 is Success ->
                     Response(Status.CREATED).header("Location", "/player/${res.value.pid}")
-                        .jsonResponse(MessageResponse("Player created: ${res.value.pid}"))
+                        .jsonResponse(TokenDTO(res.value.pid, res.value.token.toString()))
             }
         }
 
