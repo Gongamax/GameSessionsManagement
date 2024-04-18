@@ -17,7 +17,7 @@ class GameTests {
         // Assert
         assertEquals(1u, game.gid)
         assertEquals("name", game.name)
-        assertEquals("Ubisof", game.developer)
+        assertEquals("Ubisoft", game.developer)
         assertTrue { game.genres.contains(Genres.RPG) }
     }
 
