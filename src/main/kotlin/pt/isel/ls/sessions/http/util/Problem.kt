@@ -148,7 +148,7 @@ class Problem(
             name: String,
         ) = Problem(
             typeUri = NameAlreadyExists,
-            title = "name already exists",
+            title = "Name already exists",
             status = Status.BAD_REQUEST,
             detail = "Given name $name already exists",
             instance = instance,

@@ -70,9 +70,10 @@ class GameTests {
         // Assert
         assertEquals(content.status, Status.BAD_REQUEST.code)
         assertTrue(content.title.isNotBlank())
-        assertEquals("Game name already exists", content.title)
+        assertEquals("Name already exists", content.title)
+        assertEquals("Given name cod already exists", content.detail)
         assertEquals(
-            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-name-already-exists",
+            "https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/name-already-exists",
             content.type,
         )
     }
