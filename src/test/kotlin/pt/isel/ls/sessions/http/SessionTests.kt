@@ -60,8 +60,10 @@ class SessionTests {
             }
         }
 
-    private fun createPlayer(email: String = "francisco@gmail.com") {
-        val name = "Francisco"
+    private fun createPlayer(
+        name: String = "Francisco",
+        email: String = "francisco@gmail.com",
+    ) {
         val createPlayer =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(PlayerCreateDTO(name, email)))
                 .header("Authorization", "Bearer token")
@@ -418,7 +420,8 @@ class SessionTests {
         val pid = 6
         createSession()
         repeat(5) { i ->
-            createPlayer("player2$i@gmail.com")
+            println(i)
+            createPlayer("player$i", "player2$i@gmail.com")
             val request =
                 Request(
                     Method.PUT,
