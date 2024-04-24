@@ -19,7 +19,7 @@ class PlayerTests {
     fun `get players`() {
         gameMemoryDB.createPlayer(NAME, EMAIL)
         val players = gameMemoryDB.getPlayers()
-        assertEquals(4, players.size)
+        assertEquals(5, players.size)
         assertEquals(NAME, players.first().name)
         assertEquals(EMAIL, players.first().email.value)
     }
@@ -57,6 +57,13 @@ class PlayerTests {
     fun isEmailInUseFalse() {
         val isEmailInUse = gameMemoryDB.isEmailInUse("teste")
         assertEquals(false, isEmailInUse)
+    }
+
+    @Test
+    fun isNameInUse() {
+        gameMemoryDB.createPlayer(NAME, EMAIL)
+        val isNameInUse = gameMemoryDB.isNameInUse(NAME)
+        assertEquals(true, isNameInUse)
     }
 
     private companion object {

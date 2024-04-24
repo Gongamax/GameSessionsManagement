@@ -82,4 +82,14 @@ class PlayerTests {
         // arrange
         assertEquals(failure(PlayerCreationError.EmailExists), player)
     }
+
+    @Test
+    fun `create player name already exists`() {
+        // arrange
+        val playerService = PlayerService(baseDate.playerDB)
+        playerService.createPlayer(name, email)
+        val player = playerService.createPlayer(name, "xpto@gmail.com")
+        // arrange
+        assertEquals(failure(PlayerCreationError.NameExists), player)
+    }
 }

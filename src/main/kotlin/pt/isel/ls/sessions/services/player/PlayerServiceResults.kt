@@ -8,6 +8,8 @@ sealed class PlayerCreationError {
     data object EmailExists : PlayerCreationError()
 
     data object InvalidEmail : PlayerCreationError()
+
+    data object NameExists : PlayerCreationError()
 }
 
 typealias PlayerCreationResult = Either<PlayerCreationError, Token>

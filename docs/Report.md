@@ -150,7 +150,6 @@ curl --location --request POST 'http://localhost:8080/api/player' --header 'Cont
 **Error Responses:**
 
 - 400 Bad Request
-    - 409 Conflict
 
 ### GET /api/game
 
@@ -267,8 +266,7 @@ curl --location --request POST 'http://localhost:8080/api/game/1' --header 'Cont
 
 **Error Responses:**
 
-- 409 Conflict
-    - 401 Unauthorized
+- 401 Unauthorized
     - 404 Not Found
 
 ### GET /api/session
@@ -495,8 +493,7 @@ curl --location --request PUT 'http://localhost:8080/api/session/1/player/1' --h
 
 **Error Responses:**
 
-- 409 Conflict
-    - 401 Unauthorized
+- 401 Unauthorized
     - 404 Not Found
 
 ### DELETE /api/session/{sid}/player/{pid}
@@ -523,7 +520,6 @@ curl --location --request PUT 'http://localhost:8080/api/session/1/player/1' --h
 
     - 404 Not Found
     - 401 Unauthorized
-    - 409 Conflict
 
 ### Request Details
 

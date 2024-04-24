@@ -55,7 +55,7 @@ class PlayerTests {
         val response = playerRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.CONFLICT, response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Player with given email Alice@gmail.com already exists", content.detail)
         assertEquals(
@@ -81,6 +81,19 @@ class PlayerTests {
             content.type,
         )
         assertEquals("Invalid email", content.title)
+    }
+
+    @Test
+    fun `create return response with a player name already exists`() {
+        // Arrange
+        val request = Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(playerNameAlreadyExists))
+        // Act
+        val response = playerRouter.routes(request)
+        val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.BAD_REQUEST, response.status)
+        assertEquals("application/problem+json", response.header("Content-Type"))
+        assertEquals("Given name Alice already exists", content.detail)
     }
 
     @Test
@@ -145,5 +158,6 @@ class PlayerTests {
         private val player = PlayerCreateDTO(NAME, EMAIL)
         private val player2 = PlayerCreateDTO("Bob", "Bob@gmail.com")
         private val playerInvalidEmail = PlayerCreateDTO(NAME, "Alice@gmail")
+        private val playerNameAlreadyExists = PlayerCreateDTO(NAME, "xpto@gmail.com")
     }
 }

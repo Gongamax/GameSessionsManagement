@@ -68,7 +68,7 @@ class GameTests {
         val response = router.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(content.status, Status.CONFLICT.code)
+        assertEquals(content.status, Status.BAD_REQUEST.code)
         assertTrue(content.title.isNotBlank())
         assertEquals("Game name already exists", content.title)
         assertEquals(

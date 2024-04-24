@@ -76,6 +76,15 @@ class PlayerJDBC(
             }.executeQuery().next()
         }
 
+    override fun isNameInUse(name: String): Boolean {
+        return dataSource.connection.execute("Failed to check if name is in use") { con ->
+            val query = "SELECT * FROM Player WHERE name = ?".trimIndent()
+            con.prepareStatement(query).apply {
+                setString(1, name)
+            }.executeQuery().next()
+        }
+    }
+
     private fun ResultSet.toPlayer(): Player {
         val id = getInt("id").toUInt()
         val name = getString("name")

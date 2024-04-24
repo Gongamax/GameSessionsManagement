@@ -32,7 +32,7 @@ class Problem(
         //region Conflict, Already Exists
         private val playerAlreadyInSession = Uri.of(BASE_URL + "player-already-in-session")
         private val sessionIsFull = Uri.of(BASE_URL + "session-is-full")
-        private val gameNameAlreadyExists = Uri.of(BASE_URL + "game-name-already-exists")
+        private val NameAlreadyExists = Uri.of(BASE_URL + "name-already-exists")
         private val emailAlreadyExists = Uri.of(BASE_URL + "email-already-exists")
         private val internalServerError = Uri.of(BASE_URL + "internal-server-error")
         private val tokenNotFound = Uri.of(BASE_URL + "token-not-found")
@@ -111,7 +111,7 @@ class Problem(
             Problem(
                 typeUri = playerAlreadyInSession,
                 title = "Player already in session",
-                status = Status.CONFLICT,
+                status = Status.BAD_REQUEST,
                 detail = "Player is already in session",
                 instance = instance,
             ).toResponse()
@@ -120,7 +120,7 @@ class Problem(
             Problem(
                 typeUri = sessionIsFull,
                 title = "Session is full",
-                status = Status.CONFLICT,
+                status = Status.BAD_REQUEST,
                 detail = "Session is full",
                 instance = instance,
             ).toResponse()
@@ -143,14 +143,14 @@ class Problem(
                 instance = instance,
             ).toResponse()
 
-        fun gameNameAlreadyExists(
+        fun nameAlreadyExists(
             instance: Uri?,
             name: String,
         ) = Problem(
-            typeUri = gameNameAlreadyExists,
-            title = "Game name already exists",
-            status = Status.CONFLICT,
-            detail = "Game with given name $name already exists",
+            typeUri = NameAlreadyExists,
+            title = "name already exists",
+            status = Status.BAD_REQUEST,
+            detail = "Given name $name already exists",
             instance = instance,
         ).toResponse()
 
@@ -160,7 +160,7 @@ class Problem(
         ) = Problem(
             typeUri = emailAlreadyExists,
             title = "Email already exists",
-            status = Status.CONFLICT,
+            status = Status.BAD_REQUEST,
             detail = "Player with given email $email already exists",
             instance = instance,
         ).toResponse()

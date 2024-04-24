@@ -33,7 +33,7 @@ paths:
               value:
                 message: "Player created: $pid"
         '400':
-          description: Player creation fails because email is invalid
+          description: Player creation fails because email is invalid or already exists or name already exists
           content:
             application/json+problem:
               schema:
@@ -49,35 +49,29 @@ paths:
                     type: string
                   instance:
                     type: Uri?
-              value:
-                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-email
-                title: "Invalid email"
-                status: 400
-                detail: "Email is invalid"
-                instance: http://localhost:1904/api/player
-        '409':
-          description: Player creation fails because email already exists
-          content:
-            application/json+problem:
-              schema:
-                type: object
-                properties:
-                  typeUri:
-                    type: Uri
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                  detail:
-                    type: string
-                  instance:
-                    type: Uri?
-              value:
-                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists
-                title: "Email already exists"
-                status: 409
-                detail: "Player with given email $email already exists"
-                instance: http://localhost:1904/api/player
+              examples:
+                invalid-email:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-email
+                    title: "Invalid email"
+                    status: 400
+                    detail: "Email is invalid"
+                    instance: http://localhost:1904/api/player
+                email-already-exists:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/email-already-exists
+                    title: "Email already exists"
+                    status: 400
+                    detail: "Player with given email $email already exists"
+                    instance: http://localhost:1904/api/player
+                name-already-exists:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/name-already-exists
+                    title: "Name already exists"
+                    status: 400
+                    detail: "Given name $name already exists"
+                    instance: http://localhost:1904/api/player
+
   /player/{pid}:
     get:
       operationId: GetDetailsPlayer
@@ -301,12 +295,21 @@ paths:
                     type: string
                   instance:
                     type: Uri?
-              value:
-                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-game-data
-                title: "Invalid game data"
-                status: 400
-                detail: "Invalid game data"
-                instance: http://localhost:1904/api/game
+              examples:
+                invalid-game-data:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/invalid-game-data
+                    title: "Invalid game data"
+                    status: 400
+                    detail: "Invalid game data"
+                    instance: http://localhost:1904/api/game
+                name-already-exists:
+                  value:
+                    typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-name-already-exists
+                    title: "Game name already exists"
+                    status: 400
+                    detail: "Game with given name $name already exists"
+                    instance: http://localhost:1904/api/game
         '404':
           description: Game creation fails because genre not found
           content:
@@ -329,29 +332,6 @@ paths:
                 title: "Genre not found"
                 status: 404
                 detail: "Genre or genres not found"
-                instance: http://localhost:1904/api/game
-        '409':
-          description: Game creation fails because name already exists
-          content:
-            application/json+problem:
-              schema:
-                type: object
-                properties:
-                  typeUri:
-                    type: Uri
-                  title:
-                    type: string
-                  status:
-                    type: integer
-                  detail:
-                    type: string
-                  instance:
-                    type: Uri?
-              value:
-                typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/game-name-already-exists
-                title: "Game name already exists"
-                status: 409
-                detail: "Game with given name $name already exists"
                 instance: http://localhost:1904/api/game
   /game/{gid}:
     get:
@@ -959,7 +939,7 @@ paths:
                     status: 404
                     detail: "Player with given id not found"
                     instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
-        '409':
+        '400':
           description: Player not added because session is full or player already in session
           content:
             application/json+problem:
@@ -981,14 +961,14 @@ paths:
                   value:
                     typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/session-is-full
                     title: "Session is full"
-                    status: 409
+                    status: 400
                     detail: "Session is full"
                     instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
                 player-already-in-session:
                   value:
                     typeUri: https://github.com/isel-leic-ls/2324-2-LEIC42D-G04/tree/main/docs/problems/player-already-in-session
                     title: "Player already in session"
-                    status: 409
+                    status: 400
                     detail: "Player is already in session"
                     instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
     delete:
@@ -1050,7 +1030,7 @@ paths:
                     status: 404
                     detail: "Player with given id not found"
                     instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
-        '409':
+        '400':
           description: Player not removed because player not in session
           content:
             application/json+problem:
@@ -1072,7 +1052,7 @@ paths:
                   value:
                     typeUri: ""
                     title: "Player not in session"
-                    status: 409
+                    status: 400
                     detail: "Player is not in session"
                     instance: http://localhost:1904/api/sessions/{sid}/player/{pid}
 

@@ -84,7 +84,7 @@ class GameRouter(private val services: GameService) : Router {
                 is Failure ->
                     when (gameId.value) {
                         GameCreationError.InvalidGenre -> Problem.genreNotFound(request.uri)
-                        GameCreationError.NameAlreadyExists -> Problem.gameNameAlreadyExists(request.uri, game.name)
+                        GameCreationError.NameAlreadyExists -> Problem.nameAlreadyExists(request.uri, game.name)
                     }
 
                 is Success ->

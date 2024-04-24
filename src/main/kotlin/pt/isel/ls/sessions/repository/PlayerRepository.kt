@@ -16,4 +16,6 @@ interface PlayerRepository {
     fun reset()
 
     fun isEmailInUse(email: String): Boolean
+
+    fun isNameInUse(name: String): Boolean
 }

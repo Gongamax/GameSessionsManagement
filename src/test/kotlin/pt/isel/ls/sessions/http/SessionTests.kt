@@ -401,7 +401,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.CONFLICT, response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("Player is already in session", content.detail)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals(
@@ -437,7 +437,7 @@ class SessionTests {
         val response = sessionRouter.routes(request)
         val content = Json.decodeFromString<ProblemDTO>(response.bodyString())
         // Assert
-        assertEquals(Status.CONFLICT, response.status)
+        assertEquals(Status.BAD_REQUEST, response.status)
         assertEquals("application/problem+json", response.header("Content-Type"))
         assertEquals("Session is full", content.detail)
         assertEquals(

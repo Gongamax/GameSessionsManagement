@@ -33,4 +33,8 @@ class PlayerMemoryDB : PlayerRepository {
     }
 
     override fun isEmailInUse(email: String): Boolean = playersMap.any { it.value.email.value == email }
+
+    override fun isNameInUse(name: String): Boolean {
+        return playersMap.any { it.value.name == name }
+    }
 }

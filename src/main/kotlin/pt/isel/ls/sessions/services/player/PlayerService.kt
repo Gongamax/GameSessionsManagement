@@ -11,11 +11,16 @@ class PlayerService(private val playerRepository: PlayerRepository) {
         email: String,
     ): PlayerCreationResult =
         run {
-            if (playerRepository.isEmailInUse(email)) {
-                return@run failure(PlayerCreationError.EmailExists)
-            }
             if (!Email.isValidEmail(email)) {
                 return@run failure(PlayerCreationError.InvalidEmail)
+            }
+            if (playerRepository.isEmailInUse(email)) {
+                println("Email already exists")
+                return@run failure(PlayerCreationError.EmailExists)
+            }
+            println()
+            if (playerRepository.isNameInUse(name)) {
+                return@run failure(PlayerCreationError.NameExists)
             }
             val token = playerRepository.createPlayer(name, email)
             success(token)

@@ -39,6 +39,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
                     when (res.value) {
                         PlayerCreationError.EmailExists -> Problem.emailAlreadyExists(request.uri, player.email)
                         PlayerCreationError.InvalidEmail -> Problem.invalidEmail(request.uri)
+                        PlayerCreationError.NameExists -> Problem.nameAlreadyExists(request.uri, player.name)
                     }
 
                 is Success ->
