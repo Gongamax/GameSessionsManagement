@@ -10,7 +10,8 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 import pt.isel.ls.sessions.domain.game.Game
 import pt.isel.ls.sessions.http.model.game.GameDTO
-import pt.isel.ls.sessions.http.model.game.GameInputModel
+import pt.isel.ls.sessions.http.model.game.GameInputDTO
+import pt.isel.ls.sessions.http.model.game.GamesDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
@@ -45,18 +46,10 @@ class GameRouter(private val services: GameService) : Router {
 
     private fun getGames(request: Request): Response =
         execStart(request) {
-            // val game = Json.decodeFromString<GamesInputModel>(request.bodyString())
-            // if (game.genres.isEmpty() || game.developer.isBlank()) {
-            //    return@execStart Problem.genresOrDeveloperMissing(request.uri)
-            // }
-
             val limit = request.query(LIMIT)?.toInt() ?: DEFAULT_LIMIT
             val skip = request.query(SKIP)?.toInt() ?: DEFAULT_SKIP
-            val developer = request.query("developer")
-            val genres = request.query("genres")?.split(",")
-            if (genres.isNullOrEmpty() || developer == null) {
-                return@execStart Problem.genresOrDeveloperMissing(request.uri)
-            }
+            val developer = request.query("developer") ?: ""
+            val genres = request.query("genres")?.trim()?.split(",")?.filter { it.isNotEmpty() } ?: emptyList()
             if (limit < 0 || skip < 0) {
                 return@execStart Problem.invalidSkipOrLimit(request.uri)
             }
@@ -68,13 +61,13 @@ class GameRouter(private val services: GameService) : Router {
                         GamesGetError.DeveloperNotFound -> Problem.developerNotFound(request.uri)
                     }
 
-                is Success -> Response(Status.OK).jsonResponse(games.value.map { g -> g.toGameDTO() })
+                is Success -> Response(Status.OK).jsonResponse(GamesDTO(games.value.map { g -> g.toGameDTO() }))
             }
         }
 
     private fun createGame(request: Request): Response =
         execStart(request) {
-            val game = Json.decodeFromString<GameInputModel>(request.bodyString())
+            val game = Json.decodeFromString<GameInputDTO>(request.bodyString())
             request.bearerTokenOrThrow()
             if (game.name.isBlank() || game.developer.isBlank() || game.genres.isEmpty()) {
                 return@execStart Problem.invalidGameData(request.uri)

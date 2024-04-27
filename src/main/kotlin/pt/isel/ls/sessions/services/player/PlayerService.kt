@@ -15,10 +15,8 @@ class PlayerService(private val playerRepository: PlayerRepository) {
                 return@run failure(PlayerCreationError.InvalidEmail)
             }
             if (playerRepository.isEmailInUse(email)) {
-                println("Email already exists")
                 return@run failure(PlayerCreationError.EmailExists)
             }
-            println()
             if (playerRepository.isNameInUse(name)) {
                 return@run failure(PlayerCreationError.NameExists)
             }

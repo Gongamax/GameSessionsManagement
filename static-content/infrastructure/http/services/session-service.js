@@ -35,7 +35,7 @@ export default function SessionService() {
     });
   }
 
-  function getSessions(gid = 1, date, state, pid, limit = 10, skip = 0) {
+  function getSessions(gid, date, state, pid, limit = 10, skip = 0) {
     const params = {
       gid,
       date,
@@ -47,14 +47,15 @@ export default function SessionService() {
 
     // Filter out undefined or empty parameters
     const filteredParams = Object.fromEntries(Object.entries(params).filter(([_, v]) => v != null && v !== ''));
+    console.log('Filtered Params: ' + JSON.stringify(filteredParams));
 
     // Convert the parameters object into a query string
     const queryString = new URLSearchParams(filteredParams).toString();
     console.log('Query String: ' + queryString);
 
     return httpService.get(uris.getSessions + '?' + queryString)
-        .then(sessions => {
-          return sessions.map(session =>
+        .then(result => {
+          return result.sessions.map(session =>
               new Session(
                   session.sid,
                   session.numberOfPlayers,

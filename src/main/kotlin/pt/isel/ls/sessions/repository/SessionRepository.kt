@@ -20,7 +20,7 @@ interface SessionRepository {
     fun getSession(sid: UInt): Session?
 
     fun getSessions(
-        gid: UInt,
+        gid: UInt?,
         date: LocalDateTime?,
         state: SessionState?,
         pid: UInt?,

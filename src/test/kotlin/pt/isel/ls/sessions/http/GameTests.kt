@@ -8,7 +8,8 @@ import org.http4k.core.Method
 import org.http4k.core.Request
 import org.http4k.core.Status
 import pt.isel.ls.sessions.http.model.game.GameDTO
-import pt.isel.ls.sessions.http.model.game.GameInputModel
+import pt.isel.ls.sessions.http.model.game.GameInputDTO
+import pt.isel.ls.sessions.http.model.game.GamesDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.game.GameRouter
 import pt.isel.ls.sessions.http.util.APPLICATION_JSON
@@ -42,7 +43,7 @@ class GameTests {
     @Test
     fun `game created with success`() {
         //  Arrange
-        val game = GameInputModel("cod", "developer", listOf("Action", "Shooter"))
+        val game = GameInputDTO("cod", "developer", listOf("Action", "Shooter"))
         val request =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(game)).header("Authorization", "Bearer token")
 
@@ -60,7 +61,7 @@ class GameTests {
     @Test
     fun `game creation fails because name already exists`() {
         // Arrange
-        val game = GameInputModel("cod", "developer", listOf("Action", "Shooter"))
+        val game = GameInputDTO("cod", "developer", listOf("Action", "Shooter"))
         val request =
             Request(Method.POST, Uris.DEFAULT).body(Json.encodeToString(game)).header("Authorization", "Bearer token")
         // Act
@@ -168,12 +169,12 @@ class GameTests {
             ).header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
-        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
         // Assert
         assertTrue { response.status.successful }
         assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.size == 3 }
-        assertFalse { content.contains(gamesResult[1]) }
+        assertTrue { content.games.size == 3 }
+        assertFalse { content.games.contains(gamesResult[1]) }
     }
 
     @Test
@@ -190,12 +191,12 @@ class GameTests {
             ).header("Authorization", "Bearer token")
         // Act
         val response = router.routes(request)
-        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
-        assertTrue(content.isEmpty())
-        TestCase.assertEquals("[]", content.toString())
+        assertTrue(content.games.isEmpty())
+        TestCase.assertEquals("[]", content.games.toString())
     }
 
     @Test
@@ -281,15 +282,15 @@ class GameTests {
             )
         // Act
         val response = router.routes(request)
-        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
-        assertEquals(2, content.size)
-        assertEquals(gamesResult[0], content[0])
-        assertEquals(gamesResult[2], content[1])
-        assertFalse { content.contains(gamesResult[1]) }
-        assertFalse(content.contains(gamesResult[3]))
+        assertEquals(2, content.games.size)
+        assertEquals(gamesResult[0], content.games[0])
+        assertEquals(gamesResult[2], content.games[1])
+        assertFalse { content.games.contains(gamesResult[1]) }
+        assertFalse(content.games.contains(gamesResult[3]))
     }
 
     @Test
@@ -303,15 +304,15 @@ class GameTests {
             )
         // Act
         val response = router.routes(request)
-        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
-        assertEquals(2, content.size)
-        assertEquals(gamesResult[2], content[0])
-        assertEquals(gamesResult[3], content[1])
-        assertFalse { content.contains(gamesResult[0]) }
-        assertFalse { content.contains(gamesResult[1]) }
+        assertEquals(2, content.games.size)
+        assertEquals(gamesResult[2], content.games[0])
+        assertEquals(gamesResult[3], content.games[1])
+        assertFalse { content.games.contains(gamesResult[0]) }
+        assertFalse { content.games.contains(gamesResult[1]) }
     }
 
     @Test
@@ -326,14 +327,14 @@ class GameTests {
                 )
         // Act
         val response = router.routes(request)
-        val content = Json.decodeFromString<List<GameDTO>>(response.bodyString())
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
-        assertEquals(3, content.size)
-        assertContains(content, gamesResult[0])
-        assertContains(content, gamesResult[2])
-        assertContains(content, gamesResult[3])
+        assertEquals(3, content.games.size)
+        assertContains(content.games, gamesResult[0])
+        assertContains(content.games, gamesResult[2])
+        assertContains(content.games, gamesResult[3])
     }
 
     @Test
@@ -391,9 +392,9 @@ class GameTests {
         private val mem = AppMemoryDB(clock)
         private val service = GameService(mem.gameDB)
         private val router = GameRouter(service)
-        private val game = GameInputModel("cod", "developer", listOf("Action", "Shooter"))
-        private val gameInvalidGenre = GameInputModel("cod", "developer", listOf("multiplayer", "sport", "Action"))
-        private val gameNoGenres = GameInputModel("cod", "developer", listOf())
+        private val game = GameInputDTO("cod", "developer", listOf("Action", "Shooter"))
+        private val gameInvalidGenre = GameInputDTO("cod", "developer", listOf("multiplayer", "sport", "Action"))
+        private val gameNoGenres = GameInputDTO("cod", "developer", listOf())
         private val gamesResult =
             listOf(
                 GameDTO(1u, "cod", "developer", listOf("Action", "Shooter")),
@@ -402,6 +403,6 @@ class GameTests {
                 GameDTO(4u, "FIFA", "developer", listOf("Action", "Sports")),
             )
 
-        private val games = gamesResult.map { GameInputModel(it.name, it.developer, it.genres) }
+        private val games = gamesResult.map { GameInputDTO(it.name, it.developer, it.genres) }
     }
 }

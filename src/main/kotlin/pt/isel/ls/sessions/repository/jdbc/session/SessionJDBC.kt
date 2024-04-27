@@ -71,7 +71,7 @@ class SessionJDBC(
         }
 
     override fun getSessions(
-        gid: UInt,
+        gid: UInt?,
         date: LocalDateTime?,
         state: SessionState?,
         pid: UInt?,
@@ -80,17 +80,35 @@ class SessionJDBC(
     ): List<Session> =
         dataSource.connection.execute("Sessions not found") { con ->
             val query =
-                """
-                SELECT * FROM Session
-                WHERE game = ?
-                ${if (date != null) "AND date = ?" else ""}
-                ${if (pid != null) "AND id IN (SELECT session_id FROM Session_Player WHERE player_id = ?)" else ""}
-                ${"LIMIT ? OFFSET ?"}
-                """.trimIndent()
+                if (gid != null || date != null || pid != null) {
+                    """
+                    SELECT * FROM Session
+                    ${if (gid != null)"WHERE  game = ?" else ""}
+                    ${if (gid != null && date != null) {
+                        "AND date = ?"
+                    } else if (gid == null && date != null) {
+                        "WHERE date = ?"
+                    } else {
+                        ""
+                    }}
+                    ${if (gid != null && pid != null || date != null && pid != null){
+                        "AND id IN (SELECT session_id FROM Session_Player WHERE player_id = ?)"
+                    } else if (gid == null && date == null){
+                        "WHERE id IN (SELECT session_id FROM Session_Player WHERE player_id = ?)"
+                    } else {
+                        ""
+                    }}
+                    ${"LIMIT ? OFFSET ?"}
+                    """.trimIndent()
+                } else {
+                    """SELECT * FROM Session LIMIT ? OFFSET ?"""
+                }
             val stm =
                 con.prepareStatement(query).apply {
                     var index = 1
-                    setInt(index++, gid.toInt())
+                    if (gid != null) {
+                        setInt(index++, gid.toInt())
+                    }
                     if (date != null) {
                         setTimestamp(index++, Timestamp.valueOf(date.toJavaLocalDateTime()))
                     }
@@ -104,9 +122,7 @@ class SessionJDBC(
             val sessions = mutableListOf<Session>()
             while (rs.next()) {
                 val session = rs.toSession()
-                println("session: $session")
                 val sessionState = getSessionState(session.date, session.associatedPlayers, session.capacity)
-                println("state: $state, sessionState: $sessionState")
                 if (state == null || sessionState == state) {
                     sessions.add(session)
                 }

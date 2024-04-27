@@ -27,7 +27,9 @@ class GameService(private val gameDB: GameRepository) {
             if (gen.size != genres.size) {
                 return failure(GamesGetError.GenreNotFound)
             }
-            gameDB.getDeveloperByName(developer) ?: return failure(GamesGetError.DeveloperNotFound)
+            if (developer.isNotBlank()) {
+                gameDB.getDeveloperByName(developer) ?: return failure(GamesGetError.DeveloperNotFound)
+            }
             val games = gameDB.getGames(gen, developer, limit, skip)
             success(games)
         }

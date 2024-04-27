@@ -10,14 +10,7 @@ export default async function GamesView(mainContent, gamesViewModel, page) {
   const skip = (page - 1) * limit;
   const genres = params.get('genres');
 
-  if (!genres || !developer) {
-    mainContent.replaceChildren(div('Invalid parameters provided'));
-    return;
-  }
-
   const games = await gamesViewModel.getGames(developer, genres, skip, limit + 1);
-
-  console.log(games);
 
   if (games === undefined) {
     const content = renders.renderGetHome('An error occurred while fetching games. Please try again later.')

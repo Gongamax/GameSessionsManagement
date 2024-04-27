@@ -15,6 +15,7 @@ import pt.isel.ls.sessions.http.model.player.PlayerDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.session.SessionUpdateDTO
+import pt.isel.ls.sessions.http.model.session.SessionsDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.Router
 import pt.isel.ls.sessions.http.routes.utils.bearerTokenOrThrow
@@ -51,7 +52,7 @@ class SessionRouter(
     private fun getSessions(request: Request): Response =
         execStart(request) {
             val pid = request.query(PLAYER_ID)?.toUInt()
-            val gid = request.query(GAME_ID)?.toUInt() ?: return@execStart Problem.gameNotFound(request.uri)
+            val gid = request.query(GAME_ID)?.toUInt()
             val limit = request.query(LIMIT)?.toInt() ?: DEFAULT_LIMIT
             val skip = request.query(SKIP)?.toInt() ?: DEFAULT_SKIP
             if (limit < 0 || skip < 0) {
@@ -71,7 +72,7 @@ class SessionRouter(
                         SessionsGetError.PlayerNotFound -> Problem.playerNotFound(request.uri, pid)
                     }
 
-                is Success -> Response(Status.OK).jsonResponse(res.value.map { s -> s.toSessionDTO() })
+                is Success -> Response(Status.OK).jsonResponse(SessionsDTO(res.value.map { s -> s.toSessionDTO() }))
             }
         }
 

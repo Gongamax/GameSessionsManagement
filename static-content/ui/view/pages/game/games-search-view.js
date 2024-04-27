@@ -21,14 +21,9 @@ export default async function GamesSearchView(mainContent) {
       ),
       br(),
       btn('Search', () => {
-        const genres = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(checkbox => checkbox.value);
-        const developer = document.querySelector('input[name=developer]').value;
-        if (genres.length === 0 || developer === '') {
-          alert('Please fill the Developer and at least one Genre field');
-          return;
-        }
-        window.location.hash = `#games?developer=${developer}&genres=${genres.join(',')}`;
-
+          let genres = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(checkbox => checkbox.value);
+          const developer = document.querySelector('input[name=developer]').value;
+          window.location.hash = `#games?developer=${developer}&genres=${genres.join(",")}`;
       }),
     ),
     br(),

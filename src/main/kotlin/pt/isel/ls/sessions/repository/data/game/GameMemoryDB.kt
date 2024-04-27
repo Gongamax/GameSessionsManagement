@@ -27,7 +27,8 @@ class GameMemoryDB : GameRepository {
         skip: Int,
     ): List<Game> =
         gameMap.values.filter { game ->
-            game.developer == developer && game.genres.containsAll(genres)
+            (developer.isBlank() || game.developer == developer) &&
+                (genres.isEmpty() || game.genres.containsAll(genres))
         }.drop(skip).take(limit)
 
     override fun getGameById(gid: UInt): Game? = gameMap[gid]

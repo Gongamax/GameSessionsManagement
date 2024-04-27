@@ -42,15 +42,15 @@ class SessionMemoryDB(
     }
 
     override fun getSessions(
-        gid: UInt,
+        gid: UInt?,
         date: LocalDateTime?,
         state: SessionState?,
         pid: UInt?,
         limit: Int,
         skip: Int,
-    ): List<Session> {
-        return sessions.values.filter {
-            (it.gid == gid) && (date == null || it.date == date) && (
+    ): List<Session> =
+        sessions.values.filter {
+            (gid == null || it.gid == gid) && (date == null || it.date == date) && (
                 state == null || state ==
                     getSessionState(
                         it.date,
@@ -59,7 +59,6 @@ class SessionMemoryDB(
                     )
             ) && (pid == null || it.associatedPlayers.any { p -> p.pid == pid })
         }.drop(skip).take(limit)
-    }
 
     override fun reset() {
         sessions.clear()

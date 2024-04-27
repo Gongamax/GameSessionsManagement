@@ -65,7 +65,7 @@ class SessionService(
         }
 
     fun getSessions(
-        gid: UInt,
+        gid: UInt?,
         date: LocalDateTime? = null,
         state: SessionState? = null,
         pid: UInt? = null,
@@ -73,8 +73,8 @@ class SessionService(
         skip: Int,
     ): SessionsGetResult =
         run {
-            if (gameRepository.getGameById(gid) == null) {
-                return@run failure(SessionsGetError.GameNotFound)
+            if (gid != null) {
+                gameRepository.getGameById(gid) ?: return@run failure(SessionsGetError.GameNotFound)
             }
             if (state != null && state !in SessionState.entries) {
                 return@run failure(SessionsGetError.InvalidState)

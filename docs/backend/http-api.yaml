@@ -171,12 +171,18 @@ paths:
               examples:
                 found:
                   value:
-                    games: [ { name: "game1",
-                               developer: "developer0",
-                               genres: [ "Adventure", "Rpg", "Action" ] },
-                      { name: "game2",
-                        developer: "developer0",
-                        genres: [ "Adventure", "Rpg" ] } ]
+                    {
+                      games: [
+                        { name: "game1",
+                          developer: "developer0",
+                          genres: [ "Adventure", "Rpg", "Action" ]
+                        },
+                        { name: "game2",
+                          developer: "developer0",
+                          genres: [ "Adventure", "Rpg" ]
+                        }
+                      ]
+                    }
                 notFound:
                   value:
                     games: [ ]
@@ -475,20 +481,35 @@ paths:
                     capacity: integer,
               example:
                 sessions:
-                  value: [ { sid: 1,
-                             numPlayers: 2,
-                             sessionDate: "2024-03-250T18:43",
-                             gid: 2,
-                             players": [ { name: "Player0",
-                                           email: "player0@gmail.com" },
-                               { name: "Player1",
-                                 email: "player1@gmail.com" } ] },
-                    { sid: 2,
-                      numPlayers: 1,
-                      sessionDate: "2024-03-250T18:43",
-                      gid: 2,
-                      players": [ { name: "Player0",
-                                    email: "player0@gmail.com" } ] } ]
+                  value:
+                    {
+                      sessions: [
+                        { sid: 1,
+                          numPlayers: 2,
+                          sessionDate: "2024-03-250T18:43",
+                          gid: 2,
+                          players": [
+                            { name: "Player0",
+                              email: "player0@gmail.com"
+                            },
+                            { name: "Player1",
+                              email: "player1@gmail.com"
+                            }
+                          ]
+                        },
+                        { sid: 2,
+                          numPlayers: 1,
+                          sessionDate: "2024-03-250T18:43",
+                          gid: 2,
+                          players": [
+                            {
+                              name: "Player0",
+                              email: "player0@gmail.com"
+                            }
+                          ]
+                        }
+                      ]
+                    }
         '400':
           description: Bad request for invalid parameters
           content:

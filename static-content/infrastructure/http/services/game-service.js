@@ -22,8 +22,8 @@ export default function GameService() {
     function getGames(developer, genres, skip, limit) {
         return httpService.get(
             uris.getGames + '?skip=' + skip + '&limit=' + limit + '&developer=' + developer + '&genres=' + genres,
-        ).then(games => {
-            return games.map(game => {
+        ).then(result => {
+            return result.games.map(game => {
                 return new Game(game.gid, game.name, game.developer, game.genres)
             })
         }).catch(error => {

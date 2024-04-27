@@ -44,14 +44,27 @@ class GameJDBC(
         skip: Int,
     ): List<Game> =
         dataSource.connection.execute("Failed to get games") { con ->
-            val query = "SELECT * FROM Game WHERE developer = ? AND genres @> ? LIMIT ? OFFSET ?"
+            val query =
+                if (developer.isNotBlank() || genres.isNotEmpty()) {
+                    """
+                    SELECT * FROM Game 
+                    WHERE ${if (developer.isNotBlank()) "developer = ? " else ""}  
+                    ${if (developer.isNotBlank() && genres.isNotEmpty()) "AND " else ""}
+                    ${if (genres.isNotEmpty()) "genres @> ?" else ""} 
+                    LIMIT ? OFFSET ?
+                    """.trimIndent()
+                } else {
+                    "SELECT * FROM Game LIMIT ? OFFSET ?"
+                }
+
             val genreOrdinals = getGenreOrdinals(genres)
             val stm =
                 con.prepareStatement(query).apply {
-                    setString(1, developer)
-                    setArray(2, con.createArrayOf("integer", genreOrdinals))
-                    setInt(3, limit)
-                    setInt(4, skip)
+                    var index = 1
+                    if (developer.isNotBlank()) setString(index++, developer)
+                    if (genreOrdinals.isNotEmpty()) setArray(index++, con.createArrayOf("integer", genreOrdinals))
+                    setInt(index++, limit)
+                    setInt(index, skip)
                 }
             val rs = stm.executeQuery()
             val games = mutableListOf<Game>()

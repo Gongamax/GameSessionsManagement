@@ -122,6 +122,22 @@ function inputWithLabel(type, name, value, labelText) {
   return label;
 }
 
+function select(name, options) {
+  const select = document.createElement('select');
+  select.setAttribute('name', name);
+  options.forEach(option => {
+    select.appendChild(option);
+  });
+  return select;
+}
+
+function option(value, text) {
+  const option = document.createElement('option');
+  option.setAttribute('value', value);
+  option.textContent = text;
+  return option;
+}
+
 export default {
   li,
   ul,
@@ -138,4 +154,6 @@ export default {
   form,
   label,
   inputWithLabel,
+  select,
+  option,
 };

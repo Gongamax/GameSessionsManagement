@@ -177,16 +177,19 @@ curl --location --request GET 'http://localhost:8080/api/game' --header 'Authori
     - **Schema:**
 
 ````
-[
-  {
-    "gid": Integer,
-    "name": String,
-    "developer": String,
-    "genres": [
-      String
-    ]
-  }
-]
+{
+  games: [
+    {
+      "gid": Integer,
+      "name": String,
+      "developer": String,
+      "genres": [
+        String
+      ]
+    },
+    ...
+  ]
+}  
 ````
 
 **Error Responses:**
@@ -297,24 +300,26 @@ curl --location --request GET 'http://localhost:8080/api/session' --header 'Auth
     - **Schema:**
 
 ````
-[
-  {
-    "sid": Integer,
-    "numOfPlayers": Integer,
-    "date": String,
-    "gid": Integer,
-    "associatedPlayers": [
-      {
-        "pid": Integer,
-        "name": String,
-        "email": String
-      },
-      ...
-    ],
-    "capacity": Integer
-  },
-  ...
-]
+{
+  sessions: [
+    {
+      "sid": Integer,
+      "numOfPlayers": Integer,
+      "date": String,
+      "gid": Integer,
+      "associatedPlayers": [
+        {
+          "pid": Integer,
+          "name": String,
+          "email": String
+        },
+        ...
+      ],
+      "capacity": Integer
+    },
+    ...
+  ]
+}
 ````
 
 **Error Responses:**

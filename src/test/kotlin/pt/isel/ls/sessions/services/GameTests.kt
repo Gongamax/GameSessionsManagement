@@ -97,7 +97,6 @@ class GameTests {
             }
         // Assert
         assertEquals(1, result.size)
-        println(result)
         assertEquals(NAME, result.first().name)
     }
 
@@ -107,7 +106,6 @@ class GameTests {
         gameService.createGame(NAME, DEVELOPER, genres)
         // Act
         val result = gameService.getGames(listOf("rpg", "Action", "Unknown"), DEVELOPER, 10, 0)
-        println(result)
         // Assert
         assertEquals(Failure(GamesGetError.GenreNotFound), result)
     }

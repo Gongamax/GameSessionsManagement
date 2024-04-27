@@ -14,6 +14,7 @@ import pt.isel.ls.sessions.http.model.player.PlayerCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionCreateDTO
 import pt.isel.ls.sessions.http.model.session.SessionDTO
 import pt.isel.ls.sessions.http.model.session.SessionUpdateDTO
+import pt.isel.ls.sessions.http.model.session.SessionsDTO
 import pt.isel.ls.sessions.http.model.utils.MessageResponse
 import pt.isel.ls.sessions.http.routes.player.PlayerRouter
 import pt.isel.ls.sessions.http.routes.session.SessionRouter
@@ -204,14 +205,14 @@ class SessionTests {
         val request = Request(Method.GET, Uris.DEFAULT).query("gid", "1")
         // Act
         val response = sessionRouter.routes(request)
-        val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
+        val content = Json.decodeFromString<SessionsDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(1u, content[0].sid)
-        assertEquals(1u, content[0].gid)
-        assertEquals(10, content[0].capacity)
-        assertEquals("2025-03-14T10:58:00.123456789", content[0].date.toString())
+        assertEquals(1u, content.sessions[0].sid)
+        assertEquals(1u, content.sessions[0].gid)
+        assertEquals(10, content.sessions[0].capacity)
+        assertEquals("2025-03-14T10:58:00.123456789", content.sessions[0].date.toString())
     }
 
     @Test
@@ -222,14 +223,14 @@ class SessionTests {
 
         // Act
         val response = sessionRouter.routes(request)
-        val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
+        val content = Json.decodeFromString<SessionsDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(1u, content[0].sid)
-        assertEquals(1u, content[0].gid)
-        assertEquals(10, content[0].capacity)
-        assertEquals("2025-03-14T10:58:00.123456789", content[0].date.toString())
+        assertEquals(1u, content.sessions[0].sid)
+        assertEquals(1u, content.sessions[0].gid)
+        assertEquals(10, content.sessions[0].capacity)
+        assertEquals("2025-03-14T10:58:00.123456789", content.sessions[0].date.toString())
     }
 
     @Test
@@ -239,12 +240,12 @@ class SessionTests {
         val request = Request(Method.GET, Uris.DEFAULT).query("gid", "2")
         // Act
         val response = sessionRouter.routes(request)
-        val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
+        val content = Json.decodeFromString<SessionsDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertTrue(content.isEmpty())
-        assertEquals("[]", content.toString())
+        assertTrue(content.sessions.isEmpty())
+        assertEquals("[]", content.sessions.toString())
     }
 
     @Test
@@ -420,7 +421,6 @@ class SessionTests {
         val pid = 6
         createSession()
         repeat(5) { i ->
-            println(i)
             createPlayer("player$i", "player2$i@gmail.com")
             val request =
                 Request(
@@ -459,20 +459,20 @@ class SessionTests {
         val request = Request(Method.GET, Uris.DEFAULT).query("gid", "1").query("limit", "3").query("skip", "2")
         // Act
         val response = sessionRouter.routes(request)
-        val content = Json.decodeFromString<List<SessionDTO>>(response.bodyString())
+        val content = Json.decodeFromString<SessionsDTO>(response.bodyString())
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals("application/json", response.header("Content-Type"))
-        assertEquals(3, content.size)
-        assertEquals(sessions[2].gid, content[0].gid)
-        assertEquals(sessions[3].gid, content[1].gid)
-        assertEquals(sessions[4].gid, content[2].gid)
-        assertEquals(sessions[2].date, content[0].date.toString())
-        assertEquals(sessions[3].date, content[1].date.toString())
-        assertEquals(sessions[4].date, content[2].date.toString())
-        assertEquals(sessions[2].capacity, content[0].capacity)
-        assertEquals(sessions[3].capacity, content[1].capacity)
-        assertEquals(sessions[4].capacity, content[2].capacity)
+        assertEquals(3, content.sessions.size)
+        assertEquals(sessions[2].gid, content.sessions[0].gid)
+        assertEquals(sessions[3].gid, content.sessions[1].gid)
+        assertEquals(sessions[4].gid, content.sessions[2].gid)
+        assertEquals(sessions[2].date, content.sessions[0].date.toString())
+        assertEquals(sessions[3].date, content.sessions[1].date.toString())
+        assertEquals(sessions[4].date, content.sessions[2].date.toString())
+        assertEquals(sessions[2].capacity, content.sessions[0].capacity)
+        assertEquals(sessions[3].capacity, content.sessions[1].capacity)
+        assertEquals(sessions[4].capacity, content.sessions[2].capacity)
     }
 
     @Test

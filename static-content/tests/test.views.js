@@ -22,23 +22,26 @@ describe('Views Test', function() {
     let mainContent = document.createElement('div');
     sessionsRouter.sessionRouter.handleSearchSessionsRoute(mainContent);
     mainContent.innerHTML.should.be.equal(
-      '<div><h1>Search Sessions</h1>' +
-      '<div>' +
-      '<div><label>Game Id </label>' +
-      '<input type="text" name="gameId" value="">' +
-      '</div><br>' +
-      '<div><label>Date </label>' +
-      '<input type="datetime-local" name="date" value="">' +
-      '</div><br>' +
-      '<div><label>State </label>' +
-      '<input type="text" name="state" value="">' +
-      '</div><br>' +
-      '<div><label>Player Id </label>' +
-      '<input type="text" name="playerId" value="">' +
-      '</div><br>' +
-      '<button>Search</button>' +
-      '</div><br></div>' +
-      '<a href="#home">Go to Home</a>',
+        '<div><h1>Search Sessions</h1>' +
+        '<div>' +
+        '<div><label>Game Id </label>' +
+        '<input type="text" name="gameId" value="">' +
+        '</div><br>' +
+        '<div><label>Date </label>' +
+        '<input type="datetime-local" name="date" value="">' +
+        '</div><br>' +
+        '<div><label>State </label>' +
+        '<select name="state">' +
+        '<option value="">All</option>' +
+        '<option value="open">Open</option>' +
+        '<option value="close">Close</option>' +
+        '</select></div><br>' +
+        '<div><label>Player Id </label>' +
+        '<input type="text" name="playerId" value="">' +
+        '</div><br>' +
+        '<button>Search</button>' +
+        '</div><br></div>' +
+        '<a href="#home">Go to Home</a>',
     );
   });
 
@@ -69,20 +72,12 @@ describe('Views Test', function() {
   it('should show player info view', () => {
     const mainContent = renders.renderPlayerView({ id: 1, name: 'John Doe', email: 'john.doe@example.com' });
     mainContent.innerHTML.should.be.equal(
-      '<h1>Player</h1>' +
-      '<div><ul>' +
-      '<li>Id: 1</li>' +
-      '<li>Name: John Doe</li>' +
-      '<li>Email: john.doe@example.com</li>' +
-      '</ul>' +
-      '<div><label>Insert the Game Id to search for sessions: </label>' +
-      '<input type="text" name="gameId" value="">' +
-      '</div>' +
-      '<br>' +
-      '<button>Search</button>' +
-      '</div>' +
-      '<br>' +
-      '<a href="#home">Go to Home</a>',
+        '<h1>Player</h1>' +
+        '<div><ul><li>Id: 1</li>' +
+        '<li>Name: John Doe</li>' +
+        '<li>Email: john.doe@example.com</li></ul></div><br>' +
+        '<a href="#sessions?gid=&amp;date=&amp;state=&amp;pid=1">Player sessions</a><br>' +
+        '<a href="#home">Go to Home</a>'
     );
   });
 
