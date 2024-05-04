@@ -3,6 +3,7 @@ import Pagination from '../view/components/Pagination.js';
 
 const { li, ul, div, h1, a, br, btn, input, label } = dom;
 
+
 export default {
   renderPlayerView,
   renderGameView,
@@ -56,28 +57,38 @@ function renderGameView(game) {
   );
 }
 
-function renderSessionView(session) {
-  const playersDiv = session.associatedPlayers.map((player, index) => {
-    const playerLink = a(`#player/${player.pid}`, player.name);
-    const separator = document.createTextNode(',');
-    return index < session.associatedPlayers.length - 1 ? div(playerLink, separator) : div(playerLink);
-  });
-  const gameLink = a(`#game/${session.gid}`, 'Game: ' + session.gid);
-  const playersLabel = div('Associated Players: ', ...playersDiv);
-  return div(
-    h1('Session'),
-    div(
-      ul(
-        li('Id: ' + session.sid),
-        li('Number of Players: ' + session.numberOfPlayers),
-        li('Date: ' + session.date),
-        li(gameLink),
-        li(playersLabel),
-        li('Capacity: ' + session.capacity),
-      ),
-    ),
-    a('#home', 'Go to Home'),
-  );
+function renderSessionView(session, deleteSession, updateSession , update = false) {
+    if (update === true) {
+        return renderSessionUpdate(session.capacity, session.date, updateSession)
+    }
+    else {
+        const playersDiv = session.associatedPlayers.map((player, index) => {
+            const playerLink = a(`#player/${player.pid}`, player.name);
+            const separator = document.createTextNode(',');
+            return index < session.associatedPlayers.length - 1 ? div(playerLink, separator) : div(playerLink);
+        });
+        const gameLink = a(`#game/${session.gid}`, 'Game: ' + session.gid);
+        const playersLabel = div('Associated Players: ', ...playersDiv);
+        return div(
+            h1('Session'),
+            div(
+                ul(
+                    li('Id: ' + session.sid),
+                    li('Number of Players: ' + session.numberOfPlayers),
+                    li('Date: ' + session.date),
+                    li(gameLink),
+                    li(playersLabel),
+                    li('Capacity: ' + session.capacity),
+                ),
+            ),
+            br(),
+            btn('Delete', deleteSession, false),
+            btn('Update', updateSession, false),
+            br(),
+            br(),
+            a('#home', 'Go to Home'),
+        );
+    }
 }
 
 function renderSessionsView(sessions, page, hasNextPage, params) {
@@ -140,5 +151,32 @@ function renderGamesView(games, page, hasNextPage, params) {
       a('#game', 'Go to Games Search'),
     );
   }
+}
 
+function renderSessionUpdate(capacity, date, updateSession) {
+    return div(
+        h1('Update Session'),
+        div(
+            label('Capacity '),
+            input('text', 'capacity', capacity),
+        ),
+        br(),
+        div(
+            label('Date '),
+            input('datetime-local', 'date', date),
+        ),
+        br(),
+        btn('Update', () => {
+            const newCapacity = document.querySelector('input[name=capacity]').value || capacity;
+            const newDate = document.querySelector('input[name=date]').value || date;
+            if (newCapacity <= 0 )
+                alert('Capacity must be greater than 0');
+            if (newDate <= new Date().toISOString())
+                alert('Date must be greater than today');
+            else updateSession(newCapacity, newDate);
+        }),
+        br(),
+        br(),
+        a('#home', 'Go to Home'),
+    );
 }

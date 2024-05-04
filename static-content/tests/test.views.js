@@ -105,7 +105,7 @@ describe('Views Test', function() {
   it('should show session info view', () => {
     const mainContent = renders.renderSessionView({
       sid: 1,
-      date: '2021-01-01T10:00:00', state: 'Active', gid: 1, pid: 1,
+      date: '2021-01-01T10:00:00', state: 'Open', gid: 1, pid: 1,
       numberOfPlayers: 2, capacity: 4,
       associatedPlayers: [{ pid: 1, name: 'John Doe' }, { pid: 2, name: 'Jane Doe' }],
     });
@@ -120,7 +120,31 @@ describe('Views Test', function() {
       '<div><a href="#player/2">Jane Doe</a></div></div></li>' +
       '<li>Capacity: 4</li>' +
       '</ul></div>' +
-      '<a href="#home">Go to Home</a>',
+      '<br><button>Delete</button>' +
+      '<button>Update</button>' +
+      '<br><br><a href="#home">Go to Home</a>',
+    );
+  });
+
+  it('should show session update view', () => {
+    const mainContent = renders.renderSessionView({
+          capacity: 4,
+          date: '2021-01-01T10:00:00',
+        },
+        () => {},
+        () => {},
+        true
+    );
+    mainContent.innerHTML.should.be.equal(
+      '<h1>Update Session</h1>' +
+      '<div><label>Capacity </label>' +
+      '<input type="text" name="capacity" value="4">' +
+      '</div><br>' +
+      '<div><label>Date </label>' +
+      '<input type="datetime-local" name="date" value="2021-01-01T10:00:00">' +
+      '</div><br>' +
+      '<button>Update</button>' +
+      '<br><br><a href="#home">Go to Home</a>',
     );
   });
 

@@ -8,6 +8,8 @@ const createGame = `${API_BASE_URL}game`;
 const createSession = `${API_BASE_URL}session`;
 const getSession = `${API_BASE_URL}session/`;
 const getSessions = `${API_BASE_URL}session`;
+const deleteSession = `${API_BASE_URL}session/`;
+const updateSession = `${API_BASE_URL}session/`;
 
 export default {
   getPlayer,
@@ -18,4 +20,6 @@ export default {
   createSession,
   getSession,
   getSessions,
+  deleteSession,
+  updateSession
 };

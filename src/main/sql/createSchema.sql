@@ -31,7 +31,7 @@ create table Session
 -- Represents the players that are associated to a session
 create table Session_Player
 (
-    session_id integer references Session (id) not null,
-    player_id  integer references Player (id)  not null,
+    session_id integer references Session (id) on delete cascade not null,
+    player_id  integer references Player (id) on delete cascade not null,
     primary key (session_id, player_id)
 );

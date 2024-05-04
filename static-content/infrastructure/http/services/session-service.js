@@ -9,6 +9,8 @@ export default function SessionService() {
     createSession: createSession,
     getSession: getSession,
     getSessions: getSessions,
+    deleteSession: deleteSession,
+    updateSession: updateSession
   };
 
   function createSession(session) {
@@ -69,4 +71,16 @@ export default function SessionService() {
           return error.detail;
         });
   }
+
+    function deleteSession(sessionId) {
+        return httpService.del(uris.deleteSession + sessionId)
+            .then(() => { }).catch(() => { });
+    }
+
+    function updateSession(sessionId, capacity, date) {
+        return httpService.put(
+            uris.updateSession + sessionId,
+            JSON.stringify({"capacity": capacity, "date": date})
+        ).then(() => { }).catch(() => { });
+    }
 }

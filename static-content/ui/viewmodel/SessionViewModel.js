@@ -4,6 +4,8 @@ export default function SessionViewModel(sessionService) {
     getSession: getSession,
     createSession: createSession,
     getSessions: getSessions,
+    deleteSession: deleteSession,
+    updateSession: updateSession
   };
 
   function getSession(sessionId) {
@@ -17,4 +19,13 @@ export default function SessionViewModel(sessionService) {
   function getSessions(gid, date, state, playerId, skip, limit) {
     return sessionService.getSessions(gid, date, state, playerId, limit, skip);
   }
+
+  function deleteSession(sessionId) {
+    return sessionService.deleteSession(sessionId);
+  }
+
+  function updateSession(sessionId, capacity, date) {
+    return sessionService.updateSession(sessionId, capacity, date);
+  }
+
 }
