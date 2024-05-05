@@ -1,8 +1,8 @@
 import renders from '../../../lib/renders.js';
-
-const limit = 5;
+import constants from '../../../../domain/constants.js';
 
 export default async function SessionsView(mainContent, sessionViewModel, page = 1) {
+  const limit = constants.limit;
   const skip = (page - 1) * limit;
   const params = new URLSearchParams(window.location.hash.split('?')[1]);
   const gameId = params.get('gid') !== null ? params.get('gid') : '';
@@ -10,7 +10,7 @@ export default async function SessionsView(mainContent, sessionViewModel, page =
   const state = params.get('state') !== null ? params.get('state') : '';
   const playerId = params.get('pid') !== null ? params.get('pid') : '';
 
-  console.log('Sessions-View: ' + gameId, date, state, playerId, skip, limit + 1)
+  console.log('Sessions-View: ' + gameId, date, state, playerId, skip, limit + 1);
 
   const sessions = await sessionViewModel.getSessions(gameId, date, state, playerId, skip, limit + 1);
   if (!sessions) {

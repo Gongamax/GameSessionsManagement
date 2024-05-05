@@ -1,11 +1,10 @@
 export default function SessionViewModel(sessionService) {
-
   return {
     getSession: getSession,
     createSession: createSession,
     getSessions: getSessions,
     deleteSession: deleteSession,
-    updateSession: updateSession
+    updateSession: updateSession,
   };
 
   function getSession(sessionId) {
@@ -27,5 +26,4 @@ export default function SessionViewModel(sessionService) {
   function updateSession(sessionId, capacity, date) {
     return sessionService.updateSession(sessionId, capacity, date);
   }
-
 }

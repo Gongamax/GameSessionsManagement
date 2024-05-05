@@ -7,17 +7,19 @@ window.addEventListener('load', loadHandler);
 window.addEventListener('hashchange', hashChangeHandler);
 
 function loadHandler() {
-
   router.addRouteHandler(home, sessionsRouter.handleHomeRoute);
-  router.addRouteHandler('player/:id', sessionsRouter.playerRouter);
+  router.addRouteHandler('player/:id', sessionsRouter.playerRouter.handlePlayerRoute);
+  router.addRouteHandler('sign-up', sessionsRouter.playerRouter.handleSignUpRoute);
+
   router.addRouteHandler('session', sessionsRouter.sessionRouter.handleSearchSessionsRoute);
   router.addRouteHandler('session/:id', sessionsRouter.sessionRouter.handleSessionRoute);
   router.addRouteHandler('sessions', sessionsRouter.sessionRouter.handleSessionsRoute);
+
   router.addRouteHandler('game', sessionsRouter.gameRouter.handleSearchGamesRoute);
   router.addRouteHandler('game/:id', sessionsRouter.gameRouter.handleGameRoute);
   router.addRouteHandler('games', sessionsRouter.gameRouter.handleGamesRoute);
 
-  router.addDefaultNotFoundRouteHandler(() => window.location.hash = home);
+  router.addDefaultNotFoundRouteHandler(() => (window.location.hash = home));
 
   hashChangeHandler();
 }

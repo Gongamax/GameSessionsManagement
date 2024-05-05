@@ -1,34 +1,35 @@
-import dom from '../../../lib/dom-utils.js';
+import dom from '../../../lib/dom-elements.js';
 import { genres } from '../../../../domain/types/game.js';
 
-const { h1, ul, li, div, btn, input, label, br, a, inputWithLabel } = dom;
+const { h1, ul, li, div, button, input, label, br, a } = dom;
 
-export default async function GamesSearchView(mainContent) {
+export default function GamesSearchView(mainContent) {
+  const handleSearch = () => {
+    let genres = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(checkbox => checkbox.value);
+    const developer = document.querySelector('input[name=developer]').value;
+    window.location.hash = `#games?developer=${developer}&genres=${genres.join(',')}`;
+  };
+
   const content = div(
-    h1('Games Search'),
+    {},
+    h1({}, 'Games Search'),
     div(
+      {},
       ul(
+        {},
         ...genres.map(genre => {
-          return li(
-            inputWithLabel('checkbox', 'genre', genre, genre),
-            br(),
-          );
-        }),
+          return li({}, label({}, genre), input({ type: 'checkbox', name: 'genre', value: genre }), br());
+        })
       ),
-      div(
-        label('Developer '),
-        input('text', 'developer', ''),
-      ),
-      br(),
-      btn('Search', () => {
-          let genres = Array.from(document.querySelectorAll('input[type=checkbox]:checked')).map(checkbox => checkbox.value);
-          const developer = document.querySelector('input[name=developer]').value;
-          window.location.hash = `#games?developer=${developer}&genres=${genres.join(",")}`;
-      }),
+      div({}, label({}, 'Developer '), input({ type: 'text', name: 'developer', value: '' })),
+      br({}),
+      button({ type: 'submit' }, 'Search')
     ),
-    br(),
+    br()
   );
 
-  const home = a('#home', 'Go to Home');
+  const home = a({ href: '#home' }, 'Go to Home');
   mainContent.replaceChildren(content, home);
+
+  mainContent.querySelector('button[type=submit]').addEventListener('click', () => handleSearch());
 }

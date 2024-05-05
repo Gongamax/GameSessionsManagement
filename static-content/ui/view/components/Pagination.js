@@ -1,16 +1,30 @@
-import dom from '../../lib/dom-utils.js';
+import dom from '../../lib/dom-elements.js';
 
-const { btn } = dom;
+const { button } = dom;
 
 function Pagination(currentPage, hasNextPage, updatePage) {
-  const prevButton = btn('Previous Page', () => {
-    updatePage(Math.max(1, currentPage - 1));
-  }, currentPage === 1);
-  const nextButton = btn('Next Page', () => {
-    updatePage(currentPage + 1);
-  }, !hasNextPage);
+  const prevButton = button(
+    {
+      type: 'button',
+      disabled: currentPage === 1,
+    },
+    'Previous Page'
+  );
+  const nextButton = button(
+    {
+      type: 'button',
+      disabled: !hasNextPage,
+    },
+    'Next Page'
+  );
 
-  //mainContent.append(prevButton, nextButton);
+  prevButton.addEventListener('click', () => {
+    updatePage(Math.max(1, currentPage - 1));
+  });
+
+  nextButton.addEventListener('click', () => {
+    updatePage(currentPage + 1);
+  });
 
   return [prevButton, nextButton];
 }

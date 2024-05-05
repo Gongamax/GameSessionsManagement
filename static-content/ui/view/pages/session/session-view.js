@@ -1,4 +1,4 @@
-import renders from "../../../lib/renders.js";
+import renders from '../../../lib/renders.js';
 
 export default async function SessionView(mainContent, sessionViewModel) {
   const params = window.location.hash.split('/');
@@ -20,11 +20,12 @@ export default async function SessionView(mainContent, sessionViewModel) {
 
   if (update === 'true') {
     const content = renders.renderSessionView(
-        {sid, numberOfPlayers, date, gid, associatedPlayers, capacity},
-        ()=> deleteSession(sid),
-        (newCapacity, newDate) => updateSession(newCapacity, newDate), true);
+      { sid, numberOfPlayers, date, gid, associatedPlayers, capacity },
+      () => deleteSession(sid),
+      (newCapacity, newDate) => updateSession(newCapacity, newDate),
+      true
+    );
     mainContent.replaceChildren(content);
-
   } else {
     if (sid === undefined) {
       const content = renders.renderGetHome('An error occurred while fetching the session. Please try again later.');
@@ -38,9 +39,9 @@ export default async function SessionView(mainContent, sessionViewModel) {
     }
 
     const content = renders.renderSessionView(
-        {sid, numberOfPlayers, date, gid, associatedPlayers, capacity},
-        ()=> deleteSession(sid),
-        ()=> window.location.hash = `#session/${sid}?update=true`
+      { sid, numberOfPlayers, date, gid, associatedPlayers, capacity },
+      () => deleteSession(sid),
+      () => (window.location.hash = `#session/${sid}?update=true`)
     );
 
     mainContent.replaceChildren(content);

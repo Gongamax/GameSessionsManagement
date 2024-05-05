@@ -1,17 +1,19 @@
-import dom from '../../lib/dom-utils.js';
+import dom from '../../lib/dom-elements.js';
 
 const { a, br, p, h1 } = dom;
 
 function HomeView(mainContent) {
   const elements = [
-    h1('Welcome to Sessions App!'),
-    p('We are happy to have you here!'),
-    p('This is a simple app to manage sessions. You can add, edit, and delete sessions.'),
-    a('#player/1', 'Go to Player'),
+    h1({}, 'Welcome to Sessions App!'),
+    p({}, 'We are happy to have you here!'),
+    p({}, 'This is a simple app to manage sessions. You can add, edit, and delete sessions.'),
+    a({ href: '#player/1' }, 'Go to Player'),
     br(),
-    a('#session', 'Go to list of Sessions'),
+    a({ href: '#session' }, 'Go to list of Sessions'),
+    br({}),
+    a({ href: '#game' }, 'Go to list of Games'),
     br(),
-    a('#game', 'Go to list of Games'),
+    a({ href: '#sign-up' }, 'Sign Up'),
     br(),
   ];
 
