@@ -2,7 +2,7 @@ export default function GameViewModel(gameService) {
     return {
         getGames: getGames,
         getGame: getGame,
-        // createGame: createGame,
+        createGame: createGame,
     };
 
     function getGames(developer, genres, skip, limit) {
@@ -13,7 +13,7 @@ export default function GameViewModel(gameService) {
         return gameService.getGame(gameId);
     }
 
-    // function createGame(game) {
-    //     return gameService.createGame(game);
-    // }
+    function createGame(game) {
+        return gameService.createGame(game);
+    }
 }

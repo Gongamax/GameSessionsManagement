@@ -26,7 +26,9 @@ class Problem(
         private val invalidRequest = Uri.of(BASE_URL + "invalid-request")
         private val invalidGameData = Uri.of(BASE_URL + "invalid-game-data")
         private val invalidSkipOrLimit = Uri.of(BASE_URL + "invalid-skip-or-limit")
+        private val invalidName = Uri.of(BASE_URL + "invalid-name")
         private val genresOrDeveloperMissing = Uri.of(BASE_URL + "genres-or-developer-missing")
+
         //endregion
 
         //region Conflict, Already Exists
@@ -214,6 +216,17 @@ class Problem(
             typeUri = tokenNotFound,
             title = "Token not found",
             status = Status.UNAUTHORIZED,
+            detail = detail,
+            instance = uri,
+        ).toResponse()
+
+        fun invalidName(
+            uri: Uri,
+            detail: String = "Invalid name",
+        ) = Problem(
+            typeUri = invalidName,
+            title = "Invalid name",
+            status = Status.BAD_REQUEST,
             detail = detail,
             instance = uri,
         ).toResponse()

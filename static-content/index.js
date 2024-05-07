@@ -18,6 +18,7 @@ function loadHandler() {
   router.addRouteHandler('game', sessionsRouter.gameRouter.handleSearchGamesRoute);
   router.addRouteHandler('game/:id', sessionsRouter.gameRouter.handleGameRoute);
   router.addRouteHandler('games', sessionsRouter.gameRouter.handleGamesRoute);
+  router.addRouteHandler('game-create',sessionsRouter.gameRouter.handleCreateGameRoute);
 
   router.addDefaultNotFoundRouteHandler(() => (window.location.hash = home));
 

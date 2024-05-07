@@ -50,6 +50,24 @@ class GameTests {
     }
 
     @Test
+    fun searchGamesByName() {
+        // Arrange
+        when (val value = gameService.createGame(NAME, DEVELOPER, genres)) {
+            is Either.Left -> fail("Game creation failed for $value")
+            is Either.Right -> value.value
+        }
+        // Act
+        val result =
+            when (val value = gameService.searchGamesByName("nam", 10, 0)) {
+                is Either.Left -> fail("Game search failed for $value")
+                is Either.Right -> value.value
+            }
+        // Assert
+        assertEquals(1, result.size)
+        assertEquals(NAME, result.first().name)
+    }
+
+    @Test
     fun testGetGame() {
         // Arrange
         val gid =

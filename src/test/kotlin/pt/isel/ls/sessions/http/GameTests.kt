@@ -173,8 +173,59 @@ class GameTests {
         // Assert
         assertTrue { response.status.successful }
         assertTrue { response.header(CONTENT_TYPE) == APPLICATION_JSON }
-        assertTrue { content.games.size == 3 }
+        assertEquals(4, content.games.size)
         assertFalse { content.games.contains(gamesResult[1]) }
+    }
+
+    @Test
+    fun `get search games by name with success`() {
+        // Arrange
+        createGame()
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("name", "FIF").header("Authorization", "Bearer token")
+        // Act
+        val response = router.routes(request)
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
+        assertEquals(2, content.games.size)
+        assertEquals(gamesResult[3], content.games[0])
+        assertEquals(gamesResult[4], content.games[1])
+    }
+
+    @Test
+    fun `get search games by name success with skip(DEFAULT) and limit`() {
+        // Arrange
+        createGame()
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("name", "FIF").query("limit", "1")
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = router.routes(request)
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
+        assertEquals(1, content.games.size)
+        assertEquals(gamesResult[3], content.games[0])
+    }
+
+    @Test
+    fun `get search games by name success with skip and limit(DEFAULT)`() {
+        // Arrange
+        createGame()
+        val request =
+            Request(Method.GET, Uris.DEFAULT).query("name", "FIF").query("skip", "1")
+                .header("Authorization", "Bearer token")
+        // Act
+        val response = router.routes(request)
+        val content = Json.decodeFromString<GamesDTO>(response.bodyString())
+        // Assert
+        assertEquals(Status.OK, response.status)
+        assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
+        assertEquals(1, content.games.size)
+        assertEquals(gamesResult[4], content.games[0])
     }
 
     @Test
@@ -308,9 +359,10 @@ class GameTests {
         // Assert
         assertEquals(Status.OK, response.status)
         assertEquals(APPLICATION_JSON, response.header(CONTENT_TYPE))
-        assertEquals(2, content.games.size)
+        assertEquals(3, content.games.size)
         assertEquals(gamesResult[2], content.games[0])
         assertEquals(gamesResult[3], content.games[1])
+        assertEquals(gamesResult[4], content.games[2])
         assertFalse { content.games.contains(gamesResult[0]) }
         assertFalse { content.games.contains(gamesResult[1]) }
     }
@@ -401,6 +453,7 @@ class GameTests {
                 GameDTO(2u, "cs-go", "developer1", listOf("Action", "Shooter")),
                 GameDTO(3u, "over-watch", "developer", listOf("Action", "Shooter")),
                 GameDTO(4u, "FIFA", "developer", listOf("Action", "Sports")),
+                GameDTO(5u, "FIFA 21", "developer", listOf("Action", "Sports")),
             )
 
         private val games = gamesResult.map { GameInputDTO(it.name, it.developer, it.genres) }

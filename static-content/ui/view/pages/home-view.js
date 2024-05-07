@@ -15,6 +15,7 @@ function HomeView(mainContent) {
     br(),
     a({ href: '#sign-up' }, 'Sign Up'),
     br(),
+    a({ href: '#game-create' },'Create Game'),
   ];
 
   mainContent.replaceChildren(...elements);

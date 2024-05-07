@@ -78,6 +78,17 @@ class GameTests {
         assertEquals(1, games.size)
     }
 
+    @Test
+    fun testSearchGamesByName() {
+        // Arrange
+        gameMemoryDB.createGame(NAME, DEVELOPER, genres)
+        // Act
+        val games = gameMemoryDB.searchGamesByName("na", 10, 0)
+        // Assert
+        assertEquals(1, games.size)
+        assertEquals(NAME, games[0].name)
+    }
+
     private companion object {
         val gameMemoryDB = GameMemoryDB()
         const val NAME = "name"

@@ -34,6 +34,16 @@ class GameService(private val gameDB: GameRepository) {
             success(games)
         }
 
+    fun searchGamesByName(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): GamesSearchResult =
+        run {
+            val games = gameDB.searchGamesByName(name, limit, skip)
+            success(games)
+        }
+
     fun createGame(
         name: String,
         developer: String,

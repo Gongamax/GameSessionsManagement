@@ -23,5 +23,11 @@ interface GameRepository {
 
     fun getGameByName(name: String): Boolean
 
+    fun searchGamesByName(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): List<Game>
+
     fun reset()
 }

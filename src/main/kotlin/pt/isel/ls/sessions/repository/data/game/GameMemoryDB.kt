@@ -31,6 +31,12 @@ class GameMemoryDB : GameRepository {
                 (genres.isEmpty() || game.genres.containsAll(genres))
         }.drop(skip).take(limit)
 
+    override fun searchGamesByName(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): List<Game> = gameMap.values.filter { it.name.contains(name, ignoreCase = true) }.drop(skip).take(limit)
+
     override fun getGameById(gid: UInt): Game? = gameMap[gid]
 
     override fun reset() {

@@ -160,8 +160,9 @@ curl --location --request POST 'http://localhost:8080/api/player' --header 'Cont
 * **Query String:**
     * skip (_Integer_, _Optional_) - Number of elements to skip
     * limit (_Integer_, _Optional_) - Maximum number of elements to return
-    * genres (_String_,Required) - Filter by genre
-    * developer (_String_,Required) - Filter by developer
+    * genres (_String_,_Optional_) - Filter by genre
+    * developer (_String_,_Optional_) - Filter by developer
+    * name (_String_,_Optional_) - Filter by name
 
 **Example:**
 

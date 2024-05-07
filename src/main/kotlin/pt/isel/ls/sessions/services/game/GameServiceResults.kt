@@ -24,3 +24,9 @@ sealed class GamesGetError {
 }
 
 typealias GamesGetResult = Either<GamesGetError, List<Game>>
+
+sealed class GameSearchError {
+    data object NoGamesFound : GameSearchError()
+}
+
+typealias GamesSearchResult = Either<GameSearchError, List<Game>>

@@ -73,6 +73,26 @@ class GameJDBC(
             return@execute games
         }
 
+    override fun searchGamesByName(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): List<Game> =
+        dataSource.connection.execute("Failed to search games") { con ->
+            val query = "SELECT * FROM Game WHERE name LIKE ? LIMIT ? OFFSET ?"
+            val stm =
+                con.prepareStatement(query).apply {
+                    setString(1, "%$name%")
+                    setInt(2, limit)
+                    setInt(3, skip)
+                }
+            val rs = stm.executeQuery()
+            val games = mutableListOf<Game>()
+            while (rs.next())
+                games.add(getGameResponse(rs))
+            return@execute games
+        }
+
     override fun getGameById(gid: UInt): Game? =
         dataSource.connection.execute("Failed to get game") { con ->
             val query = "SELECT * FROM Game WHERE id = ?"

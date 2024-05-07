@@ -6,6 +6,7 @@ import GamesView from '../../../ui/view/pages/game/games-view.js';
 import SearchGamesView from '../../../ui/view/pages/game/games-search-view.js';
 import SessionViewModel from '../../../ui/viewmodel/SessionViewModel.js';
 import SessionService from '../services/session-service.js';
+import CreateGameView from '../../../ui/view/pages/game/game-create-view.js';
 
 const router = Router;
 const gameService = GameService();
@@ -29,8 +30,13 @@ function handleSearchGamesRoute(mainContent) {
   SearchGamesView(mainContent, gameViewModel);
 }
 
+function handleCreateGameRoute(mainContent){
+  CreateGameView(mainContent, gameViewModel);
+}
+
 export default {
   handleGameRoute,
+  handleCreateGameRoute,
   handleGamesRoute,
   handleSearchGamesRoute,
   notFoundRouteHandler,
