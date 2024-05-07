@@ -19,3 +19,5 @@ sealed class PlayerGetError {
 }
 
 typealias PlayerGetResult = Either<PlayerGetError, Player>
+
+typealias PlayerSearchResult = List<Player>

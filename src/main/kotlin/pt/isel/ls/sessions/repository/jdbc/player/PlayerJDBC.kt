@@ -9,7 +9,7 @@ import pt.isel.ls.sessions.repository.jdbc.execute
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
-import java.util.UUID
+import java.util.*
 import javax.sql.DataSource
 
 class PlayerJDBC(
@@ -84,6 +84,27 @@ class PlayerJDBC(
             }.executeQuery().next()
         }
     }
+
+    override fun searchPlayers(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): List<Player> =
+        dataSource.connection.execute("Failed to search players") { con ->
+            val query = "SELECT * FROM Player WHERE name LIKE ? LIMIT ? OFFSET ?"
+            val stm =
+                con.prepareStatement(query).apply {
+                    setString(1, "%$name%")
+                    setInt(2, limit)
+                    setInt(3, skip)
+                }
+            val rs = stm.executeQuery()
+            val players = mutableListOf<Player>()
+            while (rs.next()) {
+                players.add(rs.toPlayer())
+            }
+            return players
+        }
 
     private fun ResultSet.toPlayer(): Player {
         val id = getInt("id").toUInt()

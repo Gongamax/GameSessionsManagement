@@ -6,6 +6,7 @@ object Uris {
     object Players {
         const val ROOT = "player"
         const val BY_ID = "/{pid}"
+        const val SEARCH = "/search"
     }
 
     object Games {

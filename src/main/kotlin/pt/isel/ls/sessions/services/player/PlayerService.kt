@@ -29,4 +29,10 @@ class PlayerService(private val playerRepository: PlayerRepository) {
             val player = playerRepository.getPlayerById(pid) ?: return@run failure(PlayerGetError.PlayerNotFound)
             success(player)
         }
+
+    fun searchPlayers(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): PlayerSearchResult = playerRepository.searchPlayers(name, limit, skip)
 }

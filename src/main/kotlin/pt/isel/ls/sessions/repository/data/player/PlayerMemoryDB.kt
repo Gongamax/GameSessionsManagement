@@ -4,7 +4,7 @@ import pt.isel.ls.sessions.domain.player.Email
 import pt.isel.ls.sessions.domain.player.Player
 import pt.isel.ls.sessions.domain.utils.Token
 import pt.isel.ls.sessions.repository.PlayerRepository
-import java.util.UUID
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -36,5 +36,15 @@ class PlayerMemoryDB : PlayerRepository {
 
     override fun isNameInUse(name: String): Boolean {
         return playersMap.any { it.value.name == name }
+    }
+
+    override fun searchPlayers(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): List<Player> {
+        return playersMap.values.filter { it.name.contains(name) }
+            .drop(skip)
+            .take(limit)
     }
 }

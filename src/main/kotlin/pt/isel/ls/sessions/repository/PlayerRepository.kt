@@ -18,4 +18,10 @@ interface PlayerRepository {
     fun isEmailInUse(email: String): Boolean
 
     fun isNameInUse(name: String): Boolean
+
+    fun searchPlayers(
+        name: String,
+        limit: Int,
+        skip: Int,
+    ): List<Player>
 }

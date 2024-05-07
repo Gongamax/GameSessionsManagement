@@ -28,6 +28,7 @@ class PlayerRouter(private val services: PlayerService) : Router {
     override val routes =
         routes(
             Uris.DEFAULT bind POST to ::createPlayer,
+            Uris.Players.SEARCH bind GET to ::searchPlayers,
             Uris.Players.BY_ID bind GET to ::getDetailsPlayer,
         )
 
@@ -65,9 +66,29 @@ class PlayerRouter(private val services: PlayerService) : Router {
             }
         }
 
+    private fun searchPlayers(request: Request): Response =
+        execStart(request) {
+            val limit = request.query(LIMIT)?.toInt() ?: DEFAULT_LIMIT
+            val skip = request.query(SKIP)?.toInt() ?: DEFAULT_SKIP
+            val name = request.query("name") ?: ""
+            if (limit < 0 || skip < 0) {
+                return@execStart Problem.invalidSkipOrLimit(request.uri)
+            }
+            val players = services.searchPlayers(name, limit, skip)
+            return Response(Status.OK).jsonResponse(
+                players.map {
+                    PlayerDTO(it.pid, it.name, it.email.value)
+                },
+            )
+        }
+
     companion object {
         private val logger = LoggerFactory.getLogger(PlayerRouter::class.java)
         private const val PLAYER_ID = "pid"
+        private const val DEFAULT_SKIP = 0
+        private const val DEFAULT_LIMIT = 10
+        private const val LIMIT = "limit"
+        private const val SKIP = "skip"
 
         fun routes(services: PlayerService) = PlayerRouter(services).routes
     }
