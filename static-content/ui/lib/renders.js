@@ -28,7 +28,7 @@ function renderPlayerView(player) {
     br({}),
     a({ href: `#sessions?gid=&date=&state=&pid=${player.id}` }, 'Player sessions'),
     br({}),
-    a({ href: '#home' }, 'Go to Home')
+    a({ href: '#home' }, 'Go to Home'),
   );
 }
 
@@ -43,13 +43,13 @@ function renderGameView(game) {
         createListItem('Id', game.gid),
         createListItem('Name', game.name),
         createListItem('Developer', game.developer),
-        createListItem('Genres', game.genres)
+        createListItem('Genres', game.genres),
       ),
       br(),
-      a({ href: '#sessions?gid=' + game.gid }, 'Sessions of the game: ' + game.name)
+      a({ href: '#sessions?gid=' + game.gid }, 'Sessions of the game: ' + game.name),
     ),
     br(),
-    a({ href: '#home' }, 'Go to Home')
+    a({ href: '#home' }, 'Go to Home'),
   );
 }
 
@@ -76,9 +76,10 @@ function renderSessionView(session, deleteSession, updateSession, update = false
           createListItem('Date', session.date),
           li({}, gameLink),
           li({}, playersLabel),
-          createListItem('Capacity', session.capacity)
-        )
-      )
+          createListItem('Capacity', session.capacity),
+        ),
+      ),
+      br(),
     );
   }
 }
@@ -100,11 +101,11 @@ function renderSessionsView(sessions, page, hasNextPage, params) {
               createListItem('Date', session.date),
               createListItem('Game ID', session.gid),
               createListItem('Capacity', session.capacity),
-              br()
-            )
-          )
+              br(),
+            ),
+          ),
         );
-      })
+      }),
     ),
     br(),
     ...Pagination(page, hasNextPage, newPage => {
@@ -113,7 +114,7 @@ function renderSessionsView(sessions, page, hasNextPage, params) {
     }),
     br(),
     br(),
-    a({ href: '#session' }, 'Go to Sessions Search')
+    a({ href: '#session' }, 'Go to Sessions Search'),
   );
 }
 
@@ -137,11 +138,11 @@ function renderGamesView(games, page, hasNextPage, params) {
                 createListItem('Id', game.gid),
                 createListItem('Developer', game.developer),
                 createListItem('Genres', game.genres),
-                br({})
-              )
-            )
+                br({}),
+              ),
+            ),
           );
-        })
+        }),
       ),
       ...Pagination(page, hasNextPage, newPage => {
         page = newPage;
@@ -149,7 +150,7 @@ function renderGamesView(games, page, hasNextPage, params) {
       }),
       br({}),
       br({}),
-      a({ href: '#game' }, 'Go to Games Search')
+      a({ href: '#game' }, 'Go to Games Search'),
     );
   }
 }
@@ -171,6 +172,6 @@ function renderSessionUpdate(capacity, date, updateSession) {
     }),
     br({}),
     br({}),
-    a({ href: '#home' }, 'Go to Home')
+    a({ href: '#home' }, 'Go to Home'),
   );
 }

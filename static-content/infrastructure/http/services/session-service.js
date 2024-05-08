@@ -1,6 +1,6 @@
 import uris from '../uris.js';
 import HttpService from './http-service.js';
-import {Session} from '../../../domain/types/session.js';
+import { Session } from '../../../domain/types/session.js';
 
 const httpService = HttpService();
 
@@ -10,7 +10,8 @@ export default function SessionService() {
     getSession: getSession,
     getSessions: getSessions,
     deleteSession: deleteSession,
-    updateSession: updateSession
+    updateSession: updateSession,
+    addPlayerToSession: addPlayerToSession,
   };
 
   function createSession(session) {
@@ -44,7 +45,7 @@ export default function SessionService() {
       state,
       pid,
       limit,
-      skip
+      skip,
     };
 
     // Filter out undefined or empty parameters
@@ -56,31 +57,43 @@ export default function SessionService() {
     console.log('Query String: ' + queryString);
 
     return httpService.get(uris.getSessions + '?' + queryString)
-        .then(result => {
-          return result.sessions.map(session =>
-              new Session(
-                  session.sid,
-                  session.numberOfPlayers,
-                  session.date,
-                  session.gid,
-                  session.associatedPlayers,
-                  session.capacity,
-              ),
-          );
-        }).catch(error => {
-          return error.detail;
-        });
+      .then(result => {
+        return result.sessions.map(session =>
+          new Session(
+            session.sid,
+            session.numberOfPlayers,
+            session.date,
+            session.gid,
+            session.associatedPlayers,
+            session.capacity,
+          ),
+        );
+      }).catch(error => {
+        return error.detail;
+      });
   }
 
-    function deleteSession(sessionId) {
-        return httpService.del(uris.deleteSession + sessionId)
-            .then(() => { }).catch(() => { });
-    }
+  function deleteSession(sessionId) {
+    return httpService.del(uris.deleteSession + sessionId)
+      .then(() => {
+      }).catch(() => {
+      });
+  }
 
-    function updateSession(sessionId, capacity, date) {
-        return httpService.put(
-            uris.updateSession + sessionId,
-            JSON.stringify({"capacity": capacity, "date": date})
-        ).then(() => { }).catch(() => { });
-    }
+  function updateSession(sessionId, capacity, date) {
+    return httpService.put(
+      uris.updateSession + sessionId,
+      JSON.stringify({ 'capacity': capacity, 'date': date }),
+    ).then(() => {
+    }).catch(() => {
+    });
+  }
+
+  function addPlayerToSession(sessionId, playerId) {
+    return httpService.put(uris.addPlayerToSession + sessionId + '/player/' + playerId).then(() => {
+    }).catch((error) => {
+      return error.message;
+    });
+  }
+
 }

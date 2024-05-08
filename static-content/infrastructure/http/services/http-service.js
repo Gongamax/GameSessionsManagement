@@ -43,6 +43,9 @@ export default function httpService() {
       //   throw new Error(`HTTP error! Status: ${response.status}`);
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
+    console.log(response);
+    if(response.status === 204) return;
+
     return await response.json();
   }
 

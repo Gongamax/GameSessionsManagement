@@ -8,11 +8,25 @@ export default function PlayerService() {
   return {
     getPlayer: getPlayer,
     createPlayer: createPlayer,
+    getPlayerByName: getPlayerByName,
   };
 
   function getPlayer(playerId) {
     return httpHandler.get(uris.getPlayer + playerId).then(player => {
       return new Player(playerId, player.name, player.email);
+    }).catch(error => {
+      return error.detail;
+    });
+  }
+
+  function getPlayerByName(playerName) {
+    return httpHandler.get(uris.getPlayerByName + '?name=' + playerName).then(players => {
+      if (players.length > 0) {
+        const player = players[0];
+        return new Player(player.pid, player.name, player.email);
+      } else {
+        return undefined;
+      }
     }).catch(error => {
       return error.detail;
     });

@@ -10,6 +10,8 @@ const getSession = `${API_BASE_URL}session/`;
 const getSessions = `${API_BASE_URL}session`;
 const deleteSession = `${API_BASE_URL}session/`;
 const updateSession = `${API_BASE_URL}session/`;
+const addPlayerToSession = `${API_BASE_URL}session/`;
+const getPlayerByName = `${API_BASE_URL}player/search`;
 
 export default {
   getPlayer,
@@ -21,5 +23,7 @@ export default {
   getSession,
   getSessions,
   deleteSession,
-  updateSession
+  updateSession,
+  addPlayerToSession,
+  getPlayerByName
 };

@@ -1,10 +1,15 @@
 import renders from '../../../lib/renders.js';
+import dom from '../../../lib/dom-elements.js';
 
-export default async function SessionView(mainContent, sessionViewModel) {
+const { div, button, input, label, br} = dom;
+
+export default async function SessionView(mainContent, sessionViewModel, playerViewModel) {
   const params = window.location.hash.split('/');
   const query = new URLSearchParams(window.location.hash.split('?')[1]);
   const sessionId = params[params.length - 1].split('?')[0];
   const update = query.get('update') !== null ? query.get('update') : '';
+
+
   if (sessionId !== String(parseInt(sessionId))) {
     const content = renders.renderGetHome(`Invalid session id, is not a number ${sessionId}`);
     mainContent.replaceChildren(content);
@@ -13,17 +18,19 @@ export default async function SessionView(mainContent, sessionViewModel) {
 
   const { sid, numberOfPlayers, date, gid, associatedPlayers, capacity } = await sessionViewModel.getSession(sessionId);
 
+
   async function updateSession(newCapacity, newDate) {
     await sessionViewModel.updateSession(sid, newCapacity, newDate);
     window.location.hash = `#session/${sid}`;
   }
+
 
   if (update === 'true') {
     const content = renders.renderSessionView(
       { sid, numberOfPlayers, date, gid, associatedPlayers, capacity },
       () => deleteSession(sid),
       (newCapacity, newDate) => updateSession(newCapacity, newDate),
-      true
+      true,
     );
     mainContent.replaceChildren(content);
   } else {
@@ -41,9 +48,43 @@ export default async function SessionView(mainContent, sessionViewModel) {
     const content = renders.renderSessionView(
       { sid, numberOfPlayers, date, gid, associatedPlayers, capacity },
       () => deleteSession(sid),
-      () => (window.location.hash = `#session/${sid}?update=true`)
+      () => (window.location.hash = `#session/${sid}?update=true`),
     );
 
-    mainContent.replaceChildren(content);
+    const addPlayerContent = div(
+      br(),
+      div({}, label({}, 'PlayerName: '), input({ type: 'text', name: 'playerName', value: '' })),
+      br({}),
+      button({ type: 'submit' }, 'Add Player'),
+      br(),
+    );
+
+
+    async function addPlayerToSession(sid, pid) {
+      const addPlayer = await sessionViewModel.addPlayerToSession(sid, pid);
+      console.log(addPlayer);
+      if (addPlayer === 'HTTP error! Status: 400') {
+        alert('Player already in session or session is full');
+      } else {
+        alert('Player added to session');
+        location.reload();
+      }
+    }
+
+    mainContent.replaceChildren(content, addPlayerContent);
+    const addPlayer = mainContent.querySelector('button[type=submit]');
+    addPlayer.addEventListener('click', async () => {
+      const playerName = document.querySelector('input[name=playerName]').value;
+      if (playerName === '') {
+        alert('Player name is required');
+        return;
+      }
+      const player = await playerViewModel.getPlayerByName(playerName);
+      if (player === undefined) {
+        alert('Player not found');
+      } else {
+        await addPlayerToSession(sid, player.pid);
+      }
+    });
   }
 }

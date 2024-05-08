@@ -3,6 +3,7 @@ export default function PlayerViewModel(playerHandler) {
   return {
     getPlayer: getPlayer,
     createPlayer: createPlayer,
+    getPlayerByName: getPlayerByName
   };
 
   function getPlayer(playerId) {
@@ -11,5 +12,9 @@ export default function PlayerViewModel(playerHandler) {
 
   function createPlayer(player) {
     return playerHandler.createPlayer(player);
+  }
+
+  function getPlayerByName(playerName) {
+    return playerHandler.getPlayerByName(playerName);
   }
 }

@@ -5,6 +5,7 @@ export default function SessionViewModel(sessionService) {
     getSessions: getSessions,
     deleteSession: deleteSession,
     updateSession: updateSession,
+    addPlayerToSession: addPlayerToSession
   };
 
   function getSession(sessionId) {
@@ -25,5 +26,9 @@ export default function SessionViewModel(sessionService) {
 
   function updateSession(sessionId, capacity, date) {
     return sessionService.updateSession(sessionId, capacity, date);
+  }
+
+  function addPlayerToSession(sessionId, playerId) {
+    return sessionService.addPlayerToSession(sessionId, playerId);
   }
 }
