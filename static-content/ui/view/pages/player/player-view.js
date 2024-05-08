@@ -13,8 +13,6 @@ export default async function PlayerView(mainContent, playerViewModel) {
 
   console.log(name, email);
 
-
-
   const content = renders.renderPlayerView({id: playerId, name, email});
 
   mainContent.replaceChildren(content);

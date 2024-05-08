@@ -1,7 +1,8 @@
 import dom from './dom-elements.js';
 import Pagination from '../view/components/Pagination.js';
+import { genres } from '../../domain/types/game.js';
 
-const { li, ul, div, h1, a, br, input, label, button } = dom;
+const { form,li, ul, div, h1, a, br, input, label, button } = dom;
 
 export default {
   renderPlayerView,
@@ -10,6 +11,8 @@ export default {
   renderGamesView,
   renderSessionsView,
   renderGetHome,
+  renderGamesSearch,
+  renderGameCreate
 };
 
 function createListItem(key, value) {
@@ -51,6 +54,49 @@ function renderGameView(game) {
     br(),
     a({ href: '#home' }, 'Go to Home'),
   );
+}
+
+function renderGamesSearch(){
+  return div(
+    {},
+    h1({}, 'Games Search'),
+    div(
+      {},
+      ul(
+        {},
+        ...genres.map(genre => {
+          return li({}, label({}, genre), input({ type: 'checkbox', name: 'genre', value: genre }), br());
+        }),
+      ),
+      div({}, label({}, 'Developer '), input({ type: 'text', name: 'developer', value: '' })),
+      br({}),
+      button({ type: 'submit' }, 'Search'),
+    ),
+    br(),
+    a({ href: '#home' }, 'Go to Home'),
+  );
+}
+
+function renderGameCreate(){
+  return [
+    h1({}, 'Create Game'),
+    form({ id: 'game' }, [
+      label({ htmlFor: 'name' }, 'Name: '),
+      input({ type: 'text', id: 'name', name: 'name' }),
+      br(),
+      label({ htmlFor: 'developer' }, 'Developer: '),
+      input({ type: 'text', id: 'developer', name: 'developer' }),
+      br(),
+      ...genres.map(genre => {
+        return li({}, label({}, genre), input({ type: 'checkbox', name: 'genre', value: genre }), br());
+      }),
+
+      br({}),
+      button({ type: 'submit' }, 'Create Game'),
+      br({}),
+    ]),
+    a({ href: '#home' }, 'Go to Home'),
+  ];
 }
 
 function renderSessionView(session, update = false) {

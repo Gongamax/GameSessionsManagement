@@ -1,39 +1,13 @@
-import dom from '../../../lib/dom-elements.js';
-import { genres } from '../../../../domain/types/game.js';
-
-const { a, br,li, h1, form, input, label, button } = dom;
-
+import renders from '../../../lib/renders.js';
 
 const CreateGameView = (mainContent, gameViewModel) => {
-  const elements = [
-    h1({}, 'Create Game'),
-    form({ id: 'game' }, [
-      label({ htmlFor: 'name' }, 'Name:'),
-      input({ type: 'text', id: 'name', name: 'name' }),
-      br({}),
-      label({ htmlFor: 'developer' }, 'Developer:'),
-      input({ type: 'text', id: 'developer', name: 'developer' }),
-      br({}),
-      ...genres.map(genre => {
-        return li({}, label({}, genre), input({ type: 'checkbox', name: 'genre', value: genre }), br());
-      }),
-
-      br({}),
-      button({ type: 'submit' }, 'Create Game'),
-      br({}),
-    ]),
-    a({ href: '#home' }, 'Go to Home'),
-  ];
-
+  const elements = renders.renderGameCreate();
   mainContent.replaceChildren(...elements);
-
   const createGame = mainContent.querySelector('#game');
   createGame.addEventListener('submit', event => handleCreateGame(event, gameViewModel));
 };
 
-
 export default CreateGameView;
-
 
 async function handleCreateGame(event, gameViewModel) {
   event.preventDefault();
