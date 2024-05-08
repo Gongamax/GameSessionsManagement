@@ -1,21 +1,24 @@
 import router from '../infrastructure/http/router/router.js';
 import sessionsRouter from '../infrastructure/http/router/sessions-router.js';
-import handlePlayerRoute from '../infrastructure/http/router/player-router.js';
 
 describe('Router', function() {
 
   before(function() {
 
     router.addRouteHandler('home', sessionsRouter.handleHomeRoute);
-    router.addRouteHandler('player/:id', handlePlayerRoute);
+    router.addRouteHandler('player/:id', sessionsRouter.playerRouter.handlePlayerRoute);
+    router.addRouteHandler('sign-up', sessionsRouter.playerRouter.handleSignUpRoute);
+
     router.addRouteHandler('session', sessionsRouter.sessionRouter.handleSearchSessionsRoute);
     router.addRouteHandler('session/:id', sessionsRouter.sessionRouter.handleSessionRoute);
     router.addRouteHandler('sessions', sessionsRouter.sessionRouter.handleSessionsRoute);
+
     router.addRouteHandler('game', sessionsRouter.gameRouter.handleSearchGamesRoute);
     router.addRouteHandler('game/:id', sessionsRouter.gameRouter.handleGameRoute);
     router.addRouteHandler('games', sessionsRouter.gameRouter.handleGamesRoute);
+    router.addRouteHandler('game-create',sessionsRouter.gameRouter.handleCreateGameRoute);
 
-    router.addDefaultNotFoundRouteHandler(() => window.location.hash = 'home');
+    router.addDefaultNotFoundRouteHandler(() => (window.location.hash = home));
   });
 
   context('when is found', function() {
@@ -28,7 +31,7 @@ describe('Router', function() {
 
     it('should find player handler', function() {
 
-      router.getRouteHandler('player/:id').should.equal(handlePlayerRoute);
+      router.getRouteHandler('player/:id').should.equal(sessionsRouter.playerRouter.handlePlayerRoute);
       router.getRouteHandler('player/:id').name.should.equal('handlePlayerRoute');
       router.getRouteHandler('player/:id').should.be.a('function');
     });
@@ -73,6 +76,12 @@ describe('Router', function() {
       router.getRouteHandler('games').should.equal(sessionsRouter.gameRouter.handleGamesRoute);
       router.getRouteHandler('games').name.should.equal('handleGamesRoute');
       router.getRouteHandler('games').should.be.a('function');
+    });
+
+    it('should find create game handler', () => {
+        router.getRouteHandler('game-create').should.equal(sessionsRouter.gameRouter.handleCreateGameRoute);
+        router.getRouteHandler('game-create').name.should.equal('handleCreateGameRoute');
+        router.getRouteHandler('game-create').should.be.a('function');
     });
 
   });

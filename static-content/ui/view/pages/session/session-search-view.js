@@ -1,6 +1,4 @@
-import dom from '../../../lib/dom-elements.js';
-
-const { h1, div, a, input, button, label, br, select, option } = dom;
+import renders from "../../../lib/renders.js";
 
 async function SessionSearchView() {
   const handleSearch = () => {
@@ -12,32 +10,7 @@ async function SessionSearchView() {
     window.location.hash = `#sessions?gid=${gameId}&date=${date}&state=${state}&pid=${playerId}`;
   };
 
-  const content = div(
-    {},
-    h1({}, 'Search Sessions'),
-    div(
-      {},
-      div({}, label({}, 'Game Id '), input({ type: 'text', name: 'gameId', value: '' })),
-      br(),
-      div({}, label({}, 'Date '), input({ type: 'datetime-local', name: 'date', value: '' })),
-      br(),
-      div(
-        {},
-        label({}, 'State '),
-        select({ name: 'state' }, [
-          option({ value: '' }, 'All'),
-          option({ value: 'open' }, 'Open'),
-          option({ value: 'close' }, 'Close'),
-        ]),
-      ),
-      br(),
-      div({}, label({}, 'Player Id '), input({ type: 'text', name: 'playerId', value: '' })),
-      br(),
-      button({ type: 'submit' }, 'Search'),
-    ),
-    br(),
-    a({ href: '#home' }, 'Go to Home'),
-  );
+  const content = renders.renderSessionSearch();
 
   content.querySelector('button[type=submit]').addEventListener('click', handleSearch);
 

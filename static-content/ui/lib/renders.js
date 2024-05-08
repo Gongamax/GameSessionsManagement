@@ -1,8 +1,8 @@
 import dom from './dom-elements.js';
 import Pagination from '../view/components/Pagination.js';
-import { genres } from '../../domain/types/game.js';
+import {genres} from '../../domain/types/game.js';
 
-const { form, li, ul, div, h1, a, br, input, label, button } = dom;
+const { form, li, ul, div, h1, a, br, input, label, button, select, option } = dom;
 
 export default {
   renderPlayerView,
@@ -13,6 +13,7 @@ export default {
   renderGetHome,
   renderGamesSearch,
   renderGameCreate,
+  renderSessionSearch
 };
 
 function createListItem(key, value) {
@@ -220,11 +221,40 @@ function renderSessionUpdate(capacity, date) {
   return div(
     {},
     h1({}, 'Update Session'),
-    div({}, label({}, 'Capacity '), input({ type: 'text', name: 'capacity', value: capacity })),
+    div({}, label({}, 'Capacity '), input({ type: 'text', name: 'capacity', value: capacity.toString() })),
     br({}),
     div({}, label({}, 'Date '), input({ type: 'datetime-local', name: 'date', value: date })),
     br({}),
     button({ type: 'button', id: 'cancel' }, 'Cancel'),
     button({ type: 'submit', id: 'update' }, 'Update'),
+  );
+}
+
+function renderSessionSearch() {
+  return div(
+      {},
+      h1({}, 'Search Sessions'),
+      div(
+          {},
+          div({}, label({}, 'Game Id '), input({ type: 'text', name: 'gameId', value: '' })),
+          br(),
+          div({}, label({}, 'Date '), input({ type: 'datetime-local', name: 'date', value: '' })),
+          br(),
+          div(
+              {},
+              label({}, 'State '),
+              select({ name: 'state' }, [
+                  option({ value: '' }, 'All'),
+                  option({ value: 'open' }, 'Open'),
+                  option({ value: 'close' }, 'Close'),
+              ]),
+          ),
+          br(),
+          div({}, label({}, 'Player Id '), input({ type: 'text', name: 'playerId', value: '' })),
+          br(),
+          button({ type: 'submit' }, 'Search'),
+      ),
+      br(),
+      a({ href: '#home' }, 'Go to Home'),
   );
 }
