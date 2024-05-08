@@ -3,14 +3,20 @@ import dom from '../../lib/dom-elements.js';
 const { nav, ul, li, a, div } = dom;
 
 function NavBar() {
-  // const currentUser = useCurrentUser();
-
   const navBar = nav(
-    { class: 'navBar' },
-    a({ href: '#' }, 'Home'),
-    a({ href: '#sessions' }, 'Sessions'),
-    a({ href: '#games' }, 'Games'),
-    a({ href: '#about' }, 'About'),
+    { class: 'navbar navbar-expand-lg bg-dark navbar-dark py-3 sticky-top' },
+    div({ class: 'container' },
+      a({ class: 'navbar-brand', href: '#' }, 'Home'),
+      div(
+        { class: 'collapse navbar-collapse' },
+        ul(
+          { class: 'navbar-nav mr-auto' },
+          li({ class: 'nav-item' }, a({ class: 'nav-link', href: '#sessions' }, 'Sessions')),
+          li({ class: 'nav-item' }, a({ class: 'nav-link', href: '#games' }, 'Games')),
+          li({ class: 'nav-item' }, a({ class: 'nav-link', href: '#about' }, 'About')),
+        ),
+      ),
+    ),
   );
 
   return navBar;

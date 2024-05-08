@@ -1,6 +1,6 @@
 import renders from '../../../lib/renders.js';
 
-const CreateGameView = (mainContent, gameViewModel) => {
+const CreateGameView = async (mainContent, gameViewModel) => {
   const content = renders.renderGameCreate();
   content.querySelector('#game');
   content.addEventListener('submit', event => handleCreateGame(event, gameViewModel));

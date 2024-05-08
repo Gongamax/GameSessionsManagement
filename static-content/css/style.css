@@ -3,32 +3,98 @@ a {
 }
 
 body {
-    margin: 20px;
-    padding: 20px;
+    background-color: #f8f9fa;
     font-family: 'Quicksand', sans-serif;
     font-size: 18px;
 }
 
-.navBar {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    background-color: #333;
-    padding: 10px 0;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    flex-grow: 1;
-    z-index: 1;
+.header-bg {
+    background-color: #007bff;
+    background-image: linear-gradient(180deg, #007bff 0%, #0056b3 100%);
 }
 
-.navBar a {
-    color: #ffffff;
-    text-decoration: none;
-    padding: 12px;
-    transition: color 0.3s ease;
+.header-text {
+    font-size: 2rem;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
-.navBar a:hover {
-    color: #009579;
+/* Custom CSS for the search box */
+.search-box {
+    position: relative;
+}
+
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: #888;
+}
+
+.search-input {
+    padding-left: 45px;
+}
+
+.loading-icon {
+    position: absolute;
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+    color: #888;
+    display: none;
+}
+
+.search-input:focus + .loading-icon {
+    display: block;
+}
+
+/* Custom CSS for the login form */
+.square-form {
+    width: 300px; /* Adjust the width to make it a square */
+    margin: auto; /* Center the form horizontally */
+}
+
+/* Registration and Login CSS */
+
+.alert {
+    margin-top: 15px;
+}
+
+.gradient-custom-3 {
+    /* fallback for old browsers */
+    background: #84fab0;
+
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(
+            to right,
+            rgba(132, 250, 176, 0.5),
+            rgba(143, 211, 244, 0.5)
+    );
+
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(
+            to right,
+            rgba(132, 250, 176, 0.5),
+            rgba(143, 211, 244, 0.5)
+    );
+}
+
+.gradient-custom-4 {
+    /* fallback for old browsers */
+    background: #84fab0;
+
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(
+            to right,
+            rgba(132, 250, 176, 1),
+            rgba(143, 211, 244, 1)
+    );
+
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(
+            to right,
+            rgba(132, 250, 176, 1),
+            rgba(143, 211, 244, 1)
+    );
 }
