@@ -53,9 +53,10 @@ function renderGameView(game) {
   );
 }
 
-function renderSessionView(session, deleteSession, updateSession, update = false) {
+function renderSessionView(session, update = false) {
   if (update === true) {
-    return renderSessionUpdate(session.capacity, session.date, updateSession);
+    console.log('Capacity: ' + session.capacity + ' Date: ' + session.date)
+    return renderSessionUpdate(session.capacity, session.date);
   } else {
     const playersDiv = session.associatedPlayers.map((player, index) => {
       const playerLink = a({ href: `#player/${player.pid}` }, player.name);
@@ -79,6 +80,14 @@ function renderSessionView(session, deleteSession, updateSession, update = false
           createListItem('Capacity', session.capacity),
         ),
       ),
+      br(),
+      button({ type: 'submit', id:'delete'}, 'Delete'),
+      button({ type: 'button', id:'update'}, 'Update'),
+      br(),
+      br(),
+      div({}, label({}, 'PlayerName: '), input({ type: 'text', name: 'playerName', value: '' })),
+      br(),
+      button({ type: 'submit', id: 'addPlayer' }, 'Add Player'),
       br(),
     );
   }
@@ -155,7 +164,7 @@ function renderGamesView(games, page, hasNextPage, params) {
   }
 }
 
-function renderSessionUpdate(capacity, date, updateSession) {
+function renderSessionUpdate(capacity, date) {
   return div(
     {},
     h1({}, 'Update Session'),
@@ -163,15 +172,8 @@ function renderSessionUpdate(capacity, date, updateSession) {
     br({}),
     div({}, label({}, 'Date '), input({ type: 'datetime-local', name: 'date', value: date })),
     br({}),
-    button({}, 'Update', () => {
-      const newCapacity = document.querySelector('input[name=capacity]').value || capacity;
-      const newDate = document.querySelector('input[name=date]').value || date;
-      if (newCapacity <= 0) alert('Capacity must be greater than 0');
-      if (newDate <= new Date().toISOString()) alert('Date must be greater than today');
-      else updateSession(newCapacity, newDate);
-    }),
-    br({}),
-    br({}),
-    a({ href: '#home' }, 'Go to Home'),
+    button({ type: 'button', id: 'cancel' }, 'Cancel'),
+    button({ type: 'submit', id: 'update' }, 'Update'),
+
   );
 }

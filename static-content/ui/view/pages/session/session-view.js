@@ -28,11 +28,26 @@ export default async function SessionView(mainContent, sessionViewModel, playerV
   if (update === 'true') {
     const content = renders.renderSessionView(
       { sid, numberOfPlayers, date, gid, associatedPlayers, capacity },
-      () => deleteSession(sid),
-      (newCapacity, newDate) => updateSession(newCapacity, newDate),
-      true,
+      true
     );
     mainContent.replaceChildren(content);
+    const cancelButton = mainContent.querySelector('#cancel');
+    cancelButton.addEventListener('click', () => {
+        window.location.hash = `#session/${sid}`;
+    });
+    const updateButton = mainContent.querySelector('#update');
+    updateButton.addEventListener('click', () => {
+      const newCapacity = document.querySelector('input[name=capacity]').value || capacity;
+      const newDate = document.querySelector('input[name=date]').value || date;
+      if (newCapacity <= 0) {
+        alert('Capacity must be greater than 0');
+        return;
+      }
+      if (newDate <= new Date().toISOString()) {
+        alert('Date must be greater than now');
+      }
+      else updateSession(newCapacity, newDate);
+    });
   } else {
     if (sid === undefined) {
       const content = renders.renderGetHome('An error occurred while fetching the session. Please try again later.');
@@ -45,20 +60,7 @@ export default async function SessionView(mainContent, sessionViewModel, playerV
       window.location.hash = '#sessions';
     }
 
-    const content = renders.renderSessionView(
-      { sid, numberOfPlayers, date, gid, associatedPlayers, capacity },
-      () => deleteSession(sid),
-      () => (window.location.hash = `#session/${sid}?update=true`),
-    );
-
-    const addPlayerContent = div(
-      br(),
-      div({}, label({}, 'PlayerName: '), input({ type: 'text', name: 'playerName', value: '' })),
-      br({}),
-      button({ type: 'submit' }, 'Add Player'),
-      br(),
-    );
-
+    const content = renders.renderSessionView({ sid, numberOfPlayers, date, gid, associatedPlayers, capacity });
 
     async function addPlayerToSession(sid, pid) {
       const addPlayer = await sessionViewModel.addPlayerToSession(sid, pid);
@@ -71,8 +73,16 @@ export default async function SessionView(mainContent, sessionViewModel, playerV
       }
     }
 
-    mainContent.replaceChildren(content, addPlayerContent);
-    const addPlayer = mainContent.querySelector('button[type=submit]');
+    mainContent.replaceChildren(content);
+    const deleteButton = mainContent.querySelector('#delete');
+    deleteButton.addEventListener('click', () => {
+      deleteSession(sid);
+    });
+    const updateButton = mainContent.querySelector('#update');
+    updateButton.addEventListener('click', () => {
+      window.location.hash = `#session/${sid}?update=true`;
+    });
+    const addPlayer = mainContent.querySelector('#addPlayer');
     addPlayer.addEventListener('click', async () => {
       const playerName = document.querySelector('input[name=playerName]').value;
       if (playerName === '') {

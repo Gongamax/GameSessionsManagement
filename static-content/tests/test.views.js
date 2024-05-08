@@ -1,6 +1,4 @@
-import services from '../infrastructure/http/services/services.js';
 import sessionsRouter from '../infrastructure/http/router/sessions-router.js';
-import gameRouter from '../infrastructure/http/router/game-router.js';
 import renders from '../ui/lib/renders.js';
 
 describe('Views Test', function() {
