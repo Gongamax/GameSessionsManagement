@@ -18,7 +18,6 @@ export default async function SessionView(mainContent, sessionViewModel, playerV
 
   const { sid, numberOfPlayers, date, gid, associatedPlayers, capacity } = await sessionViewModel.getSession(sessionId);
 
-
   async function updateSession(newCapacity, newDate) {
     await sessionViewModel.updateSession(sid, newCapacity, newDate);
     window.location.hash = `#session/${sid}`;

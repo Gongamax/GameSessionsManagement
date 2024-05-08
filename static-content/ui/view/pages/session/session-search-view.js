@@ -2,7 +2,7 @@ import dom from '../../../lib/dom-elements.js';
 
 const { h1, div, a, input, button, label, br, select, option } = dom;
 
-export default function SessionSearchView(mainContent) {
+async function SessionSearchView() {
   const handleSearch = () => {
     const gameId = document.querySelector('input[name = gameId]').value;
     const date = document.querySelector('input[name = date]').value;
@@ -28,18 +28,20 @@ export default function SessionSearchView(mainContent) {
           option({ value: '' }, 'All'),
           option({ value: 'open' }, 'Open'),
           option({ value: 'close' }, 'Close'),
-        ])
+        ]),
       ),
       br(),
       div({}, label({}, 'Player Id '), input({ type: 'text', name: 'playerId', value: '' })),
       br(),
-      button({ type: 'submit' }, 'Search')
+      button({ type: 'submit' }, 'Search'),
     ),
-    br()
+    br(),
+    a({ href: '#home' }, 'Go to Home'),
   );
 
-  const home = a({ href: '#home' }, 'Go to Home');
-  mainContent.replaceChildren(content, home);
+  content.querySelector('button[type=submit]').addEventListener('click', handleSearch);
 
-  mainContent.querySelector('button[type=submit]').addEventListener('click', handleSearch);
+  return content;
 }
+
+export default SessionSearchView;

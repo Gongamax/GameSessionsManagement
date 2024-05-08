@@ -2,7 +2,7 @@ import dom from './dom-elements.js';
 import Pagination from '../view/components/Pagination.js';
 import { genres } from '../../domain/types/game.js';
 
-const { form,li, ul, div, h1, a, br, input, label, button } = dom;
+const { form, li, ul, div, h1, a, br, input, label, button } = dom;
 
 export default {
   renderPlayerView,
@@ -12,7 +12,7 @@ export default {
   renderSessionsView,
   renderGetHome,
   renderGamesSearch,
-  renderGameCreate
+  renderGameCreate,
 };
 
 function createListItem(key, value) {
@@ -27,7 +27,13 @@ function renderPlayerView(player) {
   return div(
     {},
     h1({}, 'Player'),
-    div({}, ul({}, li({}, 'Id: ' + player.id), li({}, 'Name: ' + player.name), li({}, 'Email: ' + player.email))),
+    div({},
+      ul({},
+        createListItem('Id', player.id),
+        createListItem('Name', player.name),
+        createListItem('Email', player.email),
+      ),
+    ),
     br({}),
     a({ href: `#sessions?gid=&date=&state=&pid=${player.id}` }, 'Player sessions'),
     br({}),
@@ -56,7 +62,7 @@ function renderGameView(game) {
   );
 }
 
-function renderGamesSearch(){
+function renderGamesSearch() {
   return div(
     {},
     h1({}, 'Games Search'),
@@ -77,8 +83,8 @@ function renderGamesSearch(){
   );
 }
 
-function renderGameCreate(){
-  return [
+function renderGameCreate() {
+  return div({},
     h1({}, 'Create Game'),
     form({ id: 'game' }, [
       label({ htmlFor: 'name' }, 'Name: '),
@@ -96,12 +102,12 @@ function renderGameCreate(){
       br({}),
     ]),
     a({ href: '#home' }, 'Go to Home'),
-  ];
+  );
 }
 
 function renderSessionView(session, update = false) {
   if (update === true) {
-    console.log('Capacity: ' + session.capacity + ' Date: ' + session.date)
+    console.log('Capacity: ' + session.capacity + ' Date: ' + session.date);
     return renderSessionUpdate(session.capacity, session.date);
   } else {
     const playersDiv = session.associatedPlayers.map((player, index) => {
@@ -127,8 +133,8 @@ function renderSessionView(session, update = false) {
         ),
       ),
       br(),
-      button({ type: 'submit', id:'delete'}, 'Delete'),
-      button({ type: 'button', id:'update'}, 'Update'),
+      button({ type: 'submit', id: 'delete' }, 'Delete'),
+      button({ type: 'button', id: 'update' }, 'Update'),
       br(),
       br(),
       div({}, label({}, 'PlayerName: '), input({ type: 'text', name: 'playerName', value: '' })),
@@ -220,6 +226,5 @@ function renderSessionUpdate(capacity, date) {
     br({}),
     button({ type: 'button', id: 'cancel' }, 'Cancel'),
     button({ type: 'submit', id: 'update' }, 'Update'),
-
   );
 }

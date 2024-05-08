@@ -1,10 +1,10 @@
 import renders from '../../../lib/renders.js';
 
 const CreateGameView = (mainContent, gameViewModel) => {
-  const elements = renders.renderGameCreate();
-  mainContent.replaceChildren(...elements);
-  const createGame = mainContent.querySelector('#game');
-  createGame.addEventListener('submit', event => handleCreateGame(event, gameViewModel));
+  const content = renders.renderGameCreate();
+  content.querySelector('#game');
+  content.addEventListener('submit', event => handleCreateGame(event, gameViewModel));
+  return content;
 };
 
 export default CreateGameView;
@@ -33,7 +33,7 @@ async function handleCreateGame(event, gameViewModel) {
     };
 
     const res = await gameViewModel.createGame(gameProps);
-    if (res.includes('Game created')) {
+    if (res.status === 201) {
       const message = res.split(' ');
       const number = parseInt(message[message.length - 1]);
       alert('Game created successfully');
@@ -45,7 +45,6 @@ async function handleCreateGame(event, gameViewModel) {
   } catch (error) {
     alert('Error create game');
   }
-
 }
 
 

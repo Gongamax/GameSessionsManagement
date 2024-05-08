@@ -12,6 +12,7 @@ export default function SessionService() {
     deleteSession: deleteSession,
     updateSession: updateSession,
     addPlayerToSession: addPlayerToSession,
+    removePlayerFromSession: removePlayerFromSession,
   };
 
   function createSession(session) {
@@ -91,6 +92,13 @@ export default function SessionService() {
 
   function addPlayerToSession(sessionId, playerId) {
     return httpService.put(uris.addPlayerToSession + sessionId + '/player/' + playerId).then(() => {
+    }).catch((error) => {
+      return error.message;
+    });
+  }
+
+  function removePlayerFromSession(sessionId, playerId) {
+    return httpService.put(uris.removePlayerFromSession(sessionId, playerId)).then(() => {
     }).catch((error) => {
       return error.message;
     });

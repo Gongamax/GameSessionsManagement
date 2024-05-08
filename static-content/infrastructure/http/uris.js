@@ -11,6 +11,10 @@ const getSessions = `${API_BASE_URL}session`;
 const deleteSession = `${API_BASE_URL}session/`;
 const updateSession = `${API_BASE_URL}session/`;
 const addPlayerToSession = `${API_BASE_URL}session/`;
+// const removePlayerFromSession = `${API_BASE_URL}session/`;
+const removePlayerFromSession = (sid, pid) => { //TODO: THINK ABOUT HAVING SOME OF THIS IN FUNCTION TO MAKE IT CLEANER
+    return `${API_BASE_URL}session/${sid}/player/${pid}`;
+}
 const getPlayerByName = `${API_BASE_URL}player/search`;
 
 export default {
@@ -25,5 +29,6 @@ export default {
   deleteSession,
   updateSession,
   addPlayerToSession,
-  getPlayerByName
+  getPlayerByName,
+  removePlayerFromSession,
 };

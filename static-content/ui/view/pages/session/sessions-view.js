@@ -1,7 +1,7 @@
 import renders from '../../../lib/renders.js';
 import constants from '../../../../domain/constants.js';
 
-export default async function SessionsView(mainContent, sessionViewModel, page = 1) {
+async function SessionsView(sessionViewModel, page = 1) {
   const limit = constants.limit;
   const skip = (page - 1) * limit;
   const params = new URLSearchParams(window.location.hash.split('?')[1]);
@@ -14,9 +14,7 @@ export default async function SessionsView(mainContent, sessionViewModel, page =
 
   const sessions = await sessionViewModel.getSessions(gameId, date, state, playerId, skip, limit + 1);
   if (!sessions) {
-    const content = renders.renderGetHome('An error occurred while fetching sessions. Please try again later.');
-    mainContent.replaceChildren(content);
-    return;
+    return renders.renderGetHome('An error occurred while fetching sessions. Please try again later.');
   }
 
   const hasNextPage = sessions.length > limit;
@@ -24,6 +22,7 @@ export default async function SessionsView(mainContent, sessionViewModel, page =
     sessions.pop();
   }
 
-  const content = renders.renderSessionsView(sessions, page, hasNextPage, { gid: gameId, date, state, pid: playerId });
-  mainContent.replaceChildren(content);
+  return renders.renderSessionsView(sessions, page, hasNextPage, { gid: gameId, date, state, pid: playerId });
 }
+
+export default SessionsView;

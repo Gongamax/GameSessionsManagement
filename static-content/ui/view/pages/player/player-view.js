@@ -1,19 +1,18 @@
-import renders from "../../../lib/renders.js";
+import renders from '../../../lib/renders.js';
 
-export default async function PlayerView(mainContent, playerViewModel) {
+async function PlayerView(playerViewModel) {
   const params = window.location.hash.split('/');
   const playerId = params[params.length - 1];
- if (playerId !== String(parseInt(playerId))) {
-    const content = renders.renderGetHome(`Invalid player id, is not a number ${playerId}`);
-    mainContent.replaceChildren(content);
-    return;
+  if (playerId !== String(parseInt(playerId))) {
+    return renders.renderGetHome(`Invalid player id, is not a number ${playerId}`);
   }
 
-  const { name, email } = await playerViewModel.getPlayer(playerId);
+  const player = await playerViewModel.getPlayer(playerId);
+  if (!player) {
+    return renders.renderGetHome('An error occurred while fetching the player. Please try again later.');
+  }
 
-  console.log(name, email);
-
-  const content = renders.renderPlayerView({id: playerId, name, email});
-
-  mainContent.replaceChildren(content);
+  return renders.renderPlayerView({ id : playerId, ...player});
 }
+
+export default PlayerView;

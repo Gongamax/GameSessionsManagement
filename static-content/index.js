@@ -1,5 +1,6 @@
 import router from './infrastructure/http/router/router.js';
 import sessionsRouter from './infrastructure/http/router/sessions-router.js';
+import App from './ui/view/App.js';
 
 const home = 'home';
 
@@ -18,7 +19,7 @@ function loadHandler() {
   router.addRouteHandler('game', sessionsRouter.gameRouter.handleSearchGamesRoute);
   router.addRouteHandler('game/:id', sessionsRouter.gameRouter.handleGameRoute);
   router.addRouteHandler('games', sessionsRouter.gameRouter.handleGamesRoute);
-  router.addRouteHandler('game-create',sessionsRouter.gameRouter.handleCreateGameRoute);
+  router.addRouteHandler('game-create', sessionsRouter.gameRouter.handleCreateGameRoute);
 
   router.addDefaultNotFoundRouteHandler(() => (window.location.hash = home));
 
@@ -41,5 +42,12 @@ function hashChangeHandler() {
   }
 
   const handler = router.getRouteHandler(path);
-  handler(mainContent, page);
+  handler(page)
+    .then((newContent) => {
+      mainContent.replaceChildren(App(newContent));
+    })
+    .catch((error) => {
+      console.error(error);
+      // handleRenderError(mainContent, error); TODO: MAKE THIS FUNCTION
+    });
 }

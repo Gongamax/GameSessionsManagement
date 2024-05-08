@@ -31,4 +31,8 @@ export default function SessionViewModel(sessionService) {
   function addPlayerToSession(sessionId, playerId) {
     return sessionService.addPlayerToSession(sessionId, playerId);
   }
+
+  function removePlayerFromSession(sessionId, playerId) {
+    return sessionService.removePlayerFromSession(sessionId, playerId);
+  }
 }

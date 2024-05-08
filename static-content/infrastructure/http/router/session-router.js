@@ -16,16 +16,16 @@ const notFoundRouteHandler = () => {
   throw 'Route handler for unknown routes not defined';
 };
 
-function handleSessionRoute(mainContent) {
-  SessionView(mainContent, sessionViewModel,playerViewModel);
+function handleSessionRoute() {
+  return SessionView(sessionViewModel,playerViewModel);
 }
 
-function handleSessionsRoute(mainContent, page) {
-  SessionsView(mainContent, sessionViewModel, page);
+function handleSessionsRoute(page) {
+  return SessionsView(sessionViewModel, page);
 }
 
-function handleSearchSessionsRoute(mainContent) {
-  SessionSearchView(mainContent, sessionViewModel);
+function handleSearchSessionsRoute() {
+  return SessionSearchView(sessionViewModel);
 }
 
 

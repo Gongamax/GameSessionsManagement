@@ -2,8 +2,9 @@ import dom from '../../lib/dom-elements.js';
 
 const { a, br, p, h1 } = dom;
 
-function HomeView(mainContent) {
-  const elements = [
+async function HomeView() {
+  return dom.div(
+    { class: 'page-content' },
     h1({}, 'Welcome to Sessions App!'),
     p({}, 'We are happy to have you here!'),
     p({}, 'This is a simple app to manage sessions. You can add, edit, and delete sessions.'),
@@ -15,10 +16,8 @@ function HomeView(mainContent) {
     br(),
     a({ href: '#sign-up' }, 'Sign Up'),
     br(),
-    a({ href: '#game-create' },'Create Game'),
-  ];
-
-  mainContent.replaceChildren(...elements);
+    a({ href: '#game-create' }, 'Create Game'),
+  );
 }
 
 export default HomeView;

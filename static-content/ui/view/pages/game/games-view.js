@@ -1,7 +1,7 @@
 import renders from '../../../lib/renders.js';
 import constants from '../../../../domain/constants.js';
 
-export default async function GamesView(mainContent, gamesViewModel, page) {
+async function GamesView(gamesViewModel, page) {
   const params = new URLSearchParams(window.location.hash.split('?')[1]);
   const developer = params.get('developer');
   const limit = constants.limit;
@@ -10,10 +10,10 @@ export default async function GamesView(mainContent, gamesViewModel, page) {
 
   const games = await gamesViewModel.getGames(developer, genres, skip, limit + 1);
 
-  if (games === undefined) {
-    const content = renders.renderGetHome('An error occurred while fetching games. Please try again later.');
-    mainContent.replaceChildren(content);
-    return;
+  console.log(games)
+
+  if (!games) {
+    return renders.renderGetHome('An error occurred while fetching games. Please try again later.');
   }
 
   const hasNextPage = games.length > limit;
@@ -21,7 +21,7 @@ export default async function GamesView(mainContent, gamesViewModel, page) {
     games.pop();
   }
 
-  const content = renders.renderGamesView(games, page, hasNextPage, { developer, genres });
-
-  mainContent.replaceChildren(content);
+  return renders.renderGamesView(games, page, hasNextPage, { developer, genres });
 }
+
+export default GamesView;

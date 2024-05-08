@@ -8,7 +8,6 @@ import SessionViewModel from '../../../ui/viewmodel/SessionViewModel.js';
 import SessionService from '../services/session-service.js';
 import CreateGameView from '../../../ui/view/pages/game/game-create-view.js';
 
-const router = Router;
 const gameService = GameService();
 const sessionService = SessionService();
 const gameViewModel = GameViewModel(gameService);
@@ -18,20 +17,20 @@ const notFoundRouteHandler = () => {
   throw 'Route handler for unknown routes not defined';
 };
 
-function handleGameRoute(mainContent) {
-  GameView(mainContent, gameViewModel, sessionViewModel);
+function handleGameRoute() {
+  return GameView(gameViewModel, sessionViewModel);
 }
 
-function handleGamesRoute(mainContent, page) {
-  GamesView(mainContent, gameViewModel, page);
+function handleGamesRoute(page) {
+  return GamesView(gameViewModel, page);
 }
 
-function handleSearchGamesRoute(mainContent) {
-  SearchGamesView(mainContent, gameViewModel);
+function handleSearchGamesRoute() {
+  return SearchGamesView(gameViewModel);
 }
 
-function handleCreateGameRoute(mainContent){
-  CreateGameView(mainContent, gameViewModel);
+function handleCreateGameRoute() {
+  return CreateGameView(gameViewModel);
 }
 
 export default {
